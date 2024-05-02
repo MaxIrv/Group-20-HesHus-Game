@@ -16,6 +16,12 @@ public class EventManager {
     private final HashMap<String, String> objectInteractions;
     private final Array<String> talkTopics;
 
+    private boolean studied = false;
+    private boolean studiedTwice = false;
+    private boolean hadFun = false;
+    private boolean ate = false;
+    private boolean slept = false;
+
     /**
      * A class that maps Object's event strings to actual Java functions.
      * To run a function call event(eventString), to add arguments add dashes.
@@ -279,6 +285,22 @@ public class EventManager {
                     game.setEnergy(hoursSlept*13);
                     game.passTime(secondsSlept);
                     game.addSleptHours(hoursSlept);
+                    // Check for any streaks/achievements
+                    if (studied == true) {
+                        game.addStudyStreakCounter(1);
+
+                    }
+                    else {game.setStudyStreakCounter(0);}
+
+                    if (studiedTwice == true) {game.setBookWormCounter(1);}
+
+                    if (ate == true) {game.addEatStreakCounter(1);}
+                    else {game.setEatStreakCounter(0);}
+
+                    if (hadFun == true) {game.addFunStreakCounter(1);}
+                    else {game.setFunStreakCounter(0);}
+
+                    if (slept == false) {game.setNoSleepCounter(1);}
                 }
             }
         });

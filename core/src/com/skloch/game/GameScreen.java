@@ -38,6 +38,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private int energy = 100;
     private int hoursStudied, hoursRecreational, hoursSlept, mealsEaten;
+    private int studyStreakCounter, bookWormCounter, eatStreakCounter, funStreakCounter, noSleepCounter;
     private float daySeconds = 0; // Current seconds elapsed in day
     private int day = 1; // What day the game is on
     private Label timeLabel, dayLabel;
@@ -668,6 +669,41 @@ public class GameScreen implements Screen {
     public void addStudyHours(int hours) {
         hoursStudied += hours;
     }
+
+    // Study Streak
+    public int getStudyStreakCounter() {return this.studyStreakCounter;}
+
+    public void setStudyStreakCounter(int x) {this.studyStreakCounter = x;}
+
+    public void addStudyStreakCounter(int x) {this.studyStreakCounter += x;}
+
+    // Bookworm
+    public int getBookWormCounter() {return this.bookWormCounter;}
+
+    public void setBookWormCounter(int x) {this.bookWormCounter = x;}
+
+    public void addBookWormCounter(int x) {this.bookWormCounter += x;}
+
+    // Eat Streak
+    public int getEatStreakCounter() {return this.eatStreakCounter;}
+
+    public void setEatStreakCounter(int x) {this.eatStreakCounter = x;}
+
+    public void addEatStreakCounter(int x) {this.eatStreakCounter += x;}
+
+    // Fun Streak
+    public int getFunStreakCounter() {return this.funStreakCounter;}
+
+    public void setFunStreakCounter(int x) {this.funStreakCounter = x;}
+
+    public void addFunStreakCounter(int x) {this.funStreakCounter += x;}
+
+    // All Nighter
+    public int getNoSleepCounter() {return this.noSleepCounter;}
+
+    public void setNoSleepCounter(int x) {this.noSleepCounter = x;}
+
+    public void addNoSleepCounter(int x) {this.noSleepCounter += x;}
 
     /**
      * Adds an amount of recreational hours to the total amount for the current day

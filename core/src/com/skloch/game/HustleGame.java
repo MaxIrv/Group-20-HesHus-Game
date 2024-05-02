@@ -100,7 +100,7 @@ public class HustleGame extends Game {
 		Predicate<Integer> studyStreakNo = i -> (i > 4);
 		studyStreak = new Achievement("Serial Studier", "Study 5 days in a row.", studyStreakNo);
 
-		Predicate<Integer> studyTwiceToday = i -> (i == 2);
+		Predicate<Integer> studyTwiceToday = i -> (i == 1);
 		bookWorm = new Achievement("Bookworm", "Study twice in the same day.", studyTwiceToday);
 
 		Predicate<Integer> eatStreakNo = i -> (i > 4);
@@ -109,7 +109,7 @@ public class HustleGame extends Game {
 		Predicate<Integer> funStreakNo = i -> (i > 4);
 		funStreak = new Achievement("Smelling the Roses", "Have fun 5 days in a row.", funStreakNo);
 
-		Predicate<Integer> noSleep = i -> (i > 0);
+		Predicate<Integer> noSleep = i -> (i == 1);
 		allNighter = new Achievement("The Longest Day (and Night)", "Pull an all-nighter.", noSleep);
 
 		this.setScreen(new MenuScreen(this));
