@@ -1,22 +1,22 @@
 package com.skloch.game;
 
-import com.badlogic.gdx.utils.Predicate;
+import java.util.function.Predicate;
 
 public class Achievement {
     public String title;
     public String description;
-    public Predicate<Boolean> conditions;
+    public Predicate<Integer> conditions;
     public boolean achieved;
 
-    public Achievement(String title, String description, Predicate<Boolean> conditions) {
+    public Achievement(String title, String description, Predicate<Integer> conditions) {
         this.title = title;
         this.description = description;
         this.conditions = conditions;
         this.achieved = false;
     }
 
-    public void checkCondition() {
-        if(this.conditions.evaluate(true)) {
+    public void checkCondition(Integer x) {
+        if(this.conditions.test(x)) {
             this.achieved = true;
         }
     }

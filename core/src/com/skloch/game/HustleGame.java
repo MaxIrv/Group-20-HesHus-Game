@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.function.Predicate;
+
 /**
  * A class that is initially created by DesktopLauncher, loads consistent files at the start of the game and initialises lots of important classes.
  * Loads the map, ui skin, text files and makes sound manager and more
@@ -33,6 +35,11 @@ public class HustleGame extends Game {
 	public int mapSquareSize;
 	public float mapScale;
 	public MapProperties mapProperties;
+	public Achievement studyStreak;
+	public Achievement bookWorm;
+	public Achievement eatStreak;
+	public Achievement funStreak;
+	public Achievement allNighter;
 
 
 	/**
@@ -88,6 +95,22 @@ public class HustleGame extends Game {
 
 		credits = readTextFile("Text/credits.txt");
 		tutorialText = readTextFile("Text/tutorial_text.txt");
+
+		// Generates all achievements
+		Predicate<Integer> studyStreakNo = i -> (i > 4);
+		studyStreak = new Achievement("Serial Studier", "Study 5 days in a row.", studyStreakNo);
+
+		Predicate<Integer> studyTwiceToday = i -> (i == 2);
+		bookWorm = new Achievement("Bookworm", "Study twice in the same day.", studyTwiceToday);
+
+		Predicate<Integer> eatStreakNo = i -> (i > 4);
+		eatStreak = new Achievement("Foodie", "Eat 5 days in a row.", eatStreakNo);
+
+		Predicate<Integer> funStreakNo = i -> (i > 4);
+		funStreak = new Achievement("Smelling the Roses", "Have fun 5 days in a row.", funStreakNo);
+
+		Predicate<Integer> noSleep = i -> (i > 0);
+		allNighter = new Achievement("The Longest Day (and Night)", "Pull an all-nighter.", noSleep);
 
 		this.setScreen(new MenuScreen(this));
 	}
