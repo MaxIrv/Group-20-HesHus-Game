@@ -3,10 +3,10 @@ package com.skloch.game;
 import java.util.function.Predicate;
 
 public class Achievement {
-    public String title;
-    public String description;
-    public Predicate<Integer> conditions;
-    public boolean achieved;
+    private String title;
+    private String description;
+    private Predicate<Integer> conditions;
+    private boolean achieved;
 
     public Achievement(String title, String description, Predicate<Integer> conditions) {
         this.title = title;
@@ -16,8 +16,18 @@ public class Achievement {
     }
 
     public void checkCondition(Integer x) {
-        if(this.conditions.test(x)) {
-            this.achieved = true;
+        if(this.getConditions().test(x)) {
+            this.setAchieved(true);
         }
     }
+
+    // Getters and Setters
+    public String getTitle() {return this.title;}
+    public void setTitle(String x) {this.title = x;}
+    public String getDescription() {return this.description;}
+    public void setDescription(String x) {this.description = x;}
+    public Predicate<Integer> getConditions() {return this.conditions;}
+    public void setConditions(Predicate<Integer> x) {this.conditions = x;}
+    public boolean getAchieved() {return this.achieved;}
+    public void setAchieved(boolean x) {this.achieved = x;}
 }
