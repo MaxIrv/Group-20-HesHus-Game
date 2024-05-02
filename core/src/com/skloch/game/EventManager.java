@@ -286,21 +286,33 @@ public class EventManager {
                     game.passTime(secondsSlept);
                     game.addSleptHours(hoursSlept);
                     // Check for any streaks/achievements
-                    if (studied == true) {
+                    if (studied) {
                         game.addStudyStreakCounter(1);
-
+                        game.game.studyStreak.checkCondition(game.getStudyStreakCounter());
                     }
                     else {game.setStudyStreakCounter(0);}
 
-                    if (studiedTwice == true) {game.setBookWormCounter(1);}
+                    if (studiedTwice) {
+                        game.setBookWormCounter(1);
+                        game.game.bookWorm.checkCondition(game.getBookWormCounter());
+                    }
 
-                    if (ate == true) {game.addEatStreakCounter(1);}
+                    if (ate) {
+                        game.addEatStreakCounter(1);
+                        game.game.eatStreak.checkCondition(game.getEatStreakCounter());
+                    }
                     else {game.setEatStreakCounter(0);}
 
-                    if (hadFun == true) {game.addFunStreakCounter(1);}
+                    if (hadFun) {
+                        game.addFunStreakCounter(1);
+                        game.game.funStreak.checkCondition(game.getFunStreakCounter());
+                    }
                     else {game.setFunStreakCounter(0);}
 
-                    if (slept == false) {game.setNoSleepCounter(1);}
+                    if (slept) {
+                        game.setNoSleepCounter(1);
+                        game.game.allNighter.checkCondition(game.getNoSleepCounter());
+                    }
                 }
             }
         });
