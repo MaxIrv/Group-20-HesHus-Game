@@ -93,6 +93,19 @@ public class HustleGame extends Game {
 	}
 
 	/**
+	 * Switch from to a map specified by its path.
+	 * @param mapFileName The filename of the map to switch to.
+	 */
+	public void switch_map(String mapFileName){
+		System.out.println("Changing the map.");
+		TiledMap old_map = map;
+		map = new TmxMapLoader().load(mapFileName);
+		mapProperties = map.getProperties();
+		mapSquareSize = mapProperties.get("tilewidth", Integer.class);
+		old_map.dispose();
+	}
+
+	/**
 	 * Very important, renders the game, remove super.render() to get a black screen
 	 */
 	@Override

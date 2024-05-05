@@ -55,6 +55,10 @@ public class GameScreen implements Screen {
     public DialogueBox dialogueBox;
     public final Image blackScreen;
     private boolean sleeping = false;
+    private boolean onHomeMap = true;
+
+    private String hesEastMapPath = "East Campus/east_campus.tmx";
+    private String townMapPath = "Town/town.tmx";
 
 
     /**
@@ -182,18 +186,32 @@ public class GameScreen implements Screen {
         inputMultiplexer.addProcessor(uiStage);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
+        setupMap();
 
+        game.shapeRenderer.setProjectionMatrix(camera.combined);
 
+        // Display a little good morning message
+        dialogueBox.show();
+        dialogueBox.setText(getWakeUpMessage());
+    }
+
+    /**
+     * Load and set up the map. Pass collidable objects to the player.
+     */
+    private void setupMap(){
         // Setup map
         float unitScale = game.mapScale / game.mapSquareSize;
         mapRenderer = new OrthogonalTiledMapRenderer(game.map, unitScale);
 
-        // Set the player to the middle of the map
         // Get the dimensions of the top layer
         TiledMapTileLayer layer0 = (TiledMapTileLayer) game.map.getLayers().get(0);
+        // Set the player to the middle of the map
         player.setPos(layer0.getWidth()*game.mapScale / 2f, layer0.getHeight()*game.mapScale / 2f);
         // Put camera on player
         camera.position.set(player.getCentreX(), player.getCentreY(), 0);
+
+        // Clear collidables from the player, as they may be from a different map.
+        player.clearCollidables();
 
         // Give objects to player
         for (int layer : game.objectLayers) {
@@ -226,12 +244,20 @@ public class GameScreen implements Screen {
                         game.mapProperties.get("height", Integer.class) * game.mapScale
                 )
         );
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
 
-        // Display a little good morning message
-        dialogueBox.show();
-        dialogueBox.setText(getWakeUpMessage());
     }
+
+    /**
+     * Switch from the current map to another map as specified by it's asset path.
+     *
+     * @param mapFileName the file name of the map
+     */
+    public void switchMap(String mapFileName){
+        onHomeMap = hesEastMapPath.equals(mapFileName);
+        game.switch_map(mapFileName);
+        setupMap();
+    }
+
 
     @Override
     public void show() {
@@ -681,7 +707,6 @@ public class GameScreen implements Screen {
      * Adds an amount of meals to the total number of meals
      */
     public void addMeal() {mealsEaten ++;}
-
     /**
      * @return Returns 'breakfast', 'lunch' or 'dinner' depending on the time of day
      */

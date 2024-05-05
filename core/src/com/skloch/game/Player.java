@@ -294,6 +294,13 @@ public class Player {
     }
 
     /**
+     * Removes all GameObjects from the collidables list.
+     */
+    public void clearCollidables (){
+        this.collidables = new Array<GameObject>();
+    }
+
+    /**
      * @return The X coordinate of the player
      */
     public float getX () {
