@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
     public DialogueBox dialogueBox;
     public final Image blackScreen;
     private boolean sleeping = false;
-    public String currentMap = "campus";
+    private String currentMap = "campus";
 
     // This syntax is super weird but welcome to Java, each row denotes one entry
     private final Map<String, String> mapPaths = Map.of(
@@ -235,7 +235,9 @@ public class GameScreen implements Screen {
                 if ((properties.get("spawn") != null && firstLoad) || (properties.get("respawn") != null && !firstLoad)) {
                     player.setPos(((float) properties.get("x")) * unitScale, ((float) properties.get("y")) * unitScale);
                     camera.position.set(player.getPosAsVec3());
-                } else {
+                }
+                // If not a spawn point make collidable
+                else if (properties.get("spawn") == null && properties.get("respawn") == null) {
                     // Make a new gameObject with these properties, passing along the scale the map is rendered
                     // at for accurate coordinates
                     player.addCollidable(new GameObject(properties, unitScale));
