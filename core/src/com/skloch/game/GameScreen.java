@@ -202,7 +202,10 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Load and set up the map. Pass collidable objects to the player.
+     * Load and set up the map. Passes collidable objects to the player.
+     *
+     * @param firstLoad whether this is the first map being loaded, determines
+     *                  whether to place the player at the spawn or respawn location.
      */
     private void setupMap(boolean firstLoad){
         // Setup map
@@ -267,6 +270,15 @@ public class GameScreen implements Screen {
         currentMap = mapName;
         game.switch_map(mapPaths.get(mapName));
         setupMap(false);
+    }
+
+    /**
+     * Get the map the player is currently on.
+     *
+     * @return the name of the current map.
+     */
+    public String getCurrentMap(){
+        return currentMap;
     }
 
 

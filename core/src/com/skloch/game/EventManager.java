@@ -256,7 +256,7 @@ public class EventManager {
      * @param args
      */
     public void busStopEvent(String[] args) {
-        if (game.currentMap.equals("town")){
+        if (game.getCurrentMap().equals("town")){
             game.switchMap("campus");
         }
         else {
