@@ -29,6 +29,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Handles the majority of the game logic, rendering and user inputs of the game.
  * Responsible for rendering the player and the map, and calling events.
@@ -55,10 +58,13 @@ public class GameScreen implements Screen {
     public DialogueBox dialogueBox;
     public final Image blackScreen;
     private boolean sleeping = false;
-    private boolean onHomeMap = true;
+    public String currentMap = "campus";
 
-    private String hesEastMapPath = "East Campus/east_campus.tmx";
-    private String townMapPath = "Town/town.tmx";
+    // This syntax is super weird but welcome to Java, each row denotes one entry
+    private final Map<String, String> mapPaths = Map.of(
+            "campus", "East Campus/east_campus.tmx",
+            "town", "Town/town.tmx"
+    );
 
 
     /**
@@ -186,7 +192,7 @@ public class GameScreen implements Screen {
         inputMultiplexer.addProcessor(uiStage);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
-        setupMap();
+        setupMap(true);
 
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
@@ -198,7 +204,7 @@ public class GameScreen implements Screen {
     /**
      * Load and set up the map. Pass collidable objects to the player.
      */
-    private void setupMap(){
+    private void setupMap(boolean firstLoad){
         // Setup map
         float unitScale = game.mapScale / game.mapSquareSize;
         mapRenderer = new OrthogonalTiledMapRenderer(game.map, unitScale);
@@ -223,8 +229,8 @@ public class GameScreen implements Screen {
                 // Get the properties of each object
                 MapProperties properties = objects.get(i).getProperties();
                 // If this is the spawn object, move the player there and don't collide
-                if (properties.get("spawn") != null) {
-                    player.setPos(((float) properties.get("x")) *unitScale, ((float) properties.get("y"))*unitScale);
+                if ((properties.get("spawn") != null && firstLoad) || (properties.get("respawn") != null && !firstLoad)) {
+                    player.setPos(((float) properties.get("x")) * unitScale, ((float) properties.get("y")) * unitScale);
                     camera.position.set(player.getPosAsVec3());
                 } else {
                     // Make a new gameObject with these properties, passing along the scale the map is rendered
@@ -248,15 +254,21 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Switch from the current map to another map as specified by it's asset path.
+     * Switch from the current map to another map as specified by its asset path.
      *
-     * @param mapFileName the file name of the map
+     * @param mapName the name of the map one of "town" and "campus"
      */
-    public void switchMap(String mapFileName){
-        onHomeMap = hesEastMapPath.equals(mapFileName);
-        game.switch_map(mapFileName);
-        setupMap();
+    public void switchMap(String mapName) {
+        if (!mapPaths.containsKey(mapName)){
+            mapName="campus";
+        }
+
+        // If we are switching to the home map then set "onHomeMap" attribute
+        currentMap = mapName;
+        game.switch_map(mapPaths.get(mapName));
+        setupMap(false);
     }
+
 
 
     @Override
