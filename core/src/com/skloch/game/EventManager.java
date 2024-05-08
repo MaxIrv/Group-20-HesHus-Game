@@ -40,6 +40,7 @@ public class EventManager {
         objectInteractions.put("chest", "Open the chest?");
         objectInteractions.put("comp_sci", "Study in the Computer Science building?");
         objectInteractions.put("piazza", "Meet your friends at the Piazza?");
+        objectInteractions.put("bus_stop", "Get the bus?");
         objectInteractions.put("accomodation", "Go to sleep for the night?\nYour alarm is set for 8am.");
         objectInteractions.put("rch", null); // Changes, dynamically returned in getObjectInteraction
         objectInteractions.put("tree", "Speak to the tree?");
@@ -80,6 +81,9 @@ public class EventManager {
                 break;
             case "accomodation":
                 accomEvent(args);
+                break;
+            case "bus_stop":
+                busStopEvent(args);
                 break;
             case "exit":
                 // Should do nothing and just close the dialogue menu
@@ -244,6 +248,21 @@ public class EventManager {
             game.dialogueBox.setText("It's too early in the morning to eat food, go to bed!");
         }
 
+    }
+
+    /**
+     * Allows player to "get the bus" in effect switching map.
+     * @see GameScreen switchMap function
+     * @param args
+     */
+    public void busStopEvent(String[] args) {
+        if (game.getCurrentMap().equals("town")){
+            game.switchMap("campus");
+        }
+        else {
+            game.switchMap("town");
+        }
+        game.dialogueBox.hideSelectBox();
     }
 
     /**
