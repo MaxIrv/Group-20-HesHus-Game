@@ -2,30 +2,43 @@
 <style>
 ganttDiagram {
   task {
-    BackGroundColor Green
-    LineColor Black
-    unstarted {
-      BackGroundColor Orange
-      LineColor grey
-    }
+    BackGroundColor LightCoral
+    LineColor Coral
   }
 }
 </style>
 project starts on the 24th April 2024
 ' Implementation
-[Add new map] starts 2024-04-24
+[Add new map] as [Add new map] starts 2024-04-24
 [Add new map] requires 7 days
-[New locations] requires 7 days
+[New locations] as [New locations] requires 7 days
 [New locations] starts at [Add new map]'s end
-[Add leaderboard] requires 7 days
-[Add stats] requires 7 days
-
-
-[Add testing] requires 7 days
-[Write tests for existing code] requires 14 days
+[Add leaderboard] as [Add leaderboard] requires 7 days
+[Add stats] as [Add stats] requires 7 days
+<style>
+ganttDiagram {
+  task {
+    BackGroundColor Tan
+    LineColor Tan
+  }
+}
+</style>
+[Add testing] as [Add testing] requires 7 days
+[Write tests for existing code] as [Write tests for existing code] requires 14 days
 [Write tests for existing code] starts at [Add testing]'s end
-
-[Add CI] requires 7 days
+[Write test for new code] as [Write test for new code] requires 21 days
+[Write test for new code] starts at [Add testing]'s end
+<style>
+ganttDiagram {
+  task {
+    BackGroundColor Olive
+    LineColor Olive
+  }
+}
+</style>
+[Add CI] as [Add CI] requires 7 days
+[CI Write Up] as [CI Write Up] requires 7 days
+[CI Write Up] starts at [Add CI]'s end
 
 [Add new map] is 0% complete
 [New locations] is 0% complete
@@ -33,5 +46,7 @@ project starts on the 24th April 2024
 [Add stats] is 0% complete
 [Add testing] is 0% complete
 [Write tests for existing code] is 0% complete
+[Write test for new code] is 0% complete
 [Add CI] is 0% complete
+[CI Write Up] is 0% complete
 @endgantt
