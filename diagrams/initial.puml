@@ -1,0 +1,37 @@
+@startgantt
+<style>
+ganttDiagram {
+  task {
+    BackGroundColor Green
+    LineColor Black
+    unstarted {
+      BackGroundColor Orange
+      LineColor grey
+    }
+  }
+}
+</style>
+project starts on the 24th April 2024
+' Implementation
+[Add new map] starts 2024-04-24
+[Add new map] requires 7 days
+[New locations] requires 7 days
+[New locations] starts at [Add new map]'s end
+[Add leaderboard] requires 7 days
+[Add stats] requires 7 days
+
+
+[Add testing] requires 7 days
+[Write tests for existing code] requires 14 days
+[Write tests for existing code] starts at [Add testing]'s end
+
+[Add CI] requires 7 days
+
+[Add new map] is 0% complete
+[New locations] is 0% complete
+[Add leaderboard] is 0% complete
+[Add stats] is 0% complete
+[Add testing] is 0% complete
+[Write tests for existing code] is 0% complete
+[Add CI] is 0% complete
+@endgantt
