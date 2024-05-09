@@ -1,0 +1,29 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* ENG1 Assessment 2
+**[#LightBlue] Website
+*** Update the files
+*** Add new deliverables
+**[#LightGreen] Implementation
+*** Bug fixes and minor changes
+*** Add new map
+*** Add new locations
+*** Display stats
+*** Add scoring
+*** Add leaderboard
+**[#LightSalmon] Testing
+*** Adding testing
+*** Writing tests for old code
+*** Writing tests for new code as it is written
+*** Write up
+**[#LightGoldenRodYellow] Continuous Integration
+*** Implementing continuous integration
+*** Write up
+**[#Tomato] User evaluation
+*** Evaluation meetings
+*** Write up
+*** Action
+
+
+@endwbs
