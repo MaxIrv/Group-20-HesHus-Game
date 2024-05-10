@@ -38,23 +38,28 @@ import java.util.Objects;
  */
 public class GameScreen implements Screen {
     final HustleGame game;
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
     private int energy = 100;
     private int hoursStudied, hoursRecreational, hoursSlept, mealsEaten;
     private float daySeconds = 0; // Current seconds elapsed in day
     private int day = 1; // What day the game is on
-    private Label timeLabel, dayLabel;
+    private final Label timeLabel;
+    private final Label dayLabel;
+    private final Label hoursRecreationalLabel;
+    private final Label hoursStudiedLabel;
+    private final Label mealsEatenLabel;
+    private final Label hoursSleptLabel;
     public Player player;
     private Window escapeMenu;
-    private Viewport viewport;
+    private final Viewport viewport;
     public OrthogonalTiledMapRenderer mapRenderer;
     public Stage uiStage;
-    private Label interactionLabel;
-    private EventManager eventManager;
+    private final Label interactionLabel;
+    private final EventManager eventManager;
 //    private OptionDialogue optionDialogue;
     protected InputMultiplexer inputMultiplexer;
-    private Table uiTable;
-    private Image energyBar;
+    private final Table uiTable;
+    private final Image energyBar;
     public DialogueBox dialogueBox;
     public final Image blackScreen;
     private boolean sleeping = false;
@@ -150,6 +155,26 @@ public class GameScreen implements Screen {
         energyGroup.addActor(energyBar);
         energyGroup.addActor(energyBarOutline);
 
+        //Group statsGroup = new Group();
+        Table statsTable = new Table();
+        statsTable.setFillParent(true);
+        mealsEatenLabel = new Label(String.format("Eaten %d times",mealsEaten), game.skin, "day");
+        hoursStudiedLabel = new Label(String.format("Studied for %d hours",hoursStudied),game.skin,"day");
+        hoursRecreationalLabel = new Label(String.format("Played for %d hours",hoursRecreational),game.skin,"day");
+        hoursSleptLabel = new Label(String.format("Slept for %d hours",hoursSlept),game.skin,"day");
+
+
+        statsTable.add(mealsEatenLabel).top().right();
+        statsTable.row();
+        statsTable.add(hoursStudiedLabel).top().right();
+        statsTable.row();
+        statsTable.add(hoursRecreationalLabel).top().right();
+        statsTable.row();
+        statsTable.add(hoursSleptLabel).top().right();
+        statsTable.top().right().padRight(10).padTop(10);
+
+
+
 
         // Set initial time
         daySeconds = (8*60); // 8:00 am
@@ -166,6 +191,7 @@ public class GameScreen implements Screen {
 
         // Set the order of rendered UI elements
         uiTable.add(interactionLabel).padTop(300);
+        uiStage.addActor(statsTable);
         uiStage.addActor(energyGroup);
         uiStage.addActor(timeTable);
         uiStage.addActor(blackScreen);
@@ -324,12 +350,13 @@ public class GameScreen implements Screen {
         }
         timeLabel.setText(formatTime((int) daySeconds));
 
+        mealsEatenLabel.setText(String.format("Eaten %d times",mealsEaten));
+        hoursStudiedLabel.setText(String.format("Studied for %d hours",hoursStudied));
+        hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
+        hoursSleptLabel.setText(String.format("Slept for %d hours",hoursSlept));
+
         // Freeze the player's movement for this frame if any menus are visible
-        if (escapeMenu.isVisible() || dialogueBox.isVisible() || sleeping) {
-            player.setFrozen(true);
-        } else {
-            player.setFrozen(false);
-        }
+        player.setFrozen(escapeMenu.isVisible() || dialogueBox.isVisible() || sleeping);
 
         dialogueBox.scrollText(0.8f);
 
