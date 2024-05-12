@@ -158,6 +158,7 @@ public class GameScreen implements Screen {
         //Group statsGroup = new Group();
         Table statsTable = new Table();
         statsTable.setFillParent(true);
+
         mealsEatenLabel = new Label(String.format("Eaten %d times",mealsEaten), game.skin, "day");
         hoursStudiedLabel = new Label(String.format("Studied for %d hours",hoursStudied),game.skin,"day");
         hoursRecreationalLabel = new Label(String.format("Played for %d hours",hoursRecreational),game.skin,"day");
@@ -350,10 +351,6 @@ public class GameScreen implements Screen {
         }
         timeLabel.setText(formatTime((int) daySeconds));
 
-        mealsEatenLabel.setText(String.format("Eaten %d times",mealsEaten));
-        hoursStudiedLabel.setText(String.format("Studied for %d hours",hoursStudied));
-        hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
-        hoursSleptLabel.setText(String.format("Slept for %d hours",hoursSlept));
 
         // Freeze the player's movement for this frame if any menus are visible
         player.setFrozen(escapeMenu.isVisible() || dialogueBox.isVisible() || sleeping);
@@ -746,6 +743,7 @@ public class GameScreen implements Screen {
      */
     public void addStudyHours(int hours) {
         hoursStudied += hours;
+        hoursStudiedLabel.setText(String.format("Studied for %d hours",hoursStudied));
     }
 
     /**
@@ -754,12 +752,16 @@ public class GameScreen implements Screen {
      */
     public void addRecreationalHours(int hours) {
         hoursRecreational += hours;
+        hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
     }
 
     /**
      * Adds an amount of meals to the total number of meals
      */
-    public void addMeal() {mealsEaten ++;}
+    public void addMeal() {
+        mealsEaten ++;
+        mealsEatenLabel.setText(String.format("Eaten %d times",mealsEaten));
+    }
     /**
      * @return Returns 'breakfast', 'lunch' or 'dinner' depending on the time of day
      */
@@ -812,6 +814,7 @@ public class GameScreen implements Screen {
      */
     public void addSleptHours(int hours) {
         hoursSlept += hours;
+        hoursSleptLabel.setText(String.format("Slept for %d hours",hoursSlept));
     }
 
     /**
