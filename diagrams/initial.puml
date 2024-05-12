@@ -10,6 +10,7 @@ ganttDiagram {
 project starts on the 24th April 2024
 ' Implementation
 [Breakup GameScreen Class (Max)] as [Breakup GameScreen Class] requires 7 days
+[Bug fixes and minor changes (Billy)] as [Bug fixes and minor changes] requires 7 days
 [Add new map (Billy)] as [Add new map] starts at [Breakup GameScreen Class]'s end
 [Add new map] requires 7 days
 [New locations (Sam)] as [New locations] requires 7 days
@@ -29,6 +30,7 @@ ganttDiagram {
 }
 </style>
 [Add testing (Max)] as [Add testing] requires 7 days
+[Testing write up (?)] as [Testing write up] requires 7 days
 [Write tests for existing code (Sam,Jacob,Flynn)] as [Write tests for existing code] requires 14 days
 [Write tests for existing code] starts at [Add testing]'s end
 [Write tests for existing code] starts at [Breakup GameScreen Class]'s end
@@ -54,25 +56,28 @@ ganttDiagram {
   }
 }
 </style>
-[Track and Write up implementation changes (All)] as [Track and Write up implementation changes] requires 21 days
+[Change Report Introduction (Billy)] as [Change Report Introduction] requires 7 days
 [Update Risk (Leuay)] as [Update Risk] requires 7 days
-[Update Requirements (Billy)] as [Update Requirements] requires 7 days
+[Change Report for Risk (Leuay)] as [Change Report for Risk] requires 7 days
 [Update Architecture (Leuay)] as [Update Architecture] requires 7 days
-[Compile Changes into Change Log (Billy 50%, Leuay 50%)] as [Compile Changes] requires 5 days
+[Change Report for Architecture (Leuay)] as [Change Report for Architecture] requires 7 days
+[Update Requirements (Billy)] as [Update Requirements] requires 7 days
+[Change Report for Requirements (Billy)] as [Change Report for Requirements] requires 7 days
 [Update Planning (Billy)] as [Update Planning] requires 7 days
-[Update Planning] starts at [Update Requirements]'s end
-[Compile Changes] starts at [Track and Write up implementation changes]'s end
-[Compile Changes] starts at [Update Planning]'s end
-[Compile Changes] starts at [Update Risk]'s end
-[Compile Changes] starts at [Update Architecture]'s end
-[Compile Changes] starts at [Update Requirements]'s end
+[Change Report for Planning (Billy)] as [Change Report for Planning] requires 7 days
 
+[Change Report for Architecture] starts at [Update Architecture]'s end
+[Change Report for Requirements] starts at [Update Requirements]'s end
+[Change Report for Risk] starts at [Update Risk]'s end
+[Change Report for Planning] starts at [Update Planning]'s end
 
-
+[Soft deadline] happens at 2024-05-19
 [DEADLINE] happens at 2024-05-21
 
 [Add new map] is 0% complete
+[Bug fixes and minor changes] is 0% complete
 [Breakup GameScreen Class] is 0% complete
+[Testing write up] is 0% complete
 [New locations] is 0% complete
 [Add leaderboard] is 0% complete
 [Add achievements] is 0% complete
@@ -82,10 +87,14 @@ ganttDiagram {
 [Write test for new code] is 0% complete
 [Add CI] is 0% complete
 [CI Write Up] is 0% complete
-[Track and Write up implementation changes] is 0% complete
 [Update Planning] is 0% complete
 [Update Risk] is 0% complete
 [Update Requirements] is 0% complete
 [Update Architecture] is 0% complete
+[Change Report for Architecture] is 0% complete
+[Change Report for Planning] is 0% complete
+[Change Report for Risk] is 0% complete
+[Change Report for Requirements] is 0% complete
+[Change Report Introduction] is 0% complete
 
 @endgantt
