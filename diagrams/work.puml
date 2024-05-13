@@ -1,6 +1,10 @@
 @startwbs
 'https://plantuml.com/wbs-diagram
-
+<style>
+wbsDiagram{
+FontSize: 45
+}
+</style>
 * **ENG1 Assessment 2**
 **[#LightBlue] Website
 *** Update the files
