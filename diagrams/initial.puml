@@ -72,20 +72,22 @@ ganttDiagram {
 </style>
 [Change Report Introduction (Billy)] as [Change Report Introduction] requires 7 days
 [Update Risk (Leuay)] as [Update Risk] requires 7 days
-[Change Report for Risk (Leuay)] as [Change Report for Risk] requires 7 days
+[Change Report for Risk (Leuay)] as [Change Report for Risk] requires 4 days
 [Update Architecture (Leuay)] as [Update Architecture] requires 7 days
-[Change Report for Architecture (Leuay)] as [Change Report for Architecture] requires 7 days
+[Change Report for Architecture (Leuay)] as [Change Report for Architecture] requires 4 days
 [Update Requirements (Billy)] as [Update Requirements] requires 7 days
-[Change Report for Requirements (Billy)] as [Change Report for Requirements] requires 7 days
+[Change Report for Requirements (Billy)] as [Change Report for Requirements] requires 4 days
 [Update Planning (Billy)] as [Update Planning] requires 7 days
-[Change Report for Planning (Billy)] as [Change Report for Planning] requires 7 days
+[Update Planning] starts on 2024-05-5
+[Update Architecture] starts on 2024-05-5
+[Change Report for Planning (Billy)] as [Change Report for Planning] requires 4 days
 
 [Change Report for Architecture] starts at [Update Architecture]'s end
 [Change Report for Requirements] starts at [Update Requirements]'s end
 [Change Report for Risk] starts at [Update Risk]'s end
 [Change Report for Planning] starts at [Update Planning]'s end
 
-[Soft deadline] happens at 2024-05-19
+[Soft deadline] happens at 2024-05-18
 [DEADLINE] happens at 2024-05-21
 
 [Breakup GameScreen Class] is 0% complete
@@ -115,6 +117,4 @@ ganttDiagram {
 [Change Report for Risk] is 0% complete
 [Change Report for Requirements] is 0% complete
 [Change Report Introduction] is 0% complete
-
-
 @endgantt
