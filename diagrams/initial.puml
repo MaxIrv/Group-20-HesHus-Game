@@ -2,15 +2,15 @@
 <style>
 ganttDiagram {
   task {
-    BackGroundColor LightCoral
-    LineColor Coral
+    BackGroundColor RoyalBlue
+    LineColor RoyalBlue
   }
 }
 </style>
 project starts on the 24th April 2024
 ' Implementation
+[Bug fixes and minor changes (Billy)] as [Bug fixes and minor changes] requires 3 days
 [Breakup GameScreen Class (Max)] as [Breakup GameScreen Class] requires 7 days
-[Bug fixes and minor changes (Billy)] as [Bug fixes and minor changes] requires 7 days
 [Add new map (Billy)] as [Add new map] starts at [Breakup GameScreen Class]'s end
 [Add new map] requires 7 days
 [New locations (Sam)] as [New locations] requires 7 days
@@ -19,40 +19,54 @@ project starts on the 24th April 2024
 [Add leaderboard] starts at [Breakup GameScreen Class]'s end
 [Add achievements (Flynn)] as [Add achievements] requires 7 days
 [Add achievements] starts at [Breakup GameScreen Class]'s end
-[Add stats to screen (Billy)] as [Add stats] requires 7 days
+[Add stats to screen (Billy)] as [Add stats] requires 2 days
 [Add stats] starts at [Breakup GameScreen Class]'s end
 <style>
 ganttDiagram {
   task {
-    BackGroundColor Tan
-    LineColor Tan
+    BackGroundColor Sienna
+    LineColor Sienna
+  }
+}
+</style>
+[Plan User Evaluation (Jacob)] as [Plan User Evaluation] requires 7 days
+[Perform User Evaluation (Jacob)] as [Perform User Evaluation] requires 7 days
+[Perform User Evaluation] starts at [Plan User Evaluation]'s end
+[Write Up User Evaluation (Jacob, Sam)] as [Write Up User Evaluation] requires 7 days
+[Write Up User Evaluation] starts at [Perform User Evaluation]'s end
+
+<style>
+ganttDiagram {
+  task {
+    BackGroundColor CadetBlue
+    LineColor CadetBlue
   }
 }
 </style>
 [Add testing (Max)] as [Add testing] requires 7 days
-[Testing write up (?)] as [Testing write up] requires 7 days
-[Write tests for existing code (Sam,Jacob,Flynn)] as [Write tests for existing code] requires 14 days
+[Write tests for existing code (Sam,Jacob,Flynn)] as [Write tests for existing code] requires 12 days
 [Write tests for existing code] starts at [Add testing]'s end
-[Write tests for existing code] starts at [Breakup GameScreen Class]'s end
-[Write test for new code (See tasks above)] as [Write test for new code] requires 21 days
+[Write test for new code (See tasks above)] as [Write test for new code] requires 12 days
 [Write test for new code] starts at [Add testing]'s end
+[Testing write up (Leuay)] as [Testing write up] requires 5 days
+[Testing write up] starts at [Write tests for existing code]'s end
+[Testing write up] starts at [Write test for new code]'s end
 <style>
 ganttDiagram {
   task {
-    BackGroundColor Olive
-    LineColor Olive
+    BackGroundColor DarkOrchid
+    LineColor DarkOrchid
   }
 }
 </style>
 [Add CI (Max)] as [Add CI] requires 7 days
-[Add CI] starts at [Add testing]'s end
 [CI Write Up (Sam)] as [CI Write Up] requires 7 days
 [CI Write Up] starts at [Add CI]'s end
 <style>
 ganttDiagram {
   task {
-    BackGroundColor LightBlue
-    LineColor LightBlue
+    BackGroundColor DarkSalmon
+    LineColor DarkSalmon
   }
 }
 </style>
@@ -74,14 +88,19 @@ ganttDiagram {
 [Soft deadline] happens at 2024-05-19
 [DEADLINE] happens at 2024-05-21
 
-[Add new map] is 0% complete
-[Bug fixes and minor changes] is 0% complete
 [Breakup GameScreen Class] is 0% complete
-[Testing write up] is 0% complete
+[Bug fixes and minor changes] is 0% complete
+[Add new map] is 0% complete
 [New locations] is 0% complete
 [Add leaderboard] is 0% complete
 [Add achievements] is 0% complete
 [Add stats] is 0% complete
+
+[Plan User Evaluation] is 0% complete
+[Perform User Evaluation] is 0% complete
+[Write Up User Evaluation] is 0% complete
+
+[Testing write up] is 0% complete
 [Add testing] is 0% complete
 [Write tests for existing code] is 0% complete
 [Write test for new code] is 0% complete
@@ -96,5 +115,6 @@ ganttDiagram {
 [Change Report for Risk] is 0% complete
 [Change Report for Requirements] is 0% complete
 [Change Report Introduction] is 0% complete
+
 
 @endgantt
