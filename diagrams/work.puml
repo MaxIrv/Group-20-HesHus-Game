@@ -7,36 +7,53 @@ FontSize: 45
 </style>
 * **ENG1 Assessment 2**
 **[#LightBlue] Website
-*** Update the files
-*** Add new deliverables
+*** Set up the\n\
+website clone
+*** Fix gantt typo
+*** Edit titles\n\
+to differentiate\n\
+from previous\n\
+group
+*** Add new\n\
+deliverables
 **[#LightGreen] Implementation
-*** Bug fixes and minor changes
-*** Break up <i>GameScreen</i> class
+*** Bug fixes and\n\
+minor changes
+*** Break up\n\
+<i>GameScreen</i>\n\
+class
 *** Add new map
 *** Add new locations
 *** Display stats
 *** Add scoring
 *** Add leaderboard
+*** Produce final JAR
 **[#LightSalmon] Testing
 *** Adding testing
-*** Writing tests for old code
-*** Writing tests for new code as it is written
+*** Writing tests for\n\
+old code
+*** Writing tests for\n\
+new code as it\n\
+is written
 *** Write up
 **[#LightGoldenRodYellow] Continuous Integration
-*** Implementing continuous integration
+*** Implementing\n\
+continuous\n\
+integration
 *** Write up
 **[#Tomato] User evaluation
-*** Evaluation meetings
+*** Evaluation\n\
+meetings
 *** Write up
 *** Action
 **[#LightCyan] Change Report
-*** Implementation changes
-*** Update Deliverables
-**** Plan1
-**** Req1
-**** Arch1
-**** Risk1
-**** Imp1
+*** Introduction
+*** Update\n\
+Deliverables
+**** Plan1 -> Plan2
+**** Req1 -> Req2
+**** Arch1 -> Arch2
+**** Risk1 -> Risk2
 
 
 @endwbs
