@@ -291,6 +291,8 @@ public class GameScreen implements Screen {
      * @param mapName the name of the map one of "town" and "campus"
      */
     public void switchMap(String mapName) {
+
+        // If mapName not in list of valid map names switch to campus.
         if (!mapPaths.containsKey(mapName)){
             mapName="campus";
         }
