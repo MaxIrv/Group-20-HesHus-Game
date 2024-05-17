@@ -32,6 +32,7 @@ public class EventManager {
         activityEnergies = new HashMap<String, Integer>();
         activityEnergies.put("studying", 10);
         activityEnergies.put("meet_friends", 10);
+        activityEnergies.put("pub",10);
         activityEnergies.put("eating", 10);
 
 
@@ -41,6 +42,8 @@ public class EventManager {
         objectInteractions.put("comp_sci", "Study in the Computer Science building?");
         objectInteractions.put("piazza", "Meet your friends at the Piazza?");
         objectInteractions.put("bus_stop", "Get the bus?");
+        objectInteractions.put("houses", "Open the door?");
+        objectInteractions.put("pub", "Go for a drink with some friends?");
         objectInteractions.put("accomodation", "Go to sleep for the night?\nYour alarm is set for 8am.");
         objectInteractions.put("rch", null); // Changes, dynamically returned in getObjectInteraction
         objectInteractions.put("tree", "Speak to the tree?");
@@ -64,8 +67,17 @@ public class EventManager {
 
         // Events related to objects
         switch (args[0]) {
+            case "pub":
+                pubEvent(args);
+                break;
+            case "restaurant":
+                restaurantEvent();
+                break;
             case "tree":
                 treeEvent();
+                break;
+            case "houses":
+                housesEvent();
                 break;
             case "chest":
                 chestEvent();
@@ -123,6 +135,15 @@ public class EventManager {
     public void treeEvent() {
         game.dialogueBox.hideSelectBox();
         game.dialogueBox.setText("The tree doesn't say anything back.");
+    }
+
+    /**
+     * A simple event to handle interaction with houses (other than your own).
+     */
+    public void housesEvent(){
+        game.dialogueBox.hideSelectBox();
+        game.dialogueBox.setText("That's not your house silly.");
+
     }
 
 
@@ -227,6 +248,26 @@ public class EventManager {
         }
     }
 
+    /**
+     * The event for the player to interact with a pub
+     * @param args arguments, not used currently but will use for future expansion.
+     */
+    public void pubEvent(String[] args){
+        int energyCost = activityEnergies.get("pub");
+        if (game.getEnergy() < energyCost) {
+            game.dialogueBox.hideSelectBox();
+            game.dialogueBox.setText("You are too tired to go to the pub right now!");
+        }
+        else {
+            game.dialogueBox.setText("You had a drink with some friends.");
+            int hours = 2;
+            game.decreaseEnergy(energyCost * hours);
+            game.addRecreationalHours(hours);
+            game.passTime(hours * 60); // in seconds
+        }
+    }
+
+
 
     /**
      * The event to be run when the player interacts with the ron cooke hub
@@ -234,12 +275,28 @@ public class EventManager {
      * @param args
      */
     public void ronCookeEvent(String[] args) {
+        eatingEvent("the Ron Cooke Hub");
+    }
+
+    /**
+     * The event to handle interaction with restaurants
+     * Gives the player the choice to eat breakfast, lunch or dinner depending on the time of day
+     */
+    public void restaurantEvent(){
+        eatingEvent("a restaurant");
+    }
+
+    /**
+     * To handle events that involve eating
+     * @param placeName the name of the place the player will be eating
+     */
+    private void eatingEvent(String placeName){
         if (game.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("eating");
             if (game.getEnergy() < energyCost) {
                 game.dialogueBox.setText("You are too tired to eat right now!");
             } else {
-                game.dialogueBox.setText(String.format("You took an hour to eat %s at the Ron Cooke Hub!\nYou lost %d energy!", game.getMeal(), energyCost));
+                game.dialogueBox.setText(String.format("You took an hour to eat %s at %s!\nYou lost %d energy!", game.getMeal(),placeName, energyCost));
                 game.addMeal();
                 game.decreaseEnergy(energyCost);
                 game.passTime(60); // in seconds
@@ -304,6 +361,7 @@ public class EventManager {
 
         fadeToBlack(setTextAction);
     }
+
 
     /**
      * Fades the screen to black
