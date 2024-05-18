@@ -29,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import java.io.Console;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,31 +39,28 @@ import java.util.Objects;
  */
 public class GameScreen implements Screen {
     final HustleGame game;
-    private final OrthographicCamera camera;
-    private int energy = 100;
-    private int hoursStudied, hoursRecreational, hoursSlept, mealsEaten;
-    private float daySeconds = 0; // Current seconds elapsed in day
-    private int day = 1; // What day the game is on
-    private final Label timeLabel;
-    private final Label dayLabel;
-    private final Label hoursRecreationalLabel;
-    private final Label hoursStudiedLabel;
-    private final Label mealsEatenLabel;
-    private final Label hoursSleptLabel;
+    final GameLogic gameLogic;
+    final GameRenderer gameRenderer;
+    final GameUI gameUI;
+    public final OrthographicCamera camera;
+    public Label timeLabel;
+    public Label dayLabel;
+    public Label hoursRecreationalLabel;
+    public Label hoursStudiedLabel;
+    public Label mealsEatenLabel;
+    public Label hoursSleptLabel;
+
     public Player player;
-    private Window escapeMenu;
-    private final Viewport viewport;
+    public Window escapeMenu;
+    public final Viewport viewport;
     public OrthogonalTiledMapRenderer mapRenderer;
     public Stage uiStage;
-    private final Label interactionLabel;
-    private final EventManager eventManager;
+    public Label interactionLabel;
 //    private OptionDialogue optionDialogue;
-    protected InputMultiplexer inputMultiplexer;
-    private final Table uiTable;
-    private final Image energyBar;
+    public Table uiTable;
+    public Image energyBar;
     public DialogueBox dialogueBox;
-    public final Image blackScreen;
-    private boolean sleeping = false;
+    public Image blackScreen;
     private String currentMap = "campus";
 
     // This syntax is super weird but welcome to Java, each row denotes one entry
@@ -70,6 +68,7 @@ public class GameScreen implements Screen {
             "campus", "East Campus/east_campus.tmx",
             "town", "Town/town.tmx"
     );
+    protected InputMultiplexer inputMultiplexer;
 
 
     /**
@@ -79,14 +78,14 @@ public class GameScreen implements Screen {
      * @param avatarChoice Which avatar the player has picked, 0 for the more masculine avatar, 1 for the more feminine
      */
     public GameScreen(final HustleGame game, int avatarChoice) {
+        Gdx.app.log("GameScreen", "Creating GameScreen");
         // Important game variables
         this.game = game;
         this.game.gameScreen = this;
-        eventManager = new EventManager(this);
 
-        // Scores
-        hoursStudied = hoursRecreational = hoursSlept = mealsEaten = 0;
-
+        Gdx.app.log("GameScreen", "Creating GameLogic");
+        this.gameLogic = new GameLogic(game, this, avatarChoice);
+        this.player = gameLogic.getPlayer();
 
         // Camera and viewport settings
         camera = new OrthographicCamera();
@@ -94,32 +93,15 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false, game.WIDTH, game.HEIGHT);
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
+        Gdx.app.log("GameScreen", "Creating GameUI");
+        this.gameUI = new GameUI(game, this);
 
-
-        // Create a stage for the user interface to be on
-        uiStage = new Stage(new FitViewport(game.WIDTH, game.HEIGHT));
-        // Add a black image over everything first
-        blackScreen = new Image(new Texture(Gdx.files.internal("Sprites/black_square.png")));
-        blackScreen.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
-        blackScreen.addAction(Actions.alpha(0f));
-
-        // UI table to put everything in
-        uiTable = new Table();
-        uiTable.setSize(game.WIDTH, game.HEIGHT);
-        uiStage.addActor(uiTable);
-
-
-
-        // Create a player class
-        if (avatarChoice == 1) {
-            player = new Player("avatar1");
-        } else {
-            player = new Player("avatar2");
-        }
-
-
-
+        Gdx.app.log("GameScreen", "Creating UI Stage");
+        this.gameRenderer = new GameRenderer(game, this);
+        Gdx.app.log("GameScreen", "finished creating game ui");
         // USER INTERFACE
+
+        this.uiStage = gameUI.getUiStage();
 
         // Create and center the yes/no box that appears when interacting with objects
 //        optionDialogue = new OptionDialogue("", 400, this.game.skin, game.soundManager);
@@ -132,83 +114,10 @@ public class GameScreen implements Screen {
 //        uiTable.addActor(optionDialogue.getWindow());
 //        optionDialogue.setVisible(false);
 
-        // Interaction label to prompt player
-        interactionLabel = new Label("E - Interact", game.skin, "default");
-
-        // Dialogue box
-        dialogueBox = new DialogueBox(game.skin);
-        dialogueBox.setPos(
-                (viewport.getWorldWidth() - dialogueBox.getWidth()) / 2f,
-                15f);
-        dialogueBox.hide();
-
-
-
-
-        // Load energy bar elements
-        Group energyGroup = new Group();
-        energyGroup.setDebug(true);
-        energyBar = new Image(new Texture(Gdx.files.internal("Interface/Energy Bar/green_bar.png")));
-        Image energyBarOutline = new Image(new Texture(Gdx.files.internal("Interface/Energy Bar/bar_outline.png")));
-        energyBarOutline.setPosition(viewport.getWorldWidth()-energyBarOutline.getWidth() - 15, 15);
-        energyBar.setPosition(energyBarOutline.getX()+16, energyBarOutline.getY()+16);
-        energyGroup.addActor(energyBar);
-        energyGroup.addActor(energyBarOutline);
-
-        //Group statsGroup = new Group();
-        Table statsTable = new Table();
-        statsTable.setFillParent(true);
-
-        mealsEatenLabel = new Label(String.format("Eaten %d times",mealsEaten), game.skin, "day");
-        hoursStudiedLabel = new Label(String.format("Studied for %d hours",hoursStudied),game.skin,"day");
-        hoursRecreationalLabel = new Label(String.format("Played for %d hours",hoursRecreational),game.skin,"day");
-        hoursSleptLabel = new Label(String.format("Slept for %d hours",hoursSlept),game.skin,"day");
-
-
-        statsTable.add(mealsEatenLabel).top().right();
-        statsTable.row();
-        statsTable.add(hoursStudiedLabel).top().right();
-        statsTable.row();
-        statsTable.add(hoursRecreationalLabel).top().right();
-        statsTable.row();
-        statsTable.add(hoursSleptLabel).top().right();
-        statsTable.top().right().padRight(10).padTop(10);
-
-
-
-
-        // Set initial time
-        daySeconds = (8*60); // 8:00 am
-
-        // Table to display date and time
-        Table timeTable = new Table();
-        timeTable.setFillParent(true);
-        timeLabel = new Label(formatTime((int) daySeconds), game.skin, "time");
-        dayLabel = new Label(String.format("Day %d", day), game.skin, "day");
-        timeTable.add(timeLabel).uniformX();
-        timeTable.row();
-        timeTable.add(dayLabel).uniformX().left().padTop(2);
-        timeTable.top().left().padLeft(10).padTop(10);
-
-        // Set the order of rendered UI elements
-        uiTable.add(interactionLabel).padTop(300);
-        uiStage.addActor(statsTable);
-        uiStage.addActor(energyGroup);
-        uiStage.addActor(timeTable);
-        uiStage.addActor(blackScreen);
-        uiStage.addActor(dialogueBox.getWindow());
-        uiStage.addActor(dialogueBox.getSelectBox().getWindow());
-        setupEscapeMenu(uiStage);
-
-
-
-        // Start music
-        game.soundManager.playOverworldMusic();
-
-
         // Create the keyboard input adapter that defines events to be called based on
         // specific button presses
         InputAdapter gameKeyBoardInput = makeInputAdapter();
+        Gdx.app.log("GameScreen", "make input adapter");
 
         // Since we need to listen to inputs from the stage and from the keyboard
         // Use an input multiplexer to listen for one inputadapter and then the other
@@ -219,98 +128,15 @@ public class GameScreen implements Screen {
         inputMultiplexer.addProcessor(uiStage);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
-        setupMap(true);
+        Gdx.app.log("GameScreen", "game logic setup map");
 
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
+        gameLogic.setupMap(true);
 
-        // Display a little good morning message
-        dialogueBox.show();
-        dialogueBox.setText(getWakeUpMessage());
+        Gdx.app.log("GameScreen", "game ui create ui");
+        gameUI.create_ui();
+        Gdx.app.log("GameScreen", "game ui setup escape menu");
+        gameRenderer.initial_render();
     }
-
-    /**
-     * Load and set up the map. Passes collidable objects to the player.
-     *
-     * @param firstLoad whether this is the first map being loaded, determines
-     *                  whether to place the player at the spawn or respawn location.
-     */
-    private void setupMap(boolean firstLoad){
-        // Setup map
-        float unitScale = game.mapScale / game.mapSquareSize;
-        mapRenderer = new OrthogonalTiledMapRenderer(game.map, unitScale);
-
-        // Get the dimensions of the top layer
-        TiledMapTileLayer layer0 = (TiledMapTileLayer) game.map.getLayers().get(0);
-        // Set the player to the middle of the map
-        player.setPos(layer0.getWidth()*game.mapScale / 2f, layer0.getHeight()*game.mapScale / 2f);
-        // Put camera on player
-        camera.position.set(player.getCentreX(), player.getCentreY(), 0);
-
-        // Clear collidables from the player, as they may be from a different map.
-        player.clearCollidables();
-
-        // Give objects to player
-        for (int layer : game.objectLayers) {
-            // Get all objects on the layer
-            MapObjects objects = game.map.getLayers().get(layer).getObjects();
-
-            // Loop through each, handing them to the player
-            for (int i = 0; i < objects.getCount(); i++) {
-                // Get the properties of each object
-                MapProperties properties = objects.get(i).getProperties();
-                // If this is the spawn object, move the player there and don't collide
-                if ((properties.get("spawn") != null && firstLoad) || (properties.get("respawn") != null && !firstLoad)) {
-                    player.setPos(((float) properties.get("x")) * unitScale, ((float) properties.get("y")) * unitScale);
-                    camera.position.set(player.getPosAsVec3());
-                }
-                // If not a spawn point make collidable
-                else if (properties.get("spawn") == null && properties.get("respawn") == null) {
-                    // Make a new gameObject with these properties, passing along the scale the map is rendered
-                    // at for accurate coordinates
-                    player.addCollidable(new GameObject(properties, unitScale));
-                }
-            }
-        }
-
-        // Set the player to not go outside the bounds of the map
-        // Assumes the bottom left corner of the map is at 0, 0
-        player.setBounds(
-                new Rectangle(
-                        0,
-                        0,
-                        game.mapProperties.get("width", Integer.class) * game.mapScale,
-                        game.mapProperties.get("height", Integer.class) * game.mapScale
-                )
-        );
-
-    }
-
-    /**
-     * Switch from the current map to another map as specified by its asset path.
-     *
-     * @param mapName the name of the map one of "town" and "campus"
-     */
-    public void switchMap(String mapName) {
-        if (!mapPaths.containsKey(mapName)){
-            mapName="campus";
-        }
-
-        // If we are switching to the home map then set "onHomeMap" attribute
-        currentMap = mapName;
-        game.switch_map(mapPaths.get(mapName));
-        setupMap(false);
-    }
-
-    /**
-     * Get the map the player is currently on.
-     *
-     * @return the name of the current map.
-     */
-    public String getCurrentMap(){
-        return currentMap;
-    }
-
-
 
     @Override
     public void show() {
@@ -325,107 +151,19 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render (float delta) {
-        // Clear screen
-        ScreenUtils.clear(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        viewport.apply(); // Update the viewport
-
-
         // Set delta to a constant value to minimise stuttering issues when moving the camera and player
         // Solution found here: https://www.reddit.com/r/libgdx/comments/5z6qaf/can_someone_help_me_understand_timestepsstuttering/
         delta = 0.016667f;
-        // Update sound timers
-        game.soundManager.processTimers(delta);
 
+        gameLogic.update(delta);
+        gameRenderer.render(delta);
+        gameUI.render(delta);
 
         // Load timer bar - needs fixing and drawing
         //TextureAtlas blueBar = new TextureAtlas(Gdx.files.internal("Interface/BlueTimeBar/BlueBar.atlas"));
         //Skin blueSkin = new Skin(blueBar);
         //ProgressBar timeBar = new ProgressBar(0, 200, 1, false, blueSkin);
         //timeBar.act(delta);
-
-
-        // Increment the time and possibly day
-        if (!escapeMenu.isVisible() && !sleeping) {
-            passTime(Gdx.graphics.getDeltaTime());
-        }
-        timeLabel.setText(formatTime((int) daySeconds));
-
-
-        // Freeze the player's movement for this frame if any menus are visible
-        player.setFrozen(escapeMenu.isVisible() || dialogueBox.isVisible() || sleeping);
-
-        dialogueBox.scrollText(0.8f);
-
-
-        // Let the player move to keyboard presses if not frozen
-        // Player.move() handles player collision
-        // Also play a footstep sound if they are moving
-        player.move(delta);
-        if (player.isMoving()) {
-            game.soundManager.playFootstep();
-        } else {
-            game.soundManager.footstepBool = false;
-        }
-
-
-        // Update the map's render position
-        mapRenderer.setView(camera);
-        // Draw the background layer
-        mapRenderer.render(game.backgroundLayers);
-
-        // Begin the spritebatch to draw the player on the screen
-        game.batch.setProjectionMatrix(camera.combined);
-        game.batch.begin();
-
-        // Player, draw and scale
-        game.batch.draw(
-                player.getCurrentFrame(),
-                player.sprite.x, player.sprite.y,
-                0, 0,
-                player.sprite.width, player.sprite.height,
-                1f, 1f, 1
-        );
-
-        game.batch.end();
-
-        // Render map foreground layers
-        mapRenderer.render(game.foregroundLayers);
-
-
-        // Check if the interaction (press e to use) label needs to be drawn
-        interactionLabel.setVisible(false);
-        if (!dialogueBox.isVisible() && !escapeMenu.isVisible() && !sleeping) {
-            if (player.nearObject()) {
-                interactionLabel.setVisible(true);
-                // Change text whether pressing E will interact or just read text
-                if (player.getClosestObject().get("event") != null) {
-                    interactionLabel.setText("E - Interact");
-                } else if (player.getClosestObject().get("text") != null) {
-                    interactionLabel.setText("E - Read Sign");
-                }
-            }
-        }
-
-
-        // Update UI elements
-        uiStage.getViewport().apply();
-        uiStage.act(delta);
-        uiStage.draw();
-
-
-        // Focus the camera on the center of the player
-        // Make it slide into place too
-        // Change to camera.positon.set() to remove cool sliding
-        camera.position.slerp(
-                new Vector3(
-                        player.getCentreX(),
-                        player.getCentreY(),
-                        0
-                ),
-                delta*9
-        );
-
 
         // Debug - Draw player hitboxes
 //         drawHitboxes();
@@ -434,9 +172,6 @@ public class GameScreen implements Screen {
 //        if (player.getClosestObject() != null) {
 //            System.out.println(player.getClosestObject().get("event"));
 //        }
-
-
-        camera.update();
     }
 
 
@@ -547,7 +282,7 @@ public class GameScreen implements Screen {
         // It's an issue with changing screens, and I can't figure out why it happens, but setting the mouse position
         // to exactly where it is seems to force the stage to update itself and fixes the visual issue.
 
-        Gdx.input.setCursorPosition( Gdx.input.getX(),  Gdx.input.getY());
+        Gdx.input.setCursorPosition(Gdx.input.getX(), Gdx.input.getY());
     }
 
     @Override
@@ -582,58 +317,17 @@ public class GameScreen implements Screen {
         game.shapeRenderer.end();
     }
 
+    // Functions related to game score and requirements
 
     /**
-     * Add a number of seconds to the time elapsed in the day
-     *
-     * @param delta The time in seconds to add
-     */
-    public void passTime(float delta) {
-        daySeconds += delta;
-        while (daySeconds >= 1440) {
-            daySeconds -= 1440;
-            day += 1;
-            dayLabel.setText(String.format("Day %s", day));
-        }
-
-        if (day >= 8) {
-            GameOver();
-        }
-    }
-
-    /**
-     * Takes a time in seconds and formats it a time in the format HH:MMam/pm
-     *
-     * @param seconds The seconds elapsed in a day
-     * @return A formatted time on a 12 hour clock
-     */
-    public String formatTime(int seconds) {
-        // Takes a number of seconds and converts it into a 12 hour clock time
-        int hour = Math.floorDiv(seconds, 60);
-        String minutes = String.format("%02d", (seconds - hour * 60));
-
-        // Make 12 hour
-        if (hour == 24 || hour == 0) {
-            return String.format("12:%sam", minutes);
-        } else if (hour == 12) {
-            return String.format("12:%spm", minutes);
-        } else if (hour > 12) {
-            return String.format("%d:%spm", hour-12, minutes);
-        } else {
-            return String.format("%d:%sam", hour, minutes);
-        }
-    }
-
-
-    /**
-     *  Generates an InputAdapter to handle game specific keyboard inputs
+     * Generates an InputAdapter to handle game specific keyboard inputs
      *
      * @return An InputAdapter for keyboard inputs
      */
-    public InputAdapter makeInputAdapter () {
+    public InputAdapter makeInputAdapter() {
         return new InputAdapter() {
             @Override
-            public boolean keyDown (int keycode) {
+            public boolean keyDown(int keycode) {
                 // SHOW ESCAPE MENU CODE
                 if (keycode == Input.Keys.ESCAPE) {
                     if (escapeMenu.isVisible()) {
@@ -654,17 +348,17 @@ public class GameScreen implements Screen {
                     if (!escapeMenu.isVisible()) {
                         // If a dialogue box is visible, choose an option or advance text
                         if (dialogueBox.isVisible()) {
-                            dialogueBox.enter(eventManager);
+                            dialogueBox.enter(gameLogic.eventManager);
                             game.soundManager.playButton();
 
-                        } else if (player.nearObject() && !sleeping) {
+                        } else if (player.nearObject() && !gameLogic.sleeping) {
                             // If the object has an event associated with it
                             if (player.getClosestObject().get("event") != null) {
                                 // Show a dialogue menu asking if they want to do an interaction with the object
                                 dialogueBox.show();
                                 dialogueBox.getSelectBox().setOptions(new String[]{"Yes", "No"}, new String[]{(String) player.getClosestObject().get("event"), "exit"});
-                                if (eventManager.hasCustomObjectInteraction((String) player.getClosestObject().get("event"))) {
-                                    dialogueBox.setText(eventManager.getObjectInteraction((String) player.getClosestObject().get("event")));
+                                if (gameLogic.eventManager.hasCustomObjectInteraction((String) player.getClosestObject().get("event"))) {
+                                    dialogueBox.setText(gameLogic.eventManager.getObjectInteraction((String) player.getClosestObject().get("event")));
                                 } else {
                                     dialogueBox.setText("Interact with " + player.getClosestObject().get("event") + "?");
                                 }
@@ -703,131 +397,9 @@ public class GameScreen implements Screen {
 
 
     /**
-     * Sets the player's energy level and updates the onscreen bar
-     *
-     * @param energy An int between 0 and 100
-     */
-    public void setEnergy(int energy) {
-        this.energy = energy;
-        if (this.energy > 100) {
-            this.energy = 100;
-        }
-        energyBar.setScaleY(this.energy / 100f);
-    }
-
-    /**
-     * @return The player's energy out of 100
-     */
-    public int getEnergy() {
-        return this.energy;
-    }
-
-    /**
-     * Decreases the player's energy by a certain amount
-     *
-     * @param energy The energy to decrement
-     */
-    public void decreaseEnergy(int energy) {
-        this.energy = this.energy - energy;
-        if (this.energy < 0) {
-            this.energy = 0;
-        }
-        energyBar.setScaleY(this.energy / 100f);
-    }
-
-    // Functions related to game score and requirements
-
-    /**
-     * Adds an amount of hours studied to the total hours studied
-     * @param hours The amount of hours to add
-     */
-    public void addStudyHours(int hours) {
-        hoursStudied += hours;
-        hoursStudiedLabel.setText(String.format("Studied for %d hours",hoursStudied));
-    }
-
-    /**
-     * Adds an amount of recreational hours to the total amount for the current day
-     * @param hours The amount of hours to add
-     */
-    public void addRecreationalHours(int hours) {
-        hoursRecreational += hours;
-        hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
-    }
-
-    /**
-     * Adds an amount of meals to the total number of meals
-     */
-    public void addMeal() {
-        mealsEaten ++;
-        mealsEatenLabel.setText(String.format("Eaten %d times",mealsEaten));
-    }
-    /**
-     * @return Returns 'breakfast', 'lunch' or 'dinner' depending on the time of day
-     */
-    public String getMeal() {
-        int hours = Math.floorDiv((int) daySeconds, 60);
-        if (hours >= 7 && hours <= 10) {
-            //Breakfast between 7:00-10:59am
-            return "breakfast";
-        } else if (hours > 10 && hours <= 16) {
-            // Lunch between 10:00am and 4:59pm
-            return "lunch";
-        } else if (hours > 16 && hours <= 21) {
-            // Dinner served between 4:00pm and 9:59pm
-            return "dinner";
-        } else {
-            // Nothing is served between 10:00pm and 6:59am
-            return "food";
-        }
-    }
-
-    /**
-     * @return A wake up message based on the time left until the exam
-     */
-    public String getWakeUpMessage() {
-        int daysLeft = 8 - day;
-        if (daysLeft != 1) {
-            return String.format("You have %d days left until your exam!\nRemember to eat, study and have fun, but don't overwork yourself!", daysLeft);
-        } else {
-            return "Your exam is tomorrow! I hope you've been studying! Remember not to overwork yourself and get enough sleep!";
-        }
-    }
-
-
-    /**
-     * @param sleeping Sets the value of sleeping
-     */
-    public void setSleeping(boolean sleeping) {
-        this.sleeping = sleeping;
-    }
-
-    /**
-     * @return true if the player is sleeping
-     */
-    public boolean getSleeping() {
-        return sleeping;
-    }
-
-    /**
-     * @param hours Add this amount of hours to the total hours slept
-     */
-    public void addSleptHours(int hours) {
-        hoursSlept += hours;
-        hoursSleptLabel.setText(String.format("Slept for %d hours",hoursSlept));
-    }
-
-    /**
-     * @return The number of seconds elapsed in the day
-     */
-    public float getSeconds() {
-        return daySeconds;
-    }
-
-    /**
      * Ends the game, called at the end of the 7th day, switches to a screen that displays a score
      */
     public void GameOver() {
-        game.setScreen(new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept,mealsEaten));
+        game.setScreen(new GameOverScreen(game, gameLogic.hoursStudied, gameLogic.hoursRecreational, gameLogic.hoursSlept, gameLogic.mealsEaten));
     }
 }

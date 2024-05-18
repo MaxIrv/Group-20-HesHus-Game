@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EventManager {
     private final GameScreen game;
+    private final GameLogic gameLogic;
     public HashMap<String, Integer> activityEnergies;
     private final HashMap<String, String> objectInteractions;
     private final Array<String> talkTopics;
@@ -25,8 +26,9 @@ public class EventManager {
      *
      * @param game An instance of the GameScreen containing a player and dialogue box
      */
-    public EventManager (GameScreen game) {
+    public EventManager (GameScreen game, GameLogic gameLogic) {
         this.game = game;
+        this.gameLogic = gameLogic;
 
         // How much energy an hour of each activity should take
         activityEnergies = new HashMap<String, Integer>();
@@ -104,7 +106,7 @@ public class EventManager {
      */
     public String getObjectInteraction(String key) {
         if (key.equals("rch")) {
-            return String.format("Eat %s at the Ron Cooke Hub?", game.getMeal());
+            return String.format("Eat %s at the Ron Cooke Hub?", gameLogic.getMeal());
         } else {
             return objectInteractions.get(key);
         }
@@ -147,10 +149,10 @@ public class EventManager {
      * @param args Arguments to be passed, should contain the hours the player wants to study. E.g. ["piazza", "1"]
      */
     public void piazzaEvent(String[] args) {
-        if (game.getSeconds() > 8*60) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("meet_friends");
             // If the player is too tired to meet friends
-            if (game.getEnergy() < energyCost) {
+            if (gameLogic.getEnergy() < energyCost) {
                 game.dialogueBox.setText("You are too tired to meet your friends right now!");
 
             } else if (args.length == 1) {
@@ -163,9 +165,9 @@ public class EventManager {
                 // RNG factor adds a slight difficulty (may consume too much energy to study)
                 int hours = ThreadLocalRandom.current().nextInt(1, 4);
                 game.dialogueBox.setText(String.format("You talked about %s for %d hours!", args[1].toLowerCase(), hours));
-                game.decreaseEnergy(energyCost * hours);
-                game.passTime(hours * 60); // in seconds
-                game.addRecreationalHours(hours);
+                gameLogic.decreaseEnergy(energyCost * hours);
+                gameLogic.passTime(hours * 60); // in seconds
+                gameLogic.addRecreationalHours(hours);
             }
         } else {
             game.dialogueBox.setText("It's too early in the morning to meet your friends, go to bed!");
@@ -199,10 +201,10 @@ public class EventManager {
      * @param args
      */
     public void compSciEvent(String[] args) {
-        if (game.getSeconds() > 8*60) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("studying");
             // If the player is too tired for any studying:
-            if (game.getEnergy() < energyCost) {
+            if (gameLogic.getEnergy() < energyCost) {
                 game.dialogueBox.hideSelectBox();
                 game.dialogueBox.setText("You are too tired to study right now!");
             } else if (args.length == 1) {
@@ -212,14 +214,14 @@ public class EventManager {
             } else {
                 int hours = Integer.parseInt(args[1]);
                 // If the player does not have enough energy for the selected hours
-                if (game.getEnergy() < hours*energyCost) {
+                if (gameLogic.getEnergy() < hours*energyCost) {
                     game.dialogueBox.setText("You don't have the energy to study for this long!");
                 } else {
                     // If they do have the energy to study
                     game.dialogueBox.setText(String.format("You studied for %s hours!\nYou lost %d energy", args[1], hours*energyCost));
-                    game.decreaseEnergy(energyCost * hours);
-                    game.addStudyHours(hours);
-                    game.passTime(hours * 60); // in seconds
+                    gameLogic.decreaseEnergy(energyCost * hours);
+                    gameLogic.addStudyHours(hours);
+                    gameLogic.passTime(hours * 60); // in seconds
                 }
             }
         } else {
@@ -234,15 +236,15 @@ public class EventManager {
      * @param args
      */
     public void ronCookeEvent(String[] args) {
-        if (game.getSeconds() > 8*60) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("eating");
-            if (game.getEnergy() < energyCost) {
+            if (gameLogic.getEnergy() < energyCost) {
                 game.dialogueBox.setText("You are too tired to eat right now!");
             } else {
-                game.dialogueBox.setText(String.format("You took an hour to eat %s at the Ron Cooke Hub!\nYou lost %d energy!", game.getMeal(), energyCost));
-                game.addMeal();
-                game.decreaseEnergy(energyCost);
-                game.passTime(60); // in seconds
+                game.dialogueBox.setText(String.format("You took an hour to eat %s at the Ron Cooke Hub!\nYou lost %d energy!", gameLogic.getMeal(), energyCost));
+                gameLogic.addMeal();
+                gameLogic.decreaseEnergy(energyCost);
+                gameLogic.passTime(60); // in seconds
             }
         } else {
             game.dialogueBox.setText("It's too early in the morning to eat food, go to bed!");
@@ -256,11 +258,11 @@ public class EventManager {
      * @param args
      */
     public void busStopEvent(String[] args) {
-        if (game.getCurrentMap().equals("town")){
-            game.switchMap("campus");
+        if (gameLogic.getCurrentMap().equals("town")){
+            gameLogic.switchMap("campus");
         }
         else {
-            game.switchMap("town");
+            gameLogic.switchMap("town");
         }
         game.dialogueBox.hideSelectBox();
     }
@@ -273,17 +275,17 @@ public class EventManager {
      * @param args Unused currently
      */
     public void accomEvent(String[] args) {
-        game.setSleeping(true);
+        gameLogic.setSleeping(true);
         game.dialogueBox.hide();
 
         // Calculate the hours slept to the nearest hour
         // Wakes the player up at 8am
         float secondsSlept;
-        if (game.getSeconds() < 60*8) {
-            secondsSlept = (60*8 - game.getSeconds());
+        if (gameLogic.getSeconds() < 60*8) {
+            secondsSlept = (60*8 - gameLogic.getSeconds());
         } else {
             // Account for the wakeup time being in the next day
-            secondsSlept = (((60*8) + 1440) - game.getSeconds());
+            secondsSlept = (((60*8) + 1440) - gameLogic.getSeconds());
         }
         int hoursSlept = Math.round(secondsSlept / 60f);
 
@@ -291,13 +293,13 @@ public class EventManager {
         setTextAction.setRunnable(new Runnable() {
             @Override
             public void run() {
-                if (game.getSleeping()) {
+                if (gameLogic.getSleeping()) {
                     game.dialogueBox.show();
                     game.dialogueBox.setText(String.format("You slept for %d hours!\nYou recovered %d energy!", hoursSlept, Math.min(100, hoursSlept*13)), "fadefromblack");
                     // Restore energy and pass time
-                    game.setEnergy(hoursSlept*13);
-                    game.passTime(secondsSlept);
-                    game.addSleptHours(hoursSlept);
+                    gameLogic.setEnergy(hoursSlept*13);
+                    gameLogic.passTime(secondsSlept);
+                    gameLogic.addSleptHours(hoursSlept);
                 }
             }
         });
@@ -325,16 +327,16 @@ public class EventManager {
      */
     public void fadeFromBlack() {
         // If the player is sleeping, queue up a message to be sent
-        if (game.getSleeping()) {
+        if (gameLogic.getSleeping()) {
             RunnableAction setTextAction = new RunnableAction();
             setTextAction.setRunnable(new Runnable() {
                   @Override
                   public void run() {
-                      if (game.getSleeping()) {
+                      if (gameLogic.getSleeping()) {
                           game.dialogueBox.show();
                           // Show a text displaying how many days they have left in the game
-                          game.dialogueBox.setText(game.getWakeUpMessage());
-                          game.setSleeping(false);
+                          game.dialogueBox.setText(gameLogic.getWakeUpMessage());
+                          gameLogic.setSleeping(false);
                       }
                   }
               });
