@@ -252,18 +252,28 @@ public class EventManager {
      * The event for the player to interact with a pub
      * @param args arguments, not used currently but will use for future expansion.
      */
-    public void pubEvent(String[] args){
-        int energyCost = activityEnergies.get("pub");
-        if (game.getEnergy() < energyCost) {
-            game.dialogueBox.hideSelectBox();
-            game.dialogueBox.setText("You are too tired to go to the pub right now!");
-        }
-        else {
-            game.dialogueBox.setText("You had a drink with some friends.");
-            int hours = 2;
-            game.decreaseEnergy(energyCost * hours);
-            game.addRecreationalHours(hours);
-            game.passTime(hours * 60); // in seconds
+    public void pubEvent(String[] args) {
+        if (game.getSeconds() > 8 * 60) {
+            int energyCost = activityEnergies.get("pub");
+            if (game.getEnergy() < energyCost) {
+                game.dialogueBox.hideSelectBox();
+                game.dialogueBox.setText("You are too tired to go to the pub right now!");
+            } else if (args.length == 1) {
+                // If the player has not yet chosen how many hours, ask
+                game.dialogueBox.setText("How long do you want to stay?");
+                game.dialogueBox.getSelectBox().setOptions(new String[]{"1 Hours (10)", "2 Hours (20)", "3 Hours (30)"}, new String[]{"pub-1", "pub-2", "pub-3"});
+            } else {
+                int hours = Integer.parseInt(args[1]);
+                // If the player does not have enough energy to stay for that long
+                if (game.getEnergy() < hours * energyCost) {
+                    game.dialogueBox.setText("You don't have enough energy to stay that long!");}
+                else {
+                    game.dialogueBox.setText("You had a drink with some friends.");
+                    game.decreaseEnergy(energyCost * hours);
+                    game.addRecreationalHours(hours);
+                    game.passTime(hours * 60); // in seconds
+                }
+            }
         }
     }
 
