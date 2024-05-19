@@ -61,6 +61,7 @@ public class GameOverScreen implements Screen {
 
         Table scoresTable = new Table();
         gameOverTable.add(scoresTable).prefHeight(380).prefWidth(450);
+        scoresTable.setFillParent(true);
         gameOverTable.row();
 
         // Display scores
@@ -79,7 +80,37 @@ public class GameOverScreen implements Screen {
         scoresTable.add(new Label("Meals Eaten", game.skin, "interaction")).padBottom(3);
         scoresTable.row();
         scoresTable.add(new Label(String.valueOf(mealsEaten), game.skin, "button"));
-
+        scoresTable.row();
+        if (this.game.studyStreak.getAchieved()) {
+            scoresTable.add(new Label(game.studyStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+            scoresTable.add(new Label(game.studyStreak.getDescription(), game.skin, "button")).padBottom(7);
+            scoresTable.row();
+        }
+        if (this.game.bookWorm.getAchieved()) {
+            scoresTable.add(new Label(game.bookWorm.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+            scoresTable.add(new Label(game.bookWorm.getDescription(), game.skin, "button")).padBottom(7);
+            scoresTable.row();
+        }
+        if (this.game.eatStreak.getAchieved()) {
+            scoresTable.add(new Label(game.eatStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+            scoresTable.add(new Label(game.eatStreak.getDescription(), game.skin, "button")).padBottom(7);
+            scoresTable.row();
+        }
+        if (this.game.funStreak.getAchieved()) {
+            scoresTable.add(new Label(game.funStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+            scoresTable.add(new Label(game.funStreak.getDescription(), game.skin, "button")).padBottom(7);
+            scoresTable.row();
+        }
+        if (this.game.allNighter.getAchieved()) {
+            scoresTable.add(new Label(game.allNighter.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+            scoresTable.add(new Label(game.allNighter.getDescription(), game.skin, "button")).padBottom(7);
+            scoresTable.row();
+        }
 
         // Exit button
         TextButton exitButton = new TextButton("Main Menu", game.skin);

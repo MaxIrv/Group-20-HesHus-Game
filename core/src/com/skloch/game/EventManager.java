@@ -16,6 +16,12 @@ public class EventManager {
     private final HashMap<String, String> objectInteractions;
     private final Array<String> talkTopics;
 
+    private boolean studied = false;
+    private boolean studiedTwice = false;
+    private boolean hadFun = false;
+    private boolean ate = false;
+    private boolean noSleep = false;
+
     /**
      * A class that maps Object's event strings to actual Java functions.
      * To run a function call event(eventString), to add arguments add dashes.
@@ -166,6 +172,7 @@ public class EventManager {
                 game.decreaseEnergy(energyCost * hours);
                 game.passTime(hours * 60); // in seconds
                 game.addRecreationalHours(hours);
+                hadFun = true;
             }
         } else {
             game.dialogueBox.setText("It's too early in the morning to meet your friends, go to bed!");
@@ -220,6 +227,8 @@ public class EventManager {
                     game.decreaseEnergy(energyCost * hours);
                     game.addStudyHours(hours);
                     game.passTime(hours * 60); // in seconds
+                    if (studied) {studiedTwice = true;}
+                    else {studied = true;}
                 }
             }
         } else {
@@ -243,6 +252,7 @@ public class EventManager {
                 game.addMeal();
                 game.decreaseEnergy(energyCost);
                 game.passTime(60); // in seconds
+                ate = true;
             }
         } else {
             game.dialogueBox.setText("It's too early in the morning to eat food, go to bed!");
@@ -298,6 +308,39 @@ public class EventManager {
                     game.setEnergy(hoursSlept*13);
                     game.passTime(secondsSlept);
                     game.addSleptHours(hoursSlept);
+                    // Check for any streaks/achievements
+                    if (studied) {
+                        game.addStudyStreakCounter(1);
+                        game.game.studyStreak.checkCondition(game.getStudyStreakCounter());
+                        studied = false;
+                    }
+                    else {game.setStudyStreakCounter(0);}
+
+                    if (studiedTwice) {
+                        game.setBookWormCounter(1);
+                        game.game.bookWorm.checkCondition(game.getBookWormCounter());
+                        studiedTwice = false;
+                    }
+
+                    if (ate) {
+                        game.addEatStreakCounter(1);
+                        game.game.eatStreak.checkCondition(game.getEatStreakCounter());
+                        ate = false;
+                    }
+                    else {game.setEatStreakCounter(0);}
+
+                    if (hadFun) {
+                        game.addFunStreakCounter(1);
+                        game.game.funStreak.checkCondition(game.getFunStreakCounter());
+                        hadFun = false;
+                    }
+                    else {game.setFunStreakCounter(0);}
+
+                    if (noSleep) {
+                        game.setNoSleepCounter(1);
+                        game.game.allNighter.checkCondition(game.getNoSleepCounter());
+                        noSleep = false;
+                    }
                 }
             }
         });
