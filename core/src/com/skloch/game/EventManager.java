@@ -24,6 +24,12 @@ public class EventManager implements IEventManager {
     private final HashMap<String, String> objectInteractions;
     private final Array<String> talkTopics;
 
+    private boolean studied = false;
+    private boolean studiedTwice = false;
+    private boolean hadFun = false;
+    private boolean ate = false;
+    private boolean noSleep = false;
+
     /**
      * A class that maps Object's event strings to actual Java functions.
      * To run a function call event(eventString), to add arguments add dashes.
@@ -193,6 +199,7 @@ public class EventManager implements IEventManager {
                 gameLogic.decreaseEnergy(energyCost * hours);
                 gameLogic.passTime(hours * 60); // in seconds
                 gameLogic.addRecreationalHours(hours);
+                hadFun = true;
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to meet your friends, go to bed!"));
@@ -248,12 +255,15 @@ public class EventManager implements IEventManager {
                     gameLogic.decreaseEnergy(energyCost * hours);
                     gameLogic.addStudyHours(hours);
                     gameLogic.passTime(hours * 60); // in seconds
+                    if (studied) {studiedTwice = true;}
+                    else {studied = true;}
                 }
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to study, go to bed!"));
         }
     }
+
 
     /**
      * The event to be run when the player interacts with the ron cooke hub
@@ -270,6 +280,7 @@ public class EventManager implements IEventManager {
                 gameLogic.addMeal();
                 gameLogic.decreaseEnergy(energyCost);
                 gameLogic.passTime(60); // in seconds
+                ate = true;
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to eat food, go to bed!"));
@@ -324,6 +335,39 @@ public class EventManager implements IEventManager {
                     gameLogic.setEnergy(hoursSlept*13);
                     gameLogic.passTime(secondsSlept);
                     gameLogic.addSleptHours(hoursSlept);
+                    // Check for any streaks/achievements
+                    if (studied) {
+                        game.addStudyStreakCounter(1);
+                        game.game.studyStreak.checkCondition(game.getStudyStreakCounter());
+                        studied = false;
+                    }
+                    else {game.setStudyStreakCounter(0);}
+
+                    if (studiedTwice) {
+                        game.setBookWormCounter(1);
+                        game.game.bookWorm.checkCondition(game.getBookWormCounter());
+                        studiedTwice = false;
+                    }
+
+                    if (ate) {
+                        game.addEatStreakCounter(1);
+                        game.game.eatStreak.checkCondition(game.getEatStreakCounter());
+                        ate = false;
+                    }
+                    else {game.setEatStreakCounter(0);}
+
+                    if (hadFun) {
+                        game.addFunStreakCounter(1);
+                        game.game.funStreak.checkCondition(game.getFunStreakCounter());
+                        hadFun = false;
+                    }
+                    else {game.setFunStreakCounter(0);}
+
+                    if (noSleep) {
+                        game.setNoSleepCounter(1);
+                        game.game.allNighter.checkCondition(game.getNoSleepCounter());
+                        noSleep = false;
+                    }
                 }
             }
         });

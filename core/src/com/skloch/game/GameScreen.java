@@ -2,8 +2,30 @@ package com.skloch.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.InputMultiplexer;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.interfaces.*;
@@ -13,6 +35,9 @@ import com.skloch.game.interfaces.*;
  * Responsible for rendering the player and the map, and calling events.
  */
 public class GameScreen implements Screen, GameScreenProvider {
+    private int studyStreakCounter, bookWormCounter, eatStreakCounter, funStreakCounter, noSleepCounter;
+
+
     final HustleGame game;
     final IGameLogic gameLogic;
     final IGameRenderer gameRenderer;
@@ -281,6 +306,41 @@ public class GameScreen implements Screen, GameScreenProvider {
             }
         };
     }
+    // Study Streak
+    public int getStudyStreakCounter() {return this.studyStreakCounter;}
+
+    public void setStudyStreakCounter(int x) {this.studyStreakCounter = x;}
+
+    public void addStudyStreakCounter(int x) {this.studyStreakCounter += x;}
+
+    // Bookworm
+    public int getBookWormCounter() {return this.bookWormCounter;}
+
+    public void setBookWormCounter(int x) {this.bookWormCounter = x;}
+
+    public void addBookWormCounter(int x) {this.bookWormCounter += x;}
+
+    // Eat Streak
+    public int getEatStreakCounter() {return this.eatStreakCounter;}
+
+    public void setEatStreakCounter(int x) {this.eatStreakCounter = x;}
+
+    public void addEatStreakCounter(int x) {this.eatStreakCounter += x;}
+
+    // Fun Streak
+    public int getFunStreakCounter() {return this.funStreakCounter;}
+
+    public void setFunStreakCounter(int x) {this.funStreakCounter = x;}
+
+    public void addFunStreakCounter(int x) {this.funStreakCounter += x;}
+
+    // All Nighter
+    public int getNoSleepCounter() {return this.noSleepCounter;}
+
+    public void setNoSleepCounter(int x) {this.noSleepCounter = x;}
+
+    public void addNoSleepCounter(int x) {this.noSleepCounter += x;}
+
 
     /**
      * Ends the game, called at the end of the 7th day, switches to a screen that displays a score
