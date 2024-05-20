@@ -196,30 +196,6 @@ public class GameLogic implements IGameLogic {
     }
 
     /**
-     * Takes a time in seconds and formats it a time in the format HH:MMam/pm
-     *
-     * @param seconds The seconds elapsed in a day
-     * @return A formatted time on a 12 hour clock
-     */
-    @Override
-    public String formatTime(int seconds) {
-        // Takes a number of seconds and converts it into a 12 hour clock time
-        int hour = Math.floorDiv(seconds, 60);
-        String minutes = String.format("%02d", (seconds - hour * 60));
-
-        // Make 12 hour
-        if (hour == 24 || hour == 0) {
-            return String.format("12:%sam", minutes);
-        } else if (hour == 12) {
-            return String.format("12:%spm", minutes);
-        } else if (hour > 12) {
-            return String.format("%d:%spm", hour - 12, minutes);
-        } else {
-            return String.format("%d:%sam", hour, minutes);
-        }
-    }
-
-    /**
      * Sets the player's energy level and updates the onscreen bar
      *
      * @param energy An int between 0 and 100

@@ -8,7 +8,6 @@ public interface IGameLogic {
     void switchMap(String mapName);
     String getCurrentMap();
     void passTime(float delta);
-    String formatTime(int seconds);
     void setEnergy(int energy);
     int getEnergy();
     void decreaseEnergy(int energy);

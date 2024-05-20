@@ -12,10 +12,9 @@ import com.skloch.game.interfaces.IEventManager;
  *
  */
 public class DialogueBox {
-    private Window dialogueWindow;
-    private Table dialogueTable;
-    private Label textLabel;
-    private Skin skin;
+    private final Window dialogueWindow;
+    private final Label textLabel;
+    private final Skin skin;
     private final int MAXCHARS;
     private SelectBox selectBox;
     private Array<String> textLines;
@@ -37,7 +36,7 @@ public class DialogueBox {
         dialogueWindow = new Window("", skin);
 
         // Create the table for the text in the dialogue box
-        dialogueTable = new Table();
+        Table dialogueTable = new Table();
         dialogueWindow.addActor(dialogueTable);
         dialogueTable.setFillParent(true);
 
@@ -444,8 +443,4 @@ public class DialogueBox {
     public SelectBox getSelectBox() {
         return selectBox;
     }
-
-
-
-
 }

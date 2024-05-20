@@ -8,8 +8,10 @@ import java.util.function.Consumer;
 
 /**
  * A simple event bus that allows subscribing to and publishing events.
+ * The EventBus maintains a mapping of event types to sets of listeners.
  */
 public class EventBus {
+    // A map that associates event types with their respective listeners
     private final Map<Class<?>, Set<Consumer<?>>> listeners = new HashMap<>();
 
     /**
@@ -20,6 +22,7 @@ public class EventBus {
      * @param <T>       The type of the event.
      */
     public <T> void subscribe(Class<T> eventType, Consumer<T> listener) {
+        // Adds the listener to the set of listeners for the specified event type
         listeners.computeIfAbsent(eventType, k -> new HashSet<>()).add(listener);
     }
 
