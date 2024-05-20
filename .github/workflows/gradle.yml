@@ -21,3 +21,10 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          arguments: build jacocoTestReport
+      - name: Upload JaCoCo coverage report as a workflow artifact
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: jacoco-report
+          path: tests/build/reports/jacoco/test/html/
