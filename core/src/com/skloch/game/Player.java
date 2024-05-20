@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.skloch.game.interfaces.IPlayer;
 
 /**
  * A class handling everything needed to control and draw a player, including animation, movement and collision
  */
-public class Player {
+public class Player implements IPlayer {
     // Hitboxes
     public Rectangle sprite, feet, eventHitbox;
     public float centreX, centreY;
@@ -90,6 +91,7 @@ public class Player {
      *
      * @param delta The time passed since the previous render
      */
+    @Override
     public void move (float delta) {
         // Updates the player's position based on keys being pressed
         // Also updates the direction they are facing, and whether they are currently moving
@@ -129,7 +131,7 @@ public class Player {
             }
 
             // If at least one key has been pressed then make the changes.
-            if (moving){
+            if (moving) {
                 // Get the length of travel ie sqrt(x^2 + y^2)
                 float vector_length = (float) Math.pow(Math.pow(changeInDirection[0],2)+Math.pow(changeInDirection[1],2),0.5);
 
@@ -216,6 +218,7 @@ public class Player {
      * Advances the current animation based on the time since the last render
      * The animation frame of the player can be grabbed with getCurrentFrame
      */
+    @Override
     public void updateAnimation() {
         stateTime += Gdx.graphics.getDeltaTime();
         // Set the current frame of the animation
@@ -233,6 +236,7 @@ public class Player {
      *
      * @return true if a player is near enough an object to interact with it
      */
+    @Override
     public boolean nearObject() {
         return closestObject != null;
     }
@@ -242,6 +246,7 @@ public class Player {
      *
      * @return A GameObject that is closest
      */
+    @Override
     public GameObject getClosestObject () {
         return closestObject;
     }
@@ -251,6 +256,7 @@ public class Player {
      *
      * @return true if the player is moving
      */
+    @Override
     public boolean isMoving() {
         return moving;
     }
@@ -260,16 +266,17 @@ public class Player {
      *
      * @param moving The boolean to set moving to
      */
+    @Override
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
-
 
     /**
      * Returns the current frame the player's animation is on
      *
      * @return TextureRegion the frame of the player's animation
      */
+    @Override
     public TextureRegion getCurrentFrame () {
         // Returns the current frame the player animation is on
         return currentFrame;
@@ -280,6 +287,7 @@ public class Player {
      *
      * @param collidables An array of GameObjects that the player should collide with
      */
+    @Override
     public void setCollidables (Array<GameObject> collidables) {
         this.collidables = collidables;
     }
@@ -289,6 +297,7 @@ public class Player {
      *
      * @param object a GameObject for the player to collide with
      */
+    @Override
     public void addCollidable (GameObject object) {
         this.collidables.add(object);
     }
@@ -296,6 +305,7 @@ public class Player {
     /**
      * Removes all GameObjects from the collidables list.
      */
+    @Override
     public void clearCollidables (){
         this.collidables = new Array<GameObject>();
     }
@@ -303,12 +313,14 @@ public class Player {
     /**
      * @return The X coordinate of the player
      */
+    @Override
     public float getX () {
         return sprite.getX();
     }
     /**
      * @return The Y coordinate of the player
      */
+    @Override
     public float getY () {
         return sprite.getY();
     }
@@ -316,12 +328,14 @@ public class Player {
     /**
      * @return The X coordinate of the centre point of the player's sprite rectangle
      */
+    @Override
     public float getCentreX () {
         return centreX;
     }
     /**
      * @return The Y coordinate of the centre point of the player's sprite rectangle
      */
+    @Override
     public float getCentreY () {
         return centreY;
     }
@@ -329,6 +343,7 @@ public class Player {
     /**
      * @return The Vector3 representation of the bottom left corner of the player's sprite hitbox
      */
+    @Override
     public Vector3 getPosAsVec3() {
         return new Vector3(
                 sprite.getX(),
@@ -340,6 +355,7 @@ public class Player {
     /**
      * Sets the x coordinate of the player, updating all 3 hitboxes at once as opposed to just the sprite rectangle
      */
+    @Override
     public void setX (float x) {
         this.sprite.setX(x);
         this.feet.setX(x + 4*scale);
@@ -349,6 +365,7 @@ public class Player {
     /**
      * Sets the Y coordinate of the player, updating all 3 hitboxes at once as opposed to just the sprite rectangle
      */
+    @Override
     public void setY (float y) {
         this.sprite.setY(y);
         this.feet.setY(y);
@@ -361,6 +378,7 @@ public class Player {
      * @param x The X coordinate to set the player to
      * @param y The Y coordinate to set the player to
      */
+    @Override
     public void setPos (float x, float y) {
         this.setX(x);
         this.setY(y);
@@ -371,6 +389,7 @@ public class Player {
      *
      * @param bounds The bounds of the playable map
      */
+    @Override
     public void setBounds (Rectangle bounds) {
         // Set a rectangle that the player should not leave
         this.bounds = bounds;
@@ -382,6 +401,7 @@ public class Player {
      * @param object The object to get the distance from
      * @return The distance from the object
      */
+
     private float distanceFrom (GameObject object) {
         return (float) Math.sqrt((Math.pow((centreX - object.centreX), 2) + Math.pow((centreY - object.centreY), 2)));
     }
@@ -399,6 +419,7 @@ public class Player {
      *
      * @param freeze The value to set frozen to
      */
+    @Override
     public void setFrozen (boolean freeze) {
         this.frozen = freeze;
         if (freeze) {
@@ -410,8 +431,31 @@ public class Player {
     /**
      * @return true if the player is frozen
      */
+    @Override
     public boolean isFrozen () {
         return this.frozen;
+    }
+
+    // Return x, y of players sprite
+    @Override
+    public float getSpriteX() {
+        return sprite.x;
+    }
+
+    @Override
+    public float getSpriteY() {
+        return sprite.y;
+    }
+
+    // Return sprite width and height
+    @Override
+    public float getSpriteWidth() {
+        return sprite.width;
+    }
+
+    @Override
+    public float getSpriteHeight() {
+        return sprite.height;
     }
 
 }

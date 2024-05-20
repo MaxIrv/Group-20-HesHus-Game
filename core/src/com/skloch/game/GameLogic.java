@@ -1,37 +1,47 @@
 package com.skloch.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import com.badlogic.gdx.math.Vector3;
+import com.skloch.game.events.*;
+import com.skloch.game.events.DialogueBoxEvents.DialogueScrollEvent;
+import com.skloch.game.interfaces.GameScreenProvider;
+import com.skloch.game.interfaces.IEventManager;
+import com.skloch.game.interfaces.IGameLogic;
+import com.skloch.game.interfaces.IPlayer;
 
 import java.util.Map;
 
-public class GameLogic {
+/**
+ * A class that handles the game logic, including the player, time, energy, and map switching.
+ * This class is called by the GameScreen class to update the game.
+ */
+public class GameLogic implements IGameLogic {
     private final HustleGame game;
-    private final GameScreen gameScreen;
-    public final EventManager eventManager;
-    private Player player;
-    public int energy = 100;
-    public int hoursStudied, hoursRecreational, hoursSlept, mealsEaten;
-    public float daySeconds;
-    public int day = 1;
-    public boolean sleeping = false;
+    private final GameScreenProvider gameScreen;
+    private final IEventManager eventManager;
+    private final EventBus eventBus;
+    private final IPlayer player;
+    private int energy = 100;
+    private int hoursStudied, hoursRecreational, hoursSlept, mealsEaten;
+    private float daySeconds;
+    private int day = 1;
+    private boolean sleeping = false;
     private String currentMap = "campus";
     private final Map<String, String> mapPaths = Map.of(
             "campus", "East Campus/east_campus.tmx",
             "town", "Town/town.tmx"
     );
 
-    public GameLogic(HustleGame game, GameScreen gameScreen, int avatarChoice) {
+    public GameLogic(HustleGame game, GameScreen gameScreen, int avatarChoice, EventBus eventBus) {
         this.game = game;
         this.gameScreen = gameScreen;
-        this.eventManager = new EventManager(gameScreen, this);
+        this.eventManager = new EventManager(this, eventBus);
+        this.eventBus = eventBus;
 
         hoursStudied = hoursRecreational = hoursSlept = mealsEaten = 0;
 
@@ -49,20 +59,27 @@ public class GameLogic {
         game.soundManager.playOverworldMusic();
     }
 
+    /**
+     * Update the game logic, including the player, time, and sound timers.
+     *
+     * @param delta The time in seconds since the last frame
+     */
+    @Override
     public void update(float delta) {
         // Update sound timers
         game.soundManager.processTimers(delta);
 
         // Increment the time and possibly day
-        if (!gameScreen.escapeMenu.isVisible() && !sleeping) {
+        if (!gameScreen.isEscapeMenuVisible() && !sleeping) {
             passTime(Gdx.graphics.getDeltaTime());
         }
-        gameScreen.timeLabel.setText(formatTime((int) daySeconds));
+
+        eventBus.publish(new TimeUpdatedEvent(daySeconds));
 
         // Freeze the player's movement for this frame if any menus are visible
-        player.setFrozen(gameScreen.escapeMenu.isVisible() || gameScreen.dialogueBox.isVisible() || sleeping);
+        player.setFrozen(gameScreen.isEscapeMenuVisible()  || gameScreen.isDialogueBoxVisible() || sleeping);
 
-        gameScreen.dialogueBox.scrollText(0.8f);
+        eventBus.publish(new DialogueScrollEvent(0.8f));
 
         // Let the player move to keyboard presses if not frozen
         // Player.move() handles player collision
@@ -81,17 +98,17 @@ public class GameLogic {
      * @param firstLoad whether this is the first map being loaded, determines
      *                  whether to place the player at the spawn or respawn location.
      */
+    @Override
     public void setupMap(boolean firstLoad) {
         // Setup map
         float unitScale = game.mapScale / game.mapSquareSize;
-        gameScreen.mapRenderer = new OrthogonalTiledMapRenderer(game.map, unitScale);
 
         // Get the dimensions of the top layer
         TiledMapTileLayer layer0 = (TiledMapTileLayer) game.map.getLayers().get(0);
         // Set the player to the middle of the map
         player.setPos(layer0.getWidth()*game.mapScale / 2f, layer0.getHeight()*game.mapScale / 2f);
-        // Put camera on player
-        gameScreen.camera.position.set(player.getCentreX(), player.getCentreY(), 0);
+        // Publish event to update camera position to player position
+        eventBus.publish(new CameraPositionEvent(new Vector3(player.getCentreX(), player.getCentreY(), 0)));
 
         // Clear collidables from the player, as they may be from a different map.
         player.clearCollidables();
@@ -108,7 +125,7 @@ public class GameLogic {
                 // If this is the spawn object, move the player there and don't collide
                 if ((properties.get("spawn") != null && firstLoad) || (properties.get("respawn") != null && !firstLoad)) {
                     player.setPos(((float) properties.get("x")) * unitScale, ((float) properties.get("y")) * unitScale);
-                    gameScreen.camera.position.set(player.getPosAsVec3());
+                    eventBus.publish(new CameraPositionEvent(player.getPosAsVec3()));
                 }
                 // If not a spawn point make collidable
                 else if (properties.get("spawn") == null && properties.get("respawn") == null) {
@@ -137,6 +154,7 @@ public class GameLogic {
      *
      * @param mapName the name of the map one of "town" and "campus"
      */
+    @Override
     public void switchMap(String mapName) {
         if (!mapPaths.containsKey(mapName)){
             mapName="campus";
@@ -153,6 +171,7 @@ public class GameLogic {
      *
      * @return the name of the current map.
      */
+    @Override
     public String getCurrentMap(){
         return currentMap;
     }
@@ -162,12 +181,13 @@ public class GameLogic {
      *
      * @param delta The time in seconds to add
      */
+    @Override
     public void passTime(float delta) {
         daySeconds += delta;
         while (daySeconds >= 1440) {
             daySeconds -= 1440;
             day += 1;
-            gameScreen.dayLabel.setText(String.format("Day %s", day));
+            eventBus.publish(new DayUpdatedEvent(day));
         }
 
         if (day >= 8) {
@@ -181,6 +201,7 @@ public class GameLogic {
      * @param seconds The seconds elapsed in a day
      * @return A formatted time on a 12 hour clock
      */
+    @Override
     public String formatTime(int seconds) {
         // Takes a number of seconds and converts it into a 12 hour clock time
         int hour = Math.floorDiv(seconds, 60);
@@ -203,18 +224,20 @@ public class GameLogic {
      *
      * @param energy An int between 0 and 100
      */
+    @Override
     public void setEnergy(int energy) {
         this.energy = energy;
         if (this.energy > 100) {
             this.energy = 100;
         }
         // Update energy bar
-         gameScreen.energyBar.setScaleY(this.energy / 100f);
+        eventBus.publish(new EnergyUpdatedEvent(this.energy));
     }
 
     /**
      * @return The player's energy out of 100
      */
+    @Override
     public int getEnergy() {
         return this.energy;
     }
@@ -224,13 +247,14 @@ public class GameLogic {
      *
      * @param energy The energy to decrement
      */
+    @Override
     public void decreaseEnergy(int energy) {
         this.energy = this.energy - energy;
         if (this.energy < 0) {
             this.energy = 0;
         }
         // Update energy bar
-        gameScreen.energyBar.setScaleY(this.energy / 100f);
+        eventBus.publish(new EnergyUpdatedEvent(this.energy));
     }
 
     /**
@@ -238,11 +262,10 @@ public class GameLogic {
      *
      * @param hours The amount of hours to add
      */
+    @Override
     public void addStudyHours(int hours) {
         hoursStudied += hours;
-
-        // Update hours studied
-        gameScreen.hoursStudiedLabel.setText(String.format("Studied for %d hours",hoursStudied));
+        updateStatsEvent();
     }
 
     /**
@@ -250,22 +273,25 @@ public class GameLogic {
      *
      * @param hours The amount of hours to add
      */
+    @Override
     public void addRecreationalHours(int hours) {
         hoursRecreational += hours;
-        gameScreen.hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
+//        gameScreen.hoursRecreationalLabel.setText(String.format("Played for %d hours",hoursRecreational));
     }
 
     /**
      * Adds an amount of meals to the total number of meals
      */
+    @Override
     public void addMeal() {
         mealsEaten++;
-        gameScreen.mealsEatenLabel.setText(String.format("Eaten %d times",mealsEaten));
+        updateStatsEvent();
     }
 
     /**
      * @return Returns 'breakfast', 'lunch' or 'dinner' depending on the time of day
      */
+    @Override
     public String getMeal() {
         int hours = Math.floorDiv((int) daySeconds, 60);
         if (hours >= 7 && hours <= 10) {
@@ -286,6 +312,7 @@ public class GameLogic {
     /**
      * @return A wake up message based on the time left until the exam
      */
+    @Override
     public String getWakeUpMessage() {
         int daysLeft = 8 - day;
         if (daysLeft != 1) {
@@ -298,6 +325,7 @@ public class GameLogic {
     /**
      * @param sleeping Sets the value of sleeping
      */
+    @Override
     public void setSleeping(boolean sleeping) {
         this.sleeping = sleeping;
     }
@@ -305,21 +333,24 @@ public class GameLogic {
     /**
      * @return true if the player is sleeping
      */
-    public boolean getSleeping() {
+    @Override
+    public boolean isSleeping() {
         return sleeping;
     }
 
     /**
      * @param hours Add this amount of hours to the total hours slept
      */
+    @Override
     public void addSleptHours(int hours) {
         hoursSlept += hours;
-        gameScreen.hoursSleptLabel.setText(String.format("Slept for %d hours",hoursSlept));
+        updateStatsEvent();
     }
 
     /**
      * @return The number of seconds elapsed in the day
      */
+    @Override
     public float getSeconds() {
         return daySeconds;
     }
@@ -327,15 +358,65 @@ public class GameLogic {
     /**
      * @return An object of player handled by GameLogic
      */
-    public Player getPlayer() {
+    @Override
+    public IPlayer getPlayer() {
         return player;
     }
 
     /**
      * Ends the game, called at the end of the 7th day, switches to a screen that displays a score
      */
+    @Override
     public void GameOver() {
         game.setScreen(new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept,mealsEaten));
+    }
+
+    // Getters commands
+    @Override
+    public int getMealsEaten() {
+        return mealsEaten;
+    }
+    @Override
+    public int getHoursStudied() {
+        return hoursStudied;
+    }
+    @Override
+    public int getHoursRecreational() {
+        return hoursRecreational;
+    }
+    @Override
+    public int getHoursSlept() {
+        return hoursSlept;
+    }
+    @Override
+    public int getDay() {
+        return day;
+    }
+    @Override
+    public float getDaySeconds() {
+        return daySeconds;
+    }
+    @Override
+    public IEventManager getEventManager() {
+        return eventManager;
+    }
+    @Override
+    public boolean isPlayerNearObject() {
+        return player.nearObject();
+    }
+    @Override
+    public GameObject getPlayerClosestObject() {
+        return player.getClosestObject();
+    }
+
+    /**
+     * Update the stats on the UI
+     */
+    private void updateStatsEvent() {
+        eventBus.publish(
+                new GameStatsUpdatedEvent(
+                        daySeconds, day, hoursRecreational, hoursStudied, mealsEaten, hoursSlept
+                ));
     }
 }
 
