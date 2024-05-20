@@ -2,72 +2,23 @@ package com.skloch.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-
-import java.io.Console;
-import java.util.Map;
-import java.util.Objects;
+import com.skloch.game.events.EventBus;
+import com.skloch.game.interfaces.*;
 
 /**
  * Handles the majority of the game logic, rendering and user inputs of the game.
  * Responsible for rendering the player and the map, and calling events.
  */
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, GameScreenProvider {
     final HustleGame game;
-    final GameLogic gameLogic;
-    final GameRenderer gameRenderer;
-    final GameUI gameUI;
-    public final OrthographicCamera camera;
-    public Label timeLabel;
-    public Label dayLabel;
-    public Label hoursRecreationalLabel;
-    public Label hoursStudiedLabel;
-    public Label mealsEatenLabel;
-    public Label hoursSleptLabel;
-
-    public Player player;
-    public Window escapeMenu;
-    public final Viewport viewport;
-    public OrthogonalTiledMapRenderer mapRenderer;
-    public Stage uiStage;
-    public Label interactionLabel;
-//    private OptionDialogue optionDialogue;
-    public Table uiTable;
-    public Image energyBar;
-    public DialogueBox dialogueBox;
-    public Image blackScreen;
-    private String currentMap = "campus";
-
-    // This syntax is super weird but welcome to Java, each row denotes one entry
-    private final Map<String, String> mapPaths = Map.of(
-            "campus", "East Campus/east_campus.tmx",
-            "town", "Town/town.tmx"
-    );
+    final IGameLogic gameLogic;
+    final IGameRenderer gameRenderer;
+    final IGameUI gameUI;
+    final EventBus eventBus;
+    private IPlayer player;
     protected InputMultiplexer inputMultiplexer;
 
 
@@ -78,30 +29,19 @@ public class GameScreen implements Screen {
      * @param avatarChoice Which avatar the player has picked, 0 for the more masculine avatar, 1 for the more feminine
      */
     public GameScreen(final HustleGame game, int avatarChoice) {
-        Gdx.app.log("GameScreen", "Creating GameScreen");
         // Important game variables
         this.game = game;
         this.game.gameScreen = this;
+        this.eventBus = new EventBus();
 
-        Gdx.app.log("GameScreen", "Creating GameLogic");
-        this.gameLogic = new GameLogic(game, this, avatarChoice);
+        this.gameLogic = new GameLogic(game, this, avatarChoice, eventBus);
         this.player = gameLogic.getPlayer();
 
-        // Camera and viewport settings
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(game.WIDTH, game.HEIGHT, camera);
-        camera.setToOrtho(false, game.WIDTH, game.HEIGHT);
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
+        this.gameUI = new GameUI(game, this, gameLogic, eventBus, this);
 
-        Gdx.app.log("GameScreen", "Creating GameUI");
-        this.gameUI = new GameUI(game, this);
+        this.gameRenderer = new GameRenderer(game, eventBus);
 
-        Gdx.app.log("GameScreen", "Creating UI Stage");
-        this.gameRenderer = new GameRenderer(game, this);
-        Gdx.app.log("GameScreen", "finished creating game ui");
         // USER INTERFACE
-
-        this.uiStage = gameUI.getUiStage();
 
         // Create and center the yes/no box that appears when interacting with objects
 //        optionDialogue = new OptionDialogue("", 400, this.game.skin, game.soundManager);
@@ -117,7 +57,6 @@ public class GameScreen implements Screen {
         // Create the keyboard input adapter that defines events to be called based on
         // specific button presses
         InputAdapter gameKeyBoardInput = makeInputAdapter();
-        Gdx.app.log("GameScreen", "make input adapter");
 
         // Since we need to listen to inputs from the stage and from the keyboard
         // Use an input multiplexer to listen for one inputadapter and then the other
@@ -125,17 +64,15 @@ public class GameScreen implements Screen {
         // back to this screen from the settings menu
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gameKeyBoardInput);
-        inputMultiplexer.addProcessor(uiStage);
+        inputMultiplexer.addProcessor(gameUI.getUIStage());
         Gdx.input.setInputProcessor(inputMultiplexer);
-
-        Gdx.app.log("GameScreen", "game logic setup map");
 
         gameLogic.setupMap(true);
 
-        Gdx.app.log("GameScreen", "game ui create ui");
-        gameUI.create_ui();
-        Gdx.app.log("GameScreen", "game ui setup escape menu");
+        gameUI.create_ui(gameRenderer.getWorldWidth(), gameRenderer.getWorldHeight());
+
         gameRenderer.initial_render();
+
     }
 
     @Override
@@ -156,8 +93,8 @@ public class GameScreen implements Screen {
         delta = 0.016667f;
 
         gameLogic.update(delta);
-        gameRenderer.render(delta);
-        gameUI.render(delta);
+        gameRenderer.render(delta, gameLogic.getPlayer());
+        gameUI.render_ui(delta);
 
         // Load timer bar - needs fixing and drawing
         //TextureAtlas blueBar = new TextureAtlas(Gdx.files.internal("Interface/BlueTimeBar/BlueBar.atlas"));
@@ -174,93 +111,43 @@ public class GameScreen implements Screen {
 //        }
     }
 
+    @Override
+    public boolean isDialogueBoxVisible() {
+        return gameUI.getDialogueBox().isVisible();
+    }
 
-    /**
-     * Configures everything needed to display the escape menu window when the player presses 'escape'
-     * Doesn't return anything as the variable escapeMenu is used to store the window
-     * Takes a table already added to the uiStage
-     *
-     * @param interfaceStage The stage that the escapeMenu should be added to
-     */
-    public void setupEscapeMenu(Stage interfaceStage) {
-        // Configures an escape menu to display when hitting 'esc'
-        // Escape menu
-        escapeMenu = new Window("", game.skin);
-        interfaceStage.addActor(escapeMenu);
-        escapeMenu.setModal(true);
+    public boolean isEscapeMenuVisible() {
+        return gameUI.isEscapeMenuVisible();
+    }
 
-        Table escapeTable = new Table();
-        escapeTable.setFillParent(true);
+    @Override
+    public boolean isPlayerNearObject() {
+        return gameLogic.isPlayerNearObject();
+    }
 
-        escapeMenu.add(escapeTable);
+    @Override
+    public boolean isPlayerSleeping() {
+        return gameLogic.isSleeping();
+    }
 
-        TextButton resumeButton = new TextButton("Resume", game.skin);
-        TextButton settingsButton = new TextButton("Settings", game.skin);
-        TextButton exitButton = new TextButton("Exit", game.skin);
+    @Override
+    public GameObject getPlayerClosestObject() {
+        return gameLogic.getPlayerClosestObject();
+    }
 
-        escapeTable.add(resumeButton).pad(60, 80, 10, 80).width(300);
-        escapeTable.row();
-        escapeTable.add(settingsButton).pad(10, 50, 10, 50).width(300);
-        escapeTable.row();
-        escapeTable.add(exitButton).pad(10, 50, 60, 50).width(300);
+    @Override
+    public IPlayer getPlayer() {
+        return player;
+    }
 
-        escapeMenu.pack();
-
-        // escapeMenu.setDebug(true);
-
-        // Centre
-        escapeMenu.setX((viewport.getWorldWidth() / 2) - (escapeMenu.getWidth() / 2));
-        escapeMenu.setY((viewport.getWorldHeight() / 2) - (escapeMenu.getHeight() / 2));
-
-
-        // Create button listeners
-
-        resumeButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (escapeMenu.isVisible()) {
-                    game.soundManager.playButton();
-                    game.soundManager.playOverworldMusic();
-                    escapeMenu.setVisible(false);
-                }
-            }
-        });
-
-        // SETTINGS BUTTON
-        // I assign this object to a new var 'thisScreen' since the changeListener overrides 'this'
-        // I wasn't sure of a better solution
-        Screen thisScreen = this;
-        settingsButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (escapeMenu.isVisible()) {
-                    game.soundManager.playButton();
-                    game.setScreen(new SettingsScreen(game, thisScreen));
-                }
-            }
-        });
-
-        exitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (escapeMenu.isVisible()) {
-                    game.soundManager.playButton();
-                    game.soundManager.stopOverworldMusic();
-                    dispose();
-                    game.setScreen(new MenuScreen(game));
-                }
-            }
-        });
-
-        escapeMenu.setVisible(false);
+    public void blackScreenAction() {
 
     }
 
-
     @Override
     public void resize(int width, int height) {
-        uiStage.getViewport().update(width, height);
-        viewport.update(width, height);
+        gameUI.resize_ui(width, height);
+        gameRenderer.resize_viewport(width, height);
     }
 
     @Override
@@ -294,28 +181,28 @@ public class GameScreen implements Screen {
      */
     @Override
     public void dispose () {
-        uiStage.dispose();
-        mapRenderer.dispose();
+        gameUI.dispose();
+        gameRenderer.dispose();
     }
 
     /**
      * DEBUG - Draws the player's 3 hitboxes
      * Uncomment use at the bottom of render to use
      */
-    public void drawHitboxes () {
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
-        game.shapeRenderer.begin(ShapeType.Line);
-        // Sprite
-        game.shapeRenderer.setColor(1, 0, 0, 1);
-        game.shapeRenderer.rect(player.sprite.x, player.sprite.y, player.sprite.width, player.sprite.height);
-        // Feet hitbox
-        game.shapeRenderer.setColor(0, 0, 1, 1);
-        game.shapeRenderer.rect(player.feet.x, player.feet.y, player.feet.width, player.feet.height);
-        // Event hitbox
-        game.shapeRenderer.setColor(0, 1, 0, 1);
-        game.shapeRenderer.rect(player.eventHitbox.x, player.eventHitbox.y, player.eventHitbox.width, player.eventHitbox.height);
-        game.shapeRenderer.end();
-    }
+//    public void drawHitboxes () {
+//        game.shapeRenderer.setProjectionMatrix(camera.combined);
+//        game.shapeRenderer.begin(ShapeType.Line);
+//        // Sprite
+//        game.shapeRenderer.setColor(1, 0, 0, 1);
+//        game.shapeRenderer.rect(player.sprite.x, player.sprite.y, player.sprite.width, player.sprite.height);
+//        // Feet hitbox
+//        game.shapeRenderer.setColor(0, 0, 1, 1);
+//        game.shapeRenderer.rect(player.feet.x, player.feet.y, player.feet.width, player.feet.height);
+//        // Event hitbox
+//        game.shapeRenderer.setColor(0, 1, 0, 1);
+//        game.shapeRenderer.rect(player.eventHitbox.x, player.eventHitbox.y, player.eventHitbox.width, player.eventHitbox.height);
+//        game.shapeRenderer.end();
+//    }
 
     // Functions related to game score and requirements
 
@@ -330,14 +217,14 @@ public class GameScreen implements Screen {
             public boolean keyDown(int keycode) {
                 // SHOW ESCAPE MENU CODE
                 if (keycode == Input.Keys.ESCAPE) {
-                    if (escapeMenu.isVisible()) {
+                    if (gameUI.isEscapeMenuVisible()) {
                         game.soundManager.playButton();
                         game.soundManager.playOverworldMusic();
-                        escapeMenu.setVisible(false);
+                        gameUI.setEscapeMenuVisible(false);
                     } else {
                         // game.soundManager.pauseOverworldMusic();
                         game.soundManager.playButton();
-                        escapeMenu.setVisible(true);
+                        gameUI.setEscapeMenuVisible(true);
                     }
                     // Return true to indicate the keydown event was handled
                     return true;
@@ -345,31 +232,31 @@ public class GameScreen implements Screen {
 
                 // SHOW OPTION MENU / ACT ON OPTION MENU CODE
                 if (keycode == Input.Keys.E || keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
-                    if (!escapeMenu.isVisible()) {
+                    if (!gameUI.isEscapeMenuVisible()) {
                         // If a dialogue box is visible, choose an option or advance text
-                        if (dialogueBox.isVisible()) {
-                            dialogueBox.enter(gameLogic.eventManager);
+                        if (gameUI.getDialogueBox().isVisible()) {
+                            gameUI.getDialogueBox().enter(gameLogic.getEventManager());
                             game.soundManager.playButton();
 
-                        } else if (player.nearObject() && !gameLogic.sleeping) {
+                        } else if (player.nearObject() && !gameLogic.isSleeping()) {
                             // If the object has an event associated with it
                             if (player.getClosestObject().get("event") != null) {
                                 // Show a dialogue menu asking if they want to do an interaction with the object
-                                dialogueBox.show();
-                                dialogueBox.getSelectBox().setOptions(new String[]{"Yes", "No"}, new String[]{(String) player.getClosestObject().get("event"), "exit"});
-                                if (gameLogic.eventManager.hasCustomObjectInteraction((String) player.getClosestObject().get("event"))) {
-                                    dialogueBox.setText(gameLogic.eventManager.getObjectInteraction((String) player.getClosestObject().get("event")));
+                                gameUI.getDialogueBox().show();
+                                gameUI.getDialogueBox().getSelectBox().setOptions(new String[]{"Yes", "No"}, new String[]{(String) player.getClosestObject().get("event"), "exit"});
+                                if (gameLogic.getEventManager().hasCustomObjectInteraction((String) player.getClosestObject().get("event"))) {
+                                    gameUI.getDialogueBox().setText(gameLogic.getEventManager().getObjectInteraction((String) player.getClosestObject().get("event")));
                                 } else {
-                                    dialogueBox.setText("Interact with " + player.getClosestObject().get("event") + "?");
+                                    gameUI.getDialogueBox().setText("Interact with " + player.getClosestObject().get("event") + "?");
                                 }
-                                dialogueBox.show();
-                                dialogueBox.getSelectBox().show();
+                                gameUI.getDialogueBox().show();
+                                gameUI.getDialogueBox().getSelectBox().show();
                                 game.soundManager.playDialogueOpen();
 
                             } else if (player.getClosestObject().get("text") != null) {
                                 // Otherwise, if it is a text object, just display its text
-                                dialogueBox.show();
-                                dialogueBox.setText((String) player.getClosestObject().get("text"));
+                                gameUI.getDialogueBox().show();
+                                gameUI.getDialogueBox().setText((String) player.getClosestObject().get("text"));
                             }
                         }
                         return true;
@@ -377,12 +264,12 @@ public class GameScreen implements Screen {
                 }
 
                 // If an option dialogue is open it should soak up all keypresses
-                if (dialogueBox.isVisible() && dialogueBox.getSelectBox().isVisible() && !escapeMenu.isVisible()) {
+                if (gameUI.getDialogueBox().isVisible() && gameUI.getDialogueBox().getSelectBox().isVisible() && !gameUI.isEscapeMenuVisible()) {
                     // Up or down
                     if (keycode == Input.Keys.W || keycode == Input.Keys.UP) {
-                        dialogueBox.getSelectBox().choiceUp();
+                        gameUI.getDialogueBox().getSelectBox().choiceUp();
                     } else if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN) {
-                        dialogueBox.getSelectBox().choiceDown();
+                        gameUI.getDialogueBox().getSelectBox().choiceDown();
                     }
 
                     return true;
@@ -395,11 +282,18 @@ public class GameScreen implements Screen {
         };
     }
 
-
     /**
      * Ends the game, called at the end of the 7th day, switches to a screen that displays a score
      */
     public void GameOver() {
-        game.setScreen(new GameOverScreen(game, gameLogic.hoursStudied, gameLogic.hoursRecreational, gameLogic.hoursSlept, gameLogic.mealsEaten));
+        game.setScreen(
+                new GameOverScreen(
+                        game,
+                        gameLogic.getHoursStudied(),
+                        gameLogic.getHoursRecreational(),
+                        gameLogic.getHoursSlept(),
+                        gameLogic.getMealsEaten()
+                )
+        );
     }
 }

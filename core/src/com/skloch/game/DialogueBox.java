@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
+import com.skloch.game.interfaces.IEventManager;
 
 /**
  * A class to display a dialogue box for text and options on the screen.
@@ -214,7 +215,6 @@ public class DialogueBox {
         }
     }
 
-
     /**
      * Sets the dialogue box and all its elements to a position onscreen
      *
@@ -360,7 +360,7 @@ public class DialogueBox {
      * Pressing 'confirm' on the dialogue box
      * Either selects the choice if the selectbox is open, or advances text if not
      */
-    public void enter(EventManager eventManager) {
+    public void enter(IEventManager eventManager) {
         if (selectBox.isVisible()) {
             selectBox.hide();
             eventManager.event(selectBox.getChoice());
@@ -372,7 +372,7 @@ public class DialogueBox {
     /**
      * Continues on to the next bit of text, or closes the window if the end is reached
      */
-    private void advanceText(EventManager eventManager) {
+    private void advanceText(IEventManager eventManager) {
         if (scrollingText) {
             scrollingText = false;
             textCounter = 0;
