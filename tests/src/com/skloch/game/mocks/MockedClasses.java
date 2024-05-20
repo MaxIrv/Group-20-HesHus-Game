@@ -8,7 +8,7 @@ import com.skloch.game.events.EventBus;
 import com.skloch.game.interfaces.GameScreenProvider;
 import com.skloch.game.interfaces.IPlayer;
 import com.skloch.game.interfaces.ISoundManager;
-import com.skloch.game.interfaces.ISoundManager;
+import com.skloch.game.interfaces.IGameLogic;
 
 import static org.mockito.Mockito.mock;
 
@@ -42,5 +42,9 @@ public class MockedClasses {
 
     public static ISoundManager mockSoundManager() {
         return mock(ISoundManager.class);
+    }
+
+    public static IGameLogic mockGameLogic(){
+        return mock(IGameLogic.class);
     }
 }
