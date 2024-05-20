@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.skloch.game.interfaces.ISoundManager;
 
 import java.util.function.Predicate;
 
@@ -31,7 +32,7 @@ public class HustleGame extends Game {
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public ShapeRenderer shapeRenderer;
-	public SoundManager soundManager;
+	public ISoundManager soundManager;
 	public Stage blueBackground;
 	public int[] backgroundLayers, foregroundLayers, objectLayers;
 	public int mapSquareSize;
@@ -166,5 +167,13 @@ public class HustleGame extends Game {
 			return file.readString();
 		}
 
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public Stage getStage() {
+		return blueBackground;
 	}
 }

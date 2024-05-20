@@ -1,0 +1,63 @@
+package com.skloch.game.interfaces;
+
+import com.skloch.game.GameObject;
+import com.skloch.game.HustleGame;
+
+public interface IGameLogic {
+    void update(float delta);
+    void setupMap(boolean firstLoad);
+    void switchMap(String mapName);
+    String getCurrentMap();
+    void passTime(float delta);
+    void setEnergy(int energy);
+    int getEnergy();
+    void decreaseEnergy(int energy);
+    void addStudyHours(int hours);
+    void addRecreationalHours(int hours);
+    void addMeal();
+    String getMeal();
+    String getWakeUpMessage();
+    void setSleeping(boolean sleeping);
+    boolean isSleeping();
+    void addSleptHours(int hours);
+    float getSeconds();
+    IPlayer getPlayer();
+    void GameOver();
+    int getMealsEaten();
+    int getHoursStudied();
+    int getHoursRecreational();
+    int getHoursSlept();
+    int getDay();
+    float getDaySeconds();
+    IEventManager getEventManager();
+    boolean isPlayerNearObject();
+    GameObject getPlayerClosestObject();
+
+
+    // Study Streak
+    int getStudyStreakCounter();
+    void setStudyStreakCounter(int x);
+    void addStudyStreakCounter(int x);
+
+    // Bookworm
+    int getBookWormCounter();
+    void setBookWormCounter(int x);
+    void addBookWormCounter(int x);
+
+    // Eat Streak
+    int getEatStreakCounter();
+    void setEatStreakCounter(int x);
+    void addEatStreakCounter(int x);
+
+    // Fun Streak
+    int getFunStreakCounter();
+    void setFunStreakCounter(int x);
+    void addFunStreakCounter(int x);
+
+    // All Nighter
+    int getNoSleepCounter();
+    void setNoSleepCounter(int x);
+    void addNoSleepCounter(int x);
+    HustleGame getGame();
+
+}

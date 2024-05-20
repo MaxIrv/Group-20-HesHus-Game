@@ -106,7 +106,7 @@ public class GameOverScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.soundManager.playButton();
-                game.soundManager.overworldMusic.stop();
+                game.soundManager.stopOverworldMusic();
                 dispose();
                 game.setScreen(new MenuScreen(game));
             }
