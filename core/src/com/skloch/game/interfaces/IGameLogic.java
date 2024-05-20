@@ -1,6 +1,7 @@
 package com.skloch.game.interfaces;
 
 import com.skloch.game.GameObject;
+import com.skloch.game.HustleGame;
 
 public interface IGameLogic {
     void update(float delta);
@@ -31,4 +32,32 @@ public interface IGameLogic {
     IEventManager getEventManager();
     boolean isPlayerNearObject();
     GameObject getPlayerClosestObject();
+
+
+    // Study Streak
+    int getStudyStreakCounter();
+    void setStudyStreakCounter(int x);
+    void addStudyStreakCounter(int x);
+
+    // Bookworm
+    int getBookWormCounter();
+    void setBookWormCounter(int x);
+    void addBookWormCounter(int x);
+
+    // Eat Streak
+    int getEatStreakCounter();
+    void setEatStreakCounter(int x);
+    void addEatStreakCounter(int x);
+
+    // Fun Streak
+    int getFunStreakCounter();
+    void setFunStreakCounter(int x);
+    void addFunStreakCounter(int x);
+
+    // All Nighter
+    int getNoSleepCounter();
+    void setNoSleepCounter(int x);
+    void addNoSleepCounter(int x);
+    HustleGame getGame();
+
 }

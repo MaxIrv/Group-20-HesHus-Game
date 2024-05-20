@@ -337,35 +337,35 @@ public class EventManager implements IEventManager {
                     gameLogic.addSleptHours(hoursSlept);
                     // Check for any streaks/achievements
                     if (studied) {
-                        game.addStudyStreakCounter(1);
-                        game.game.studyStreak.checkCondition(game.getStudyStreakCounter());
+                        gameLogic.addStudyStreakCounter(1);
+                        gameLogic.getGame().studyStreak.checkCondition(gameLogic.getStudyStreakCounter());
                         studied = false;
                     }
-                    else {game.setStudyStreakCounter(0);}
+                    else {gameLogic.setStudyStreakCounter(0);}
 
                     if (studiedTwice) {
-                        game.setBookWormCounter(1);
-                        game.game.bookWorm.checkCondition(game.getBookWormCounter());
+                        gameLogic.setBookWormCounter(1);
+                        gameLogic.getGame().bookWorm.checkCondition(gameLogic.getBookWormCounter());
                         studiedTwice = false;
                     }
 
                     if (ate) {
-                        game.addEatStreakCounter(1);
-                        game.game.eatStreak.checkCondition(game.getEatStreakCounter());
+                        gameLogic.addEatStreakCounter(1);
+                        gameLogic.getGame().eatStreak.checkCondition(gameLogic.getEatStreakCounter());
                         ate = false;
                     }
-                    else {game.setEatStreakCounter(0);}
+                    else {gameLogic.setEatStreakCounter(0);}
 
                     if (hadFun) {
-                        game.addFunStreakCounter(1);
-                        game.game.funStreak.checkCondition(game.getFunStreakCounter());
+                        gameLogic.addFunStreakCounter(1);
+                        gameLogic.getGame().funStreak.checkCondition(gameLogic.getFunStreakCounter());
                         hadFun = false;
                     }
-                    else {game.setFunStreakCounter(0);}
+                    else {gameLogic.setFunStreakCounter(0);}
 
                     if (noSleep) {
-                        game.setNoSleepCounter(1);
-                        game.game.allNighter.checkCondition(game.getNoSleepCounter());
+                        gameLogic.setNoSleepCounter(1);
+                        gameLogic.getGame().allNighter.checkCondition(gameLogic.getNoSleepCounter());
                         noSleep = false;
                     }
                 }
