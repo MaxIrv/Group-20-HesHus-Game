@@ -90,7 +90,7 @@ public class GameLogic implements IGameLogic {
         if (player.isMoving()) {
             game.soundManager.playFootstep();
         } else {
-            game.soundManager.footstepBool = false;
+            game.soundManager.stopFootstep();
         }
     }
 
@@ -189,6 +189,7 @@ public class GameLogic implements IGameLogic {
         while (daySeconds >= 1440) {
             daySeconds -= 1440;
             day += 1;
+            Gdx.app.log("test", "test");
             eventBus.publish(new DayUpdatedEvent(day));
         }
 
@@ -207,6 +208,8 @@ public class GameLogic implements IGameLogic {
         this.energy = energy;
         if (this.energy > 100) {
             this.energy = 100;
+        } else if (this.energy < 0) {
+            this.energy = 0;
         }
         // Update energy bar
         eventBus.publish(new EnergyUpdatedEvent(this.energy));
