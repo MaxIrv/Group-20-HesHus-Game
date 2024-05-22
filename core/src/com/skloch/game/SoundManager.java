@@ -112,6 +112,27 @@ public class SoundManager implements Disposable, ISoundManager {
      */
     public float getSfxVolume() {return sfxVolume;}
 
+    public float getFootstepTimer() {return footstepTimer;}
+    public void setFootstepTimer(float x) {footstepTimer = x;}
+
+    public Sound getPauseSound() {return pauseSound;}
+    public void setPauseSound(Sound x) {pauseSound = x;}
+
+    public Sound getDialogueOpenSound() {return dialogueOpenSound;}
+    public void setDialogueOpenSound(Sound x) {dialogueOpenSound = x;}
+
+    public Sound getDialogueOptionSound() {return dialogueOptionSound;}
+    public void setDialogueOptionSound(Sound x) {dialogueOptionSound = x;}
+
+    public Sound getButtonSound() {return buttonSound;}
+    public void setButtonSound(Sound x) {buttonSound = x;}
+
+    public Sound getFootstep1() {return footstep1;}
+    public void setFootstep1(Sound x) {footstep1 = x;}
+
+    public Sound getFootstep2() {return footstep2;}
+    public void setFootstep2(Sound x) {footstep2 = x;}
+
     /**
      * Updates the timers for sounds that repeat regularly, needs to be called every render cycle.
      * Specifically handles triggering footsteps when the player is moving

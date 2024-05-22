@@ -103,6 +103,9 @@ public class SettingsScreen implements Screen {
         });
     }
 
+    public Window getOptionMenu() {
+        return optionMenu;
+    }
 
     /**
      * Renders a settings screen to let the player configure music and sound volume

@@ -316,4 +316,5 @@ public class MenuScreen implements Screen {
         return table;
     }
 
+    public Stage getMenuStage() {return menuStage;}
 }
