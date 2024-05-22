@@ -42,7 +42,8 @@ public class GameOverScreen implements Screen {
       int hoursStudied,
       int hoursRecreational,
       int hoursSlept,
-      int mealsEaten) {
+      int mealsEaten,
+      float score) {
     this.game = game;
     gameOverStage = new Stage(new FitViewport(game.width, game.height));
     Gdx.input.setInputProcessor(gameOverStage);
@@ -135,7 +136,7 @@ public class GameOverScreen implements Screen {
         public void changed(ChangeEvent event, Actor actor) {
             game.soundManager.playButton();
             dispose();
-            game.setScreen(new LeaderboardScreen(game));
+            game.setScreen(new LeaderboardScreen(game,score));
         }
       });
 

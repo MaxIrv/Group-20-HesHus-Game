@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -29,6 +30,14 @@ public class LeaderboardScreen implements Screen {
     private Window inputWindow;
 
     private String playerName;
+
+    private final int numberEntriesDisplayed;
+
+    String leaderboardFilePath = "scores.csv";
+    Label[] nameLabels,scoreLabels;
+
+    float playerScore;
+
     Viewport viewport;
     OrthographicCamera camera;
     ScrollPane scrollPane;
@@ -39,7 +48,8 @@ public class LeaderboardScreen implements Screen {
      *
      * @param game An instance of HustleGame
      */
-    public LeaderboardScreen (final HustleGame game) {
+    public LeaderboardScreen (final HustleGame game,float playerScore) {
+        this.playerScore = playerScore;
         this.game = game;
 
         leaderboardStage= new Stage(new FitViewport(game.width, game.height));
@@ -52,20 +62,45 @@ public class LeaderboardScreen implements Screen {
         leaderboardStage.addActor(leaderboardWindow);
 
         // Table for UI elements in window
-        Table leaderboardTable = new Table();
-        leaderboardWindow.add(leaderboardTable);
+        Table leaderboardUiTable = new Table();
+        Table leaderboardResultsTable = new Table();
+        leaderboardWindow.add(leaderboardUiTable);
 
-        leaderboardTable.row();
 
         // Title
         Label title = new Label("Leaderboard", game.skin, "button");
-        leaderboardTable.add(title).padTop(10);
-        leaderboardTable.row();
+        leaderboardResultsTable.add(title).padTop(10);
+        leaderboardResultsTable.row();
+
+        List<String[]> entries= fetchLeaderboardEntries(leaderboardFilePath);
+
+        numberEntriesDisplayed = 5;
+        nameLabels = new Label[numberEntriesDisplayed];
+        scoreLabels = new Label[numberEntriesDisplayed];
+
+        int len = entries.size();
+
+        for (int i=0 ; i<numberEntriesDisplayed ; i++ ) {
+            Label numb = new Label(String.format("%d", i + 1), game.skin, "button");
+            Label name = new Label("-", game.skin, "button");
+            Label score = new Label("-", game.skin, "button");
+
+            nameLabels[i] = name;
+            scoreLabels[i] = score;
+            leaderboardResultsTable.add(numb);
+            leaderboardResultsTable.add(name);
+            leaderboardResultsTable.add(score);
+            leaderboardResultsTable.row();
+        }
+
+
+        leaderboardUiTable.add(leaderboardResultsTable);
+        leaderboardUiTable.row();
+        leaderboardUiTable.row();
 
         // Exit button
         TextButton exitButton = new TextButton("Main Menu", game.skin);
-        leaderboardTable.row();
-        leaderboardTable.add(exitButton).bottom().width(300).padTop(10);
+        leaderboardUiTable.add(exitButton).bottom().width(300).padTop(10);
 
 
         exitButton.addListener(new ChangeListener() {
@@ -99,16 +134,19 @@ public class LeaderboardScreen implements Screen {
 
         inputWindow = new Window("",game.skin);
         leaderboardStage.addActor(inputWindow);
-        inputWindow.setWidth(300);
+
+        inputWindow.setWidth(600);
+        inputWindow.setHeight(600);
+
         inputWindow.setPosition(
                 (game.width/2f)-inputWindow.getWidth()/2,
                 (game.height/2f)-inputWindow.getHeight()/2);
         //nameInputGroup.addActor(inputBox);
 
-        Label nameLabel = new Label("", game.skin);
+        Label nameLabel = new Label("", game.skin,"button");
         nameLabel.setPosition(
-                (inputWindow.getX()/2f) - inputWindow.getWidth()/2,
-                (inputWindow.getY()/2f) - inputWindow.getHeight()/2);
+                (inputWindow.getX()/2f) - nameLabel.getWidth()/2,
+                (inputWindow.getY()/2f) - nameLabel.getHeight()/2);
         inputWindow.addActor(nameLabel);
 
         Gdx.input.setInputProcessor(new InputAdapter() {
@@ -146,7 +184,25 @@ public class LeaderboardScreen implements Screen {
      */
     private void closeInputLayer(){
         Gdx.input.setInputProcessor(leaderboardStage);
+        storeLeaderboardEntry(leaderboardFilePath,new String[] {playerName,String.format("%f",playerScore)});
+        updateLeaderboard();
         setInputWindowVisibility(false);
+
+    }
+
+    private void updateLeaderboard(){
+        List<String[]> entries= fetchLeaderboardEntries(leaderboardFilePath);
+        Comparator<String[]> cmpr = Comparator.comparing(arr -> Float.parseFloat(arr[1]));
+        entries.sort(cmpr);
+
+        int pos = 0;
+        for (int i = entries.size()-1; i > (entries.size()-numberEntriesDisplayed-1); i--){
+            nameLabels[pos].setText(String.format("%s",entries.get(i)[0]));
+            scoreLabels[pos].setText(String.format("%.1f",Float.parseFloat(entries.get(i)[1]))+"%");
+            pos ++;
+        }
+
+
     }
 
     /**
@@ -171,7 +227,7 @@ public class LeaderboardScreen implements Screen {
      * @return The contents of the file as a String
      */
     public String readTextFile(String filepath) {
-        FileHandle file = Gdx.files.internal(filepath);
+        FileHandle file = Gdx.files.local(filepath);
 
         if (!file.exists()) {
             System.out.println("WARNING: Couldn't load file " + filepath);
@@ -187,7 +243,7 @@ public class LeaderboardScreen implements Screen {
      * @return A list of string arrays
      */
     private List<String[]>  fetchLeaderboardEntries(String filepath){
-        FileHandle file = Gdx.files.internal(filepath);
+        FileHandle file = Gdx.files.local(filepath);
         List<String[]> entries = new ArrayList<>();
         if (!file.exists()) {
             System.out.println("WARNING: Couldn't load file " + filepath);
@@ -212,6 +268,7 @@ public class LeaderboardScreen implements Screen {
         FileHandle file = Gdx.files.internal(filepath);
         String writeString = String.join(",",entry);
         writeString += "\n";
+        file.writeString(writeString,false);
     }
 
     /**

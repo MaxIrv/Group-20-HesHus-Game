@@ -384,6 +384,7 @@ public class GameScreen implements Screen, GameScreenProvider {
             gameLogic.getHoursStudied(),
             gameLogic.getHoursRecreational(),
             gameLogic.getHoursSlept(),
-            gameLogic.getMealsEaten()));
+            gameLogic.getMealsEaten(),
+            gameLogic.getPlayerScore()));
   }
 }

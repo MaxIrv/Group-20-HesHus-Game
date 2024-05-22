@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.skloch.game.events.CameraPositionEvent;
 import com.skloch.game.events.DayUpdatedEvent;
 import com.skloch.game.events.EnergyUpdatedEvent;
@@ -17,6 +18,8 @@ import com.skloch.game.events.dialoguebox.DialogueScrollEvent;
 import com.skloch.game.interfaces.GameScreenProvider;
 import com.skloch.game.interfaces.InterfaceEventManager;
 import com.skloch.game.interfaces.PlayerInterface;
+
+import java.util.Map;
 
 /**
  * A class that handles the game logic, including the player, time, energy, and map switching. This
@@ -87,7 +90,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
 
     // Increment the time and possibly day
     if (!gameScreen.isEscapeMenuVisible() && !sleeping) {
-      passTime(Gdx.graphics.getDeltaTime());
+      passTime(Gdx.graphics.getDeltaTime()*5000);
     }
 
     eventBus.publish(new TimeUpdatedEvent(daySeconds));
@@ -368,7 +371,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
   @Override
   public void gameOver() {
     game.setScreen(
-        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten));
+        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten,getPlayerScore()));
   }
 
   // Getters commands
@@ -422,6 +425,63 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
     eventBus.publish(
         new GameStatsUpdatedEvent(
             daySeconds, day, hoursRecreational, hoursStudied, mealsEaten, hoursSlept));
+  }
+
+  public float getPlayerScore(){
+    //  if target range for each thing rec, study, meals and sleep, then X points
+    float rawScore = 0;
+    float possible_score = 4;
+
+    ArrayMap<String, int[]> successRanges = new ArrayMap<String, int[]>();
+
+    successRanges.put("rec",new int[] {5,10});
+    successRanges.put("study",new int[] {14,21});
+    successRanges.put("meals",new int[] {14,26});
+    successRanges.put("sleep",new int[] {35,55});
+
+    if ((hoursRecreational > successRanges.get("rec")[0]) &&
+            (hoursRecreational < successRanges.get("rec")[1])){
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("study")[0] &&
+            hoursStudied <successRanges.get("study")[1]){
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("meals")[0] &&
+            hoursStudied <successRanges.get("meals")[1]){
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("sleep")[0] &&
+            hoursStudied <successRanges.get("sleep")[1]){
+      rawScore += 1;
+    }
+
+
+    /**
+     * Multiply by 1.3x
+     */
+    if (game.allNighter.getAchieved()){
+      rawScore *= 1.2f;
+    }
+    if (game.bookWorm.getAchieved()){
+      rawScore *= 1.2f;
+    }
+    if (game.eatStreak.getAchieved()){
+      rawScore *= 1.2f;
+    }
+    if (game.funStreak.getAchieved()){
+      rawScore *= 1.2f;
+    }
+    if (game.studyStreak.getAchieved()){
+      rawScore *= 1.2f;
+    }
+
+
+    float ratio_score = rawScore/possible_score;
+    if (ratio_score > 1){
+      ratio_score = 1;
+    }
+    return ratio_score * 100;
   }
 
   // Study Streak

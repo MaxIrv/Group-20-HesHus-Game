@@ -97,5 +97,7 @@ public interface GameLogicInterface {
 
   void addNoSleepCounter(int x);
 
+  float getPlayerScore();
+
   HustleGame getGame();
 }
