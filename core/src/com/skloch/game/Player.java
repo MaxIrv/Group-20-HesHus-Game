@@ -19,8 +19,9 @@ public class Player implements IPlayer {
     public float centreX, centreY;
     public int direction = 2; // 0 = up, 1 = right, 2 = down, 3 = left (like a clock)
     private TextureRegion currentFrame;
-    private float stateTime = 0;
-    private final Array<Animation<TextureRegion>> walkingAnimation, idleAnimation;
+    public float stateTime = 0;
+    public final Array<Animation<TextureRegion>> walkingAnimation;
+    public final Array<Animation<TextureRegion>> idleAnimation;
     // Stats
     public float speed = 300f;
     public Array<GameObject> collidables;

@@ -1,10 +1,15 @@
 package com.skloch.game.mocks;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.skloch.game.HustleGame;
 import com.skloch.game.events.EventBus;
+import com.skloch.game.events.FadeBlackScreenEvent;
 import com.skloch.game.interfaces.GameScreenProvider;
 import com.skloch.game.interfaces.IPlayer;
 import com.skloch.game.interfaces.ISoundManager;
@@ -47,4 +52,12 @@ public class MockedClasses {
     public static IGameLogic mockGameLogic(){
         return mock(IGameLogic.class);
     }
+
+    public static FadeBlackScreenEvent mockFadeBlackScreenEvent(){return mock(FadeBlackScreenEvent.class);}
+
+    public static TextureAtlas mockTextureAtlas(){return mock(TextureAtlas.class);}
+
+    public static FileHandle mockFileHandle(){return mock(FileHandle.class);}
+
+    public static Files mockFiles() {return mock(Files.class);}
 }
