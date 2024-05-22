@@ -90,7 +90,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
 
     // Increment the time and possibly day
     if (!gameScreen.isEscapeMenuVisible() && !sleeping) {
-      passTime(Gdx.graphics.getDeltaTime()*5000);
+      passTime(Gdx.graphics.getDeltaTime());
     }
 
     eventBus.publish(new TimeUpdatedEvent(daySeconds));
@@ -434,10 +434,10 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
 
     ArrayMap<String, int[]> successRanges = new ArrayMap<String, int[]>();
 
-    successRanges.put("rec",new int[] {5,10});
-    successRanges.put("study",new int[] {14,21});
-    successRanges.put("meals",new int[] {14,26});
-    successRanges.put("sleep",new int[] {35,55});
+    successRanges.put("rec",new int[] {7,10});
+    successRanges.put("study",new int[] {10,21});
+    successRanges.put("meals",new int[] {10,26});
+    successRanges.put("sleep",new int[] {30,55});
 
     if ((hoursRecreational > successRanges.get("rec")[0]) &&
             (hoursRecreational < successRanges.get("rec")[1])){
