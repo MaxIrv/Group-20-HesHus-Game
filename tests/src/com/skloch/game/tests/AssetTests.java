@@ -7,13 +7,15 @@ import com.skloch.game.GameMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/** Tests for assets. */
 @RunWith(GdxTestRunner.class)
 public class AssetTests {
-    @Test
-    public void testShipAssetExists() {
-        for (String mapName : GameMap.mapPaths.values()) {
-            assertTrue("The asset for TMX map exists",
-                    Gdx.files.internal(mapName).exists());
-        }
+
+  /** Test that the ship asset exists. */
+  @Test
+  public void testShipAssetExists() {
+    for (String mapName : GameMap.mapPaths.values()) {
+      assertTrue("The asset for TMX map exists", Gdx.files.internal(mapName).exists());
     }
+  }
 }

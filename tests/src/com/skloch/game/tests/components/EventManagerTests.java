@@ -1,81 +1,60 @@
 package com.skloch.game.tests.components;
 
-import com.skloch.game.*;
-import com.skloch.game.events.*;
+import com.skloch.game.InterfaceEventManager;
+import com.skloch.game.events.EventBus;
+import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.mocks.MockedClasses;
 import com.skloch.game.tests.GdxTestRunner;
-import com.skloch.game.interfaces.GameScreenProvider;
-import com.skloch.game.interfaces.IPlayer;
-import com.skloch.game.interfaces.IGameLogic;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/** Tests for the EventManager class. */
 @RunWith(GdxTestRunner.class)
 public class EventManagerTests {
-    private EventManager eventManager;
-    private IGameLogic gameLogic;
-    private EventBus eventBus;
-    @Before
-    public void setup() {
-        gameLogic = MockedClasses.mockGameLogic();
-        eventBus = MockedClasses.mockEventBus();
+  private InterfaceEventManager eventManager;
+  private GameLogicInterface gameLogic;
+  private EventBus eventBus;
 
-        eventManager = new EventManager(gameLogic, eventBus);
-    }
+  /** Setup the mocked classes for the testing. */
+  @Before
+  public void setup() {
+    gameLogic = MockedClasses.mockGameLogic();
+    eventBus = MockedClasses.mockEventBus();
 
-    @Test
-    public void testEventFadeFromBlack() {
+    eventManager = new InterfaceEventManager(gameLogic, eventBus);
+  }
 
-    }
+  @Test
+  public void testEventFadeFromBlack() {}
 
-    @Test
-    public void testEventFadeToBlack() {
+  @Test
+  public void testEventFadeToBlack() {}
 
-    }
+  @Test
+  public void testGetObjectInteraction_Rch() {}
 
-    @Test
-    public void testGetObjectInteraction_Rch() {
+  @Test
+  public void testGetObjectInteraction_Chest() {}
 
-    }
+  @Test
+  public void testHasCustomObjectInteraction_Chest() {}
 
-    @Test
-    public void testGetObjectInteraction_Chest() {
+  @Test
+  public void testTreeEvent() {}
 
-    }
+  @Test
+  public void testChestEvent() {}
 
-    @Test
-    public void testHasCustomObjectInteraction_Chest() {
+  @Test
+  public void testPiazzaEvent_TooEarly() {}
 
-    }
+  @Test
+  public void testPiazzaEvent_NotEnoughEnergy() {}
 
-    @Test
-    public void testTreeEvent() {
+  @Test
+  public void testPiazzaEvent_Chats() {}
 
-    }
-
-    @Test
-    public void testChestEvent() {
-
-    }
-
-    @Test
-    public void testPiazzaEvent_TooEarly() {
-
-    }
-
-    @Test
-    public void testPiazzaEvent_NotEnoughEnergy() {
-
-    }
-
-    @Test
-    public void testPiazzaEvent_Chats() {
-
-    }
-
-    @Test
-    public void testPiazzaEvent_ChatsTopic() {
-
-    }
+  @Test
+  public void testPiazzaEvent_ChatsTopic() {}
 }
