@@ -22,9 +22,19 @@ jobs:
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: build jacocoTestReport
+          arguments: build jacocoTestReport checkstyleMain
       - name: Upload JaCoCo coverage report as a workflow artifact
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: tests/build/reports/jacoco/test/html/
+      - name: Upload library JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-1.0.jar
+          path: core/build/libs/core-1.0.jar
+      - name: Upload Checkstytle report
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-report
+          path: core/build/reports/checkstyle/main.html
