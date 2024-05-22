@@ -9,11 +9,12 @@ import com.skloch.game.events.dialoguebox.DialogueSetOptions;
 import com.skloch.game.events.dialoguebox.DialogueSetText;
 import com.skloch.game.events.dialoguebox.DialogueUpdateState;
 import com.skloch.game.interfaces.GameLogicInterface;
+import com.skloch.game.interfaces.EventManagerInterface;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** A class that maps Object's event strings to actual Java functions. */
-public class InterfaceEventManager implements com.skloch.game.interfaces.InterfaceEventManager {
+public class EventManager implements EventManagerInterface {
   private final GameLogicInterface gameLogic;
   private final EventBus eventBus;
   private final HashMap<String, Integer> activityEnergies;
@@ -35,7 +36,7 @@ public class InterfaceEventManager implements com.skloch.game.interfaces.Interfa
    * @param gameLogic The game logic object
    * @param eventBus The event bus object
    */
-  public InterfaceEventManager(GameLogicInterface gameLogic, EventBus eventBus) {
+  public EventManager(GameLogicInterface gameLogic, EventBus eventBus) {
     this.gameLogic = gameLogic;
     this.eventBus = eventBus;
 

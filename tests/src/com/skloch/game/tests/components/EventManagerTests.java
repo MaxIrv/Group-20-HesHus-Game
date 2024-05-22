@@ -1,6 +1,6 @@
 package com.skloch.game.tests.components;
 
-import com.skloch.game.InterfaceEventManager;
+import com.skloch.game.EventManager;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.mocks.MockedClasses;
@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 /** Tests for the EventManager class. */
 @RunWith(GdxTestRunner.class)
 public class EventManagerTests {
-  private InterfaceEventManager eventManager;
+  private EventManager eventManager;
   private GameLogicInterface gameLogic;
   private EventBus eventBus;
 
@@ -22,7 +22,7 @@ public class EventManagerTests {
     gameLogic = MockedClasses.mockGameLogic();
     eventBus = MockedClasses.mockEventBus();
 
-    eventManager = new InterfaceEventManager(gameLogic, eventBus);
+    eventManager = new EventManager(gameLogic, eventBus);
   }
 
   @Test

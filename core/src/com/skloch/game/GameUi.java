@@ -27,12 +27,13 @@ import com.skloch.game.events.dialoguebox.DialogueSetText;
 import com.skloch.game.events.dialoguebox.DialogueUpdateState;
 import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.GameScreenProvider;
+import com.skloch.game.interfaces.GameUiInterface;
 
 /**
  * A class to display the game's user interface, including the energy bar, time, stats, and dialogue
  * box. This class is called by the GameScreen class to render the GUI.
  */
-public class GameUiInterface implements com.skloch.game.interfaces.GameUiInterface {
+public class GameUi implements GameUiInterface {
   private final HustleGame game;
   private final GameScreen gameScreen;
   private final GameLogicInterface gameLogic;
@@ -64,7 +65,7 @@ public class GameUiInterface implements com.skloch.game.interfaces.GameUiInterfa
    * @param eventBus The event bus for subscribing to game events
    * @param gameScreenProvider The game screen provider
    */
-  public GameUiInterface(
+  public GameUi(
       HustleGame game,
       GameScreen gameScreen,
       GameLogicInterface gameLogic,

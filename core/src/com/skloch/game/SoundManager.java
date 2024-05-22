@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
+import com.skloch.game.interfaces.SoundManagerInterface;
 
 /** A class handling loading, playing and disposing of sounds. */
-public class SoundManagerInterface
-    implements Disposable, com.skloch.game.interfaces.SoundManagerInterface {
+public class SoundManager implements Disposable, SoundManagerInterface {
   public Music overworldMusic;
   public Music menuMusic;
   private Sound footstep1;
@@ -26,7 +26,7 @@ public class SoundManagerInterface
    * so a GameScreen can just call "play overworld music" without needing to know the track title.
    * Also handles disposing sounds and music
    */
-  public SoundManagerInterface() {
+  public SoundManager() {
     // Load music
     overworldMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/OverworldMusic.mp3"));
     overworldMusic.setLooping(true);

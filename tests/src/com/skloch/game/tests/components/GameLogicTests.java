@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.skloch.game.GameLogicInterface;
+import com.skloch.game.GameLogic;
 import com.skloch.game.HustleGame;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.interfaces.GameScreenProvider;
@@ -24,7 +24,7 @@ public class GameLogicTests {
   private GameScreenProvider gameScreenProvider;
   private EventBus eventBus;
   private PlayerInterface player;
-  private GameLogicInterface gameLogic;
+  private GameLogic gameLogic;
   private SpriteBatch spriteBatch;
   private Stage stage;
 
@@ -39,7 +39,7 @@ public class GameLogicTests {
     stage = MockedClasses.mockStage();
     game.soundManager = MockedClasses.mockSoundManager();
 
-    gameLogic = new GameLogicInterface(game, gameScreenProvider, 1, eventBus);
+    gameLogic = new GameLogic(game, gameScreenProvider, 1, eventBus);
   }
 
   @Test

@@ -62,7 +62,7 @@ public class HustleGame extends Game {
     // Bottom most layer on 'layers' tab is 0
 
     shapeRenderer = new ShapeRenderer();
-    soundManager = new com.skloch.game.SoundManagerInterface();
+    soundManager = new SoundManager();
 
     // Make a stage with a blue background that any screen can draw
     Image blueImage = new Image(new Texture(Gdx.files.internal("Sprites/white_square.png")));

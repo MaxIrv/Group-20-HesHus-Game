@@ -56,7 +56,7 @@ public interface GameLogicInterface {
 
   float getDaySeconds();
 
-  InterfaceEventManager getEventManager();
+  EventManagerInterface getEventManager();
 
   boolean isPlayerNearObject();
 

@@ -14,18 +14,19 @@ import com.skloch.game.events.GameStatsUpdatedEvent;
 import com.skloch.game.events.MapSwitchEvent;
 import com.skloch.game.events.TimeUpdatedEvent;
 import com.skloch.game.events.dialoguebox.DialogueScrollEvent;
+import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.GameScreenProvider;
-import com.skloch.game.interfaces.InterfaceEventManager;
+import com.skloch.game.interfaces.EventManagerInterface;
 import com.skloch.game.interfaces.PlayerInterface;
 
 /**
  * A class that handles the game logic, including the player, time, energy, and map switching. This
  * class is called by the GameScreen class to update the game.
  */
-public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicInterface {
+public class GameLogic implements GameLogicInterface {
   private final HustleGame game;
   private final GameScreenProvider gameScreen;
-  private final InterfaceEventManager eventManager;
+  private final EventManagerInterface eventManager;
   private final EventBus eventBus;
   private final PlayerInterface player;
   private int energy = 100;
@@ -52,11 +53,11 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
    * @param avatarChoice The avatar choice
    * @param eventBus The event bus
    */
-  public GameLogicInterface(
+  public GameLogic(
       HustleGame game, GameScreenProvider gameScreen, int avatarChoice, EventBus eventBus) {
     this.game = game;
     this.gameScreen = gameScreen;
-    this.eventManager = new com.skloch.game.InterfaceEventManager(this, eventBus);
+    this.eventManager = new EventManager(this, eventBus);
     this.eventBus = eventBus;
 
     hoursStudied = hoursRecreational = hoursSlept = mealsEaten = 0;
@@ -403,7 +404,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
   }
 
   @Override
-  public InterfaceEventManager getEventManager() {
+  public EventManagerInterface getEventManager() {
     return eventManager;
   }
 

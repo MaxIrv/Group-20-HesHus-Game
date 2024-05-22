@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
-import com.skloch.game.interfaces.InterfaceEventManager;
+import com.skloch.game.interfaces.EventManagerInterface;
 
 /** A class to display a dialogue box for text and options on the screen. */
 public class DialogueBox {
@@ -82,7 +82,7 @@ public class DialogueBox {
      * Sets the options visible to the player when asking for a choice. Also sets which events to
      * call from each option. Event strings are translated into events in EventManager
      *
-     * @see com.skloch.game.InterfaceEventManager
+     * @see EventManager
      * @param options The options available to the player e.g. "Yes" and "No"
      * @param events The events called to the option of the same index E.g. "piazza" and
      *     "closeDialogue"
@@ -347,7 +347,7 @@ public class DialogueBox {
    * Pressing 'confirm' on the dialogue box Either selects the choice if the select is open, or
    * advances text if not.
    */
-  public void enter(InterfaceEventManager eventManager) {
+  public void enter(EventManagerInterface eventManager) {
     if (selectBox.isVisible()) {
       selectBox.hide();
       eventManager.event(selectBox.getChoice());
@@ -357,7 +357,7 @@ public class DialogueBox {
   }
 
   /** Continues on to the next bit of text, or closes the window if the end is reached. */
-  private void advanceText(InterfaceEventManager eventManager) {
+  private void advanceText(EventManagerInterface eventManager) {
     if (scrollingText) {
       scrollingText = false;
       textCounter = 0;
