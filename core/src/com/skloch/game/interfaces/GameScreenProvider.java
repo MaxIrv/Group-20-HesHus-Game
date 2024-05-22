@@ -1,5 +1,6 @@
 package com.skloch.game.interfaces;
 
+import com.skloch.game.GameMap;
 import com.skloch.game.GameObject;
 
 public interface GameScreenProvider {
@@ -9,4 +10,5 @@ public interface GameScreenProvider {
     boolean isPlayerSleeping();
     GameObject getPlayerClosestObject();
     IPlayer getPlayer();
+    GameMap getGameMap();
 }
