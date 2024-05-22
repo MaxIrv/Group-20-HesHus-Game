@@ -18,9 +18,24 @@ plugins {
     id 'jacoco'
 }
 
+configurations {
+    checkstyleRules
+}
+
+dependencies {
+    checkstyleRules(
+            "com.puppycrawl.tools:checkstyle:10.12.4") {
+        transitive = false
+    }
+}
+
 checkstyle {
     toolVersion = "10.12.4"
+    config = resources.text.fromArchiveEntry(
+            configurations.checkstyleRules, 'google_check.xml')
 }
+
+
 
 allprojects {
     repositories {
@@ -45,6 +60,9 @@ allprojects {
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
     }
+
+    apply plugin: "java"
+    apply plugin: "checkstyle"
 }
 
 project(":desktop") {
@@ -68,9 +86,7 @@ project(":core") {
 }
 
 project(":tests") {
-    apply plugin: "java"
     apply plugin: "jacoco"
-    apply plugin: "checkstyle"
 
     sourceSets.test.java.srcDirs = ["src/"]
 
@@ -85,5 +101,18 @@ project(":tests") {
         testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        sourceSets project(':core').sourceSets.main
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: ['**/*Tests.*', '**/GdxTestRunner.*'])
+            }))
+        }
+    }
+    test {
+        finalizedBy jacocoTestReport
     }
 }
