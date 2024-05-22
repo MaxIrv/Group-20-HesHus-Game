@@ -168,6 +168,7 @@ public class EventManager implements IEventManager {
     }
 
     /**
+
      * A simple event to handle interaction with houses (other than your own).
      */
     public void housesEvent(){
@@ -176,11 +177,13 @@ public class EventManager implements IEventManager {
     }
 
     /**
+
      * Sets the text when opening a chest
      */
     private void chestEvent() {
         eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
         eventBus.publish(new DialogueSetText("Wow! This chest is full of so many magical items! I wonder how they will help you out on your journey! Boy, this is an awfully long piece of text, I wonder if someone is testing something?\n...\n...\n...\nHow cool!"));
+
     }
 
     /**
@@ -280,6 +283,7 @@ public class EventManager implements IEventManager {
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to study, go to bed!"));
+
         }
     }
 
@@ -309,6 +313,7 @@ public class EventManager implements IEventManager {
                     gameLogic.passTime(hours * 60); // in seconds
                 }
             }
+
         }
     }
 
@@ -319,6 +324,7 @@ public class EventManager implements IEventManager {
      * Gives the player the choice to eat breakfast, lunch or dinner depending on the time of day
      * @param args Should contain the meal the player wants to eat
      */
+
     public void ronCookeEvent(String[] args) {
         eatingEvent("the Ron Cooke Hub");
     }
@@ -341,7 +347,9 @@ public class EventManager implements IEventManager {
             if (gameLogic.getEnergy() < energyCost) {
                 eventBus.publish(new DialogueSetText("You are too tired to eat right now!"));
             } else {
-                eventBus.publish(new DialogueSetText(String.format("You took an hour to eat %s at the %s!\nYou lost %d energy!", gameLogic.getMeal(),placeName, energyCost)));
+
+                eventBus.publish(new DialogueSetText(String.format("You took an hour to eat %s at %s!\nYou lost %d energy!", gameLogic.getMeal(),placeName, energyCost)));
+
                 gameLogic.addMeal();
                 gameLogic.decreaseEnergy(energyCost);
                 gameLogic.passTime(60); // in seconds
@@ -349,7 +357,9 @@ public class EventManager implements IEventManager {
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to eat food, go to bed!"));
+
         }
+
 
         }
 
