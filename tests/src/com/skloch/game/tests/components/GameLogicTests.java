@@ -1,19 +1,19 @@
 package com.skloch.game.tests.components;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.skloch.game.*;
 import com.skloch.game.events.*;
-import com.skloch.game.mocks.MockedClasses;
-import com.skloch.game.tests.GdxTestRunner;
 import com.skloch.game.interfaces.GameScreenProvider;
 import com.skloch.game.interfaces.IPlayer;
+import com.skloch.game.mocks.MockedClasses;
+import com.skloch.game.tests.GdxTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(GdxTestRunner.class)
 public class GameLogicTests {
@@ -35,10 +35,6 @@ public class GameLogicTests {
         spriteBatch = MockedClasses.mockSpriteBatch();
         stage = MockedClasses.mockStage();
         game.soundManager = MockedClasses.mockSoundManager();
-
-        // Mock the initialization of classes that use SpriteBatch and Stage
-        when(game.getBatch()).thenReturn(spriteBatch);
-        when(game.getStage()).thenReturn(stage);
 
         gameLogic = new GameLogic(game, gameScreenProvider, 1, eventBus);
     }

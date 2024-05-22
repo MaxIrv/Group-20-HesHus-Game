@@ -1,7 +1,8 @@
 package com.skloch.game.mocks;
 
+import static org.mockito.Mockito.mock;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.skloch.game.HustleGame;
 import com.skloch.game.events.EventBus;
@@ -10,14 +11,11 @@ import com.skloch.game.interfaces.IPlayer;
 import com.skloch.game.interfaces.ISoundManager;
 import com.skloch.game.interfaces.IGameLogic;
 
-import static org.mockito.Mockito.mock;
-
 public class MockedClasses {
 
     public static HustleGame mockHustleGame() {
-        HustleGame game = mock(HustleGame.class);
-        game.map = mock(TiledMap.class);
-        return game;
+      //        game.map = mock(GameMap.class);
+        return mock(HustleGame.class);
     }
 
     public static GameScreenProvider mockGameScreenProvider() {
