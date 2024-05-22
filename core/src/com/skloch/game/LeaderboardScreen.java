@@ -42,10 +42,10 @@ public class LeaderboardScreen implements Screen {
     public LeaderboardScreen (final HustleGame game) {
         this.game = game;
 
-        leaderboardStage= new Stage(new FitViewport(game.WIDTH, game.HEIGHT));
+        leaderboardStage= new Stage(new FitViewport(game.width, game.height));
         camera = new OrthographicCamera();
-        viewport = new FitViewport(game.WIDTH, game.HEIGHT, camera);
-        camera.setToOrtho(false, game.WIDTH, game.HEIGHT);
+        viewport = new FitViewport(game.width, game.height, camera);
+        camera.setToOrtho(false, game.width, game.height);
 
         // Create the window
         Window leaderboardWindow = new Window("", game.skin);
@@ -97,16 +97,12 @@ public class LeaderboardScreen implements Screen {
         //Group nameInputGroup = new Group();
         //leaderboardStage.addActor(nameInputGroup);
 
-        // Grey background
-        Image inputModeLayer = new Image(new Texture(Gdx.files.internal("Interface/transparent_grey.png")));
-        inputModeLayer.setBounds(0,0,game.WIDTH, game.HEIGHT);
-        inputModeLayer.setOrigin(game.WIDTH/2f,game.HEIGHT/2f);
-
         inputWindow = new Window("",game.skin);
         leaderboardStage.addActor(inputWindow);
         inputWindow.setWidth(300);
-        inputWindow.setPosition((game.WIDTH/2f)-inputWindow.getWidth()/2,
-                (game.HEIGHT/2f)-inputWindow.getHeight()/2);
+        inputWindow.setPosition(
+                (game.width/2f)-inputWindow.getWidth()/2,
+                (game.height/2f)-inputWindow.getHeight()/2);
         //nameInputGroup.addActor(inputBox);
 
         Label nameLabel = new Label("", game.skin);
