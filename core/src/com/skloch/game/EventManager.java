@@ -3,6 +3,13 @@ package com.skloch.game;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.utils.Array;
+import com.skloch.game.events.DialogueBoxEvents.DialogueSetOptions;
+import com.skloch.game.events.DialogueBoxEvents.DialogueSetText;
+import com.skloch.game.events.DialogueBoxEvents.DialogueUpdateState;
+import com.skloch.game.events.EventBus;
+import com.skloch.game.events.FadeBlackScreenEvent;
+import com.skloch.game.interfaces.IEventManager;
+import com.skloch.game.interfaces.IGameLogic;
 
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,11 +17,18 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * A class that maps Object's event strings to actual Java functions.
  */
-public class EventManager {
-    private final GameScreen game;
-    public HashMap<String, Integer> activityEnergies;
+public class EventManager implements IEventManager {
+    private final IGameLogic gameLogic;
+    private final EventBus eventBus;
+    private final HashMap<String, Integer> activityEnergies;
     private final HashMap<String, String> objectInteractions;
     private final Array<String> talkTopics;
+
+    private boolean studied = false;
+    private boolean studiedTwice = false;
+    private boolean hadFun = false;
+    private boolean ate = false;
+    private boolean noSleep = false;
 
     /**
      * A class that maps Object's event strings to actual Java functions.
@@ -23,10 +37,12 @@ public class EventManager {
      * Which the function interprets as "study at the piazza for 1 hour".
      * Object's event strings can be set in the Tiled map editor with a property called "event"
      *
-     * @param game An instance of the GameScreen containing a player and dialogue box
+     * @param gameLogic The game logic object
+     * @param eventBus The event bus object
      */
-    public EventManager (GameScreen game) {
-        this.game = game;
+    public EventManager (IGameLogic gameLogic, EventBus eventBus) {
+        this.gameLogic = gameLogic;
+        this.eventBus = eventBus;
 
         // How much energy an hour of each activity should take
         activityEnergies = new HashMap<String, Integer>();
@@ -53,16 +69,26 @@ public class EventManager {
         talkTopics = new Array<String>(topics);
     }
 
+    /**
+     * Calls the appropriate function based on the event key
+     * @param eventKey The key of the event to be called
+     */
+    @Override
     public void event (String eventKey) {
         String[] args = eventKey.split("-");
 
         // Important functions, most likely called after displaying text
-        if (args[0].equals("fadefromblack")) {
-            fadeFromBlack();
-        } else if (args[0].equals("fadetoblack")) {
-            fadeToBlack();
-        } else if (args[0].equals("gameover")) {
-            game.GameOver();
+        switch (args[0]) {
+            case "fadefromblack":
+                fadeFromBlack();
+                break;
+            case "fadetoblack":
+                fadeToBlack();
+                break;
+            // I don't think this is used
+//            case "gameover":
+//                gameScreen.GameOver();
+//                break;
         }
 
         // Events related to objects
@@ -95,11 +121,12 @@ public class EventManager {
                 accomEvent(args);
                 break;
             case "bus_stop":
-                busStopEvent(args);
+                busStopEvent();
                 break;
             case "exit":
                 // Should do nothing and just close the dialogue menu
-                game.dialogueBox.hide();
+                eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE));
+//                gameScreen.dialogueBox.hide();
                 break;
             default:
                 objectEvent(eventKey);
@@ -111,12 +138,13 @@ public class EventManager {
 
     /**
      * Gets the interaction text associated with each object via a key
-     * @param key
+     * @param key The key of the object
      * @return The object interaction text
      */
+    @Override
     public String getObjectInteraction(String key) {
         if (key.equals("rch")) {
-            return String.format("Eat %s at the Ron Cooke Hub?", game.getMeal());
+            return String.format("Eat %s at the Ron Cooke Hub?", gameLogic.getMeal());
         } else {
             return objectInteractions.get(key);
         }
@@ -125,6 +153,7 @@ public class EventManager {
     /**
      * @return True if the object has some custom text to display that isn't just "This is an x!"
      */
+    @Override
     public boolean hasCustomObjectInteraction(String key) {
         return objectInteractions.containsKey(key);
     }
@@ -132,33 +161,34 @@ public class EventManager {
     /**
      * Sets the text when talking to a tree
      */
-    public void treeEvent() {
-        game.dialogueBox.hideSelectBox();
-        game.dialogueBox.setText("The tree doesn't say anything back.");
+    private void treeEvent() {
+//        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueSetText("The tree doesn't say anything back."));
     }
 
     /**
      * A simple event to handle interaction with houses (other than your own).
      */
     public void housesEvent(){
-        game.dialogueBox.hideSelectBox();
-        game.dialogueBox.setText("That's not your house silly.");
-
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueSetText("That's not your house silly."));
     }
 
-
-    public void chestEvent() {
-        game.dialogueBox.hideSelectBox();
-        game.dialogueBox.setText("Wow! This chest is full of so many magical items! I wonder how they will help you out on your journey! Boy, this is an awfully long piece of text, I wonder if someone is testing something?\n...\n...\n...\nHow cool!");
-
+    /**
+     * Sets the text when opening a chest
+     */
+    private void chestEvent() {
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueSetText("Wow! This chest is full of so many magical items! I wonder how they will help you out on your journey! Boy, this is an awfully long piece of text, I wonder if someone is testing something?\n...\n...\n...\nHow cool!"));
     }
 
     /**
      * Sets the text when talking to an object without a dedicated function
      */
-    public void objectEvent(String object) {
-        game.dialogueBox.hideSelectBox();
-        game.dialogueBox.setText("This is a " +  object + "!");
+    private void objectEvent(String object) {
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueSetText("This is a " +  object + "!"));
     }
 
     /**
@@ -167,41 +197,42 @@ public class EventManager {
      *
      * @param args Arguments to be passed, should contain the hours the player wants to study. E.g. ["piazza", "1"]
      */
-    public void piazzaEvent(String[] args) {
-        if (game.getSeconds() > 8*60) {
+    private void piazzaEvent(String[] args) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("meet_friends");
             // If the player is too tired to meet friends
-            if (game.getEnergy() < energyCost) {
-                game.dialogueBox.setText("You are too tired to meet your friends right now!");
+            if (gameLogic.getEnergy() < energyCost) {
+                eventBus.publish(new DialogueSetText("You are too tired to meet your friends right now!"));
 
             } else if (args.length == 1) {
                 // Ask the player to chat about something (makes no difference)
-                String[] topics = randomTopics(3);
-                game.dialogueBox.setText("What do you want to chat about?");
-                game.dialogueBox.getSelectBox().setOptions(topics, new String[]{"piazza-"+topics[0], "piazza-"+topics[1], "piazza-"+topics[2]});
+                String[] topics = randomTopics();
+                eventBus.publish(new DialogueSetText("What do you want to chat about?"));
+                eventBus.publish(new DialogueSetOptions(topics, new String[]{"piazza-"+topics[0], "piazza-"+topics[1], "piazza-"+topics[2]}));
+//                gameScreen.dialogueBox.getSelectBox().setOptions(topics, new String[]{"piazza-"+topics[0], "piazza-"+topics[1], "piazza-"+topics[2]});
             } else {
                 // Say that the player chatted about this topic for 1-3 hours
                 // RNG factor adds a slight difficulty (may consume too much energy to study)
                 int hours = ThreadLocalRandom.current().nextInt(1, 4);
-                game.dialogueBox.setText(String.format("You talked about %s for %d hours!", args[1].toLowerCase(), hours));
-                game.decreaseEnergy(energyCost * hours);
-                game.passTime(hours * 60); // in seconds
-                game.addRecreationalHours(hours);
+                eventBus.publish(new DialogueSetText(String.format("You talked about %s for %d hours!", args[1].toLowerCase(), hours)));
+                gameLogic.decreaseEnergy(energyCost * hours);
+                gameLogic.passTime(hours * 60); // in seconds
+                gameLogic.addRecreationalHours(hours);
+                hadFun = true;
             }
         } else {
-            game.dialogueBox.setText("It's too early in the morning to meet your friends, go to bed!");
+            eventBus.publish(new DialogueSetText("It's too early in the morning to meet your friends, go to bed!"));
         }
     }
 
     /**
-     * @param amount The amount of topics to return
-     * @return An array of x random topics the player can chat about
+     * @return An array of 3 random topics the player can chat about
      */
-    private String[] randomTopics(int amount) {
+    private String[] randomTopics() {
         // Returns an array of 3 random topics
-        Array<String> topics = new Array<String>(amount);
+        Array<String> topics = new Array<String>(3);
 
-        for (int i = 0;i<amount;i++) {
+        for (int i = 0; i < 3; i++) {
             String choice = talkTopics.random();
             // If statement to ensure topic hasn't already been selected
             if (!topics.contains(choice, false)) {
@@ -217,34 +248,38 @@ public class EventManager {
     /**
      * The event to be run when interacting with the computer science building
      * Gives the player the option to study for 2, 3 or 4 hours
-     * @param args
+     * @param args The arguments passed to the function, should contain the hours the player wants to study
      */
-    public void compSciEvent(String[] args) {
-        if (game.getSeconds() > 8*60) {
+    private void compSciEvent(String[] args) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("studying");
             // If the player is too tired for any studying:
-            if (game.getEnergy() < energyCost) {
-                game.dialogueBox.hideSelectBox();
-                game.dialogueBox.setText("You are too tired to study right now!");
+            if (gameLogic.getEnergy() < energyCost) {
+                eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+                eventBus.publish(new DialogueSetText("You are too tired to study right now!"));
+//                eventBus.publish(new DialogueSetText("You are too tired to study right now!");
             } else if (args.length == 1) {
                 // If the player has not yet chosen how many hours, ask
-                game.dialogueBox.setText("Study for how long?");
-                game.dialogueBox.getSelectBox().setOptions(new String[]{"2 Hours (20)", "3 Hours (30)", "4 Hours (40)"}, new String[]{"comp_sci-2", "comp_sci-3", "comp_sci-4"});
+                eventBus.publish(new DialogueSetText("Study for how long?"));
+                eventBus.publish(new DialogueSetOptions(new String[]{"2 Hours (20)", "3 Hours (30)", "4 Hours (40)"}, new String[]{"comp_sci-2", "comp_sci-3", "comp_sci-4"}));
+//                gameScreen.dialogueBox.getSelectBox().setOptions(new String[]{"2 Hours (20)", "3 Hours (30)", "4 Hours (40)"}, new String[]{"comp_sci-2", "comp_sci-3", "comp_sci-4"});
             } else {
                 int hours = Integer.parseInt(args[1]);
                 // If the player does not have enough energy for the selected hours
-                if (game.getEnergy() < hours*energyCost) {
-                    game.dialogueBox.setText("You don't have the energy to study for this long!");
+                if (gameLogic.getEnergy() < hours*energyCost) {
+                    eventBus.publish(new DialogueSetText("You don't have the energy to study for this long!"));
                 } else {
                     // If they do have the energy to study
-                    game.dialogueBox.setText(String.format("You studied for %s hours!\nYou lost %d energy", args[1], hours*energyCost));
-                    game.decreaseEnergy(energyCost * hours);
-                    game.addStudyHours(hours);
-                    game.passTime(hours * 60); // in seconds
+                    eventBus.publish(new DialogueSetText(String.format("You studied for %s hours!\nYou lost %d energy", args[1], hours*energyCost)));
+                    gameLogic.decreaseEnergy(energyCost * hours);
+                    gameLogic.addStudyHours(hours);
+                    gameLogic.passTime(hours * 60); // in seconds
+                    if (studied) {studiedTwice = true;}
+                    else {studied = true;}
                 }
             }
         } else {
-            game.dialogueBox.setText("It's too early in the morning to study, go to bed!");
+            eventBus.publish(new DialogueSetText("It's too early in the morning to study, go to bed!"));
         }
     }
 
@@ -253,25 +288,25 @@ public class EventManager {
      * @param args arguments, not used currently but will use for future expansion.
      */
     public void pubEvent(String[] args) {
-        if (game.getSeconds() > 8 * 60) {
+        if (gameLogic.getSeconds() > 8 * 60) {
             int energyCost = activityEnergies.get("pub");
-            if (game.getEnergy() < energyCost) {
-                game.dialogueBox.hideSelectBox();
-                game.dialogueBox.setText("You are too tired to go to the pub right now!");
+            if (gameLogic.getEnergy() < energyCost) {
+                eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+                eventBus.publish(new DialogueSetText("You are too tired to go to the pub right now!"));
             } else if (args.length == 1) {
                 // If the player has not yet chosen how many hours, ask
-                game.dialogueBox.setText("How long do you want to stay?");
-                game.dialogueBox.getSelectBox().setOptions(new String[]{"1 Hours (10)", "2 Hours (20)", "3 Hours (30)"}, new String[]{"pub-1", "pub-2", "pub-3"});
+                eventBus.publish(new DialogueSetText("How long do you want to stay?"));
+                eventBus.publish(new DialogueSetOptions(new String[]{"1 Hours (10)", "2 Hours (20)", "3 Hours (30)"}, new String[]{"pub-1", "pub-2", "pub-3"}));
             } else {
                 int hours = Integer.parseInt(args[1]);
                 // If the player does not have enough energy to stay for that long
-                if (game.getEnergy() < hours * energyCost) {
-                    game.dialogueBox.setText("You don't have enough energy to stay that long!");}
+                if (gameLogic.getEnergy() < hours * energyCost) {
+                    eventBus.publish(new DialogueSetText("You don't have enough energy to stay that long!"));}
                 else {
-                    game.dialogueBox.setText("You had a drink with some friends.");
-                    game.decreaseEnergy(energyCost * hours);
-                    game.addRecreationalHours(hours);
-                    game.passTime(hours * 60); // in seconds
+                    eventBus.publish(new DialogueSetText("You had a drink with some friends."));
+                    gameLogic.decreaseEnergy(energyCost * hours);
+                    gameLogic.addRecreationalHours(hours);
+                    gameLogic.passTime(hours * 60); // in seconds
                 }
             }
         }
@@ -282,7 +317,7 @@ public class EventManager {
     /**
      * The event to be run when the player interacts with the ron cooke hub
      * Gives the player the choice to eat breakfast, lunch or dinner depending on the time of day
-     * @param args
+     * @param args Should contain the meal the player wants to eat
      */
     public void ronCookeEvent(String[] args) {
         eatingEvent("the Ron Cooke Hub");
@@ -301,35 +336,36 @@ public class EventManager {
      * @param placeName the name of the place the player will be eating
      */
     private void eatingEvent(String placeName){
-        if (game.getSeconds() > 8*60) {
+        if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("eating");
-            if (game.getEnergy() < energyCost) {
-                game.dialogueBox.setText("You are too tired to eat right now!");
+            if (gameLogic.getEnergy() < energyCost) {
+                eventBus.publish(new DialogueSetText("You are too tired to eat right now!"));
             } else {
-                game.dialogueBox.setText(String.format("You took an hour to eat %s at %s!\nYou lost %d energy!", game.getMeal(),placeName, energyCost));
-                game.addMeal();
-                game.decreaseEnergy(energyCost);
-                game.passTime(60); // in seconds
+                eventBus.publish(new DialogueSetText(String.format("You took an hour to eat %s at the %s!\nYou lost %d energy!", gameLogic.getMeal(),placeName, energyCost)));
+                gameLogic.addMeal();
+                gameLogic.decreaseEnergy(energyCost);
+                gameLogic.passTime(60); // in seconds
+                ate = true;
             }
         } else {
-            game.dialogueBox.setText("It's too early in the morning to eat food, go to bed!");
+            eventBus.publish(new DialogueSetText("It's too early in the morning to eat food, go to bed!"));
         }
 
-    }
+        }
+
 
     /**
      * Allows player to "get the bus" in effect switching map.
      * @see GameScreen switchMap function
-     * @param args
      */
-    public void busStopEvent(String[] args) {
-        if (game.getCurrentMap().equals("town")){
-            game.switchMap("campus");
+    private void busStopEvent() {
+        if (gameLogic.getCurrentMap().equals("town")){
+            gameLogic.switchMap("campus");
         }
         else {
-            game.switchMap("town");
+            gameLogic.switchMap("town");
         }
-        game.dialogueBox.hideSelectBox();
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     }
 
     /**
@@ -339,18 +375,18 @@ public class EventManager {
      * @see GameScreen fadeToBlack function
      * @param args Unused currently
      */
-    public void accomEvent(String[] args) {
-        game.setSleeping(true);
-        game.dialogueBox.hide();
+    private void accomEvent(String[] args) {
+        gameLogic.setSleeping(true);
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE));
 
         // Calculate the hours slept to the nearest hour
         // Wakes the player up at 8am
         float secondsSlept;
-        if (game.getSeconds() < 60*8) {
-            secondsSlept = (60*8 - game.getSeconds());
+        if (gameLogic.getSeconds() < 60*8) {
+            secondsSlept = (60*8 - gameLogic.getSeconds());
         } else {
             // Account for the wakeup time being in the next day
-            secondsSlept = (((60*8) + 1440) - game.getSeconds());
+            secondsSlept = (((60*8) + 1440) - gameLogic.getSeconds());
         }
         int hoursSlept = Math.round(secondsSlept / 60f);
 
@@ -358,13 +394,46 @@ public class EventManager {
         setTextAction.setRunnable(new Runnable() {
             @Override
             public void run() {
-                if (game.getSleeping()) {
-                    game.dialogueBox.show();
-                    game.dialogueBox.setText(String.format("You slept for %d hours!\nYou recovered %d energy!", hoursSlept, Math.min(100, hoursSlept*13)), "fadefromblack");
+                if (gameLogic.isSleeping()) {
+                    eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.SHOW));
+                    eventBus.publish(new DialogueSetText(String.format("You slept for %d hours!\nYou recovered %d energy!", hoursSlept, Math.min(100, hoursSlept*13)), "fadefromblack"));
                     // Restore energy and pass time
-                    game.setEnergy(hoursSlept*13);
-                    game.passTime(secondsSlept);
-                    game.addSleptHours(hoursSlept);
+                    gameLogic.setEnergy(hoursSlept*13);
+                    gameLogic.passTime(secondsSlept);
+                    gameLogic.addSleptHours(hoursSlept);
+                    // Check for any streaks/achievements
+                    if (studied) {
+                        gameLogic.addStudyStreakCounter(1);
+                        gameLogic.getGame().studyStreak.checkCondition(gameLogic.getStudyStreakCounter());
+                        studied = false;
+                    }
+                    else {gameLogic.setStudyStreakCounter(0);}
+
+                    if (studiedTwice) {
+                        gameLogic.setBookWormCounter(1);
+                        gameLogic.getGame().bookWorm.checkCondition(gameLogic.getBookWormCounter());
+                        studiedTwice = false;
+                    }
+
+                    if (ate) {
+                        gameLogic.addEatStreakCounter(1);
+                        gameLogic.getGame().eatStreak.checkCondition(gameLogic.getEatStreakCounter());
+                        ate = false;
+                    }
+                    else {gameLogic.setEatStreakCounter(0);}
+
+                    if (hadFun) {
+                        gameLogic.addFunStreakCounter(1);
+                        gameLogic.getGame().funStreak.checkCondition(gameLogic.getFunStreakCounter());
+                        hadFun = false;
+                    }
+                    else {gameLogic.setFunStreakCounter(0);}
+
+                    if (noSleep) {
+                        gameLogic.setNoSleepCounter(1);
+                        gameLogic.getGame().allNighter.checkCondition(gameLogic.getNoSleepCounter());
+                        noSleep = false;
+                    }
                 }
             }
         });
@@ -376,41 +445,41 @@ public class EventManager {
     /**
      * Fades the screen to black
      */
-    public void fadeToBlack() {
-        game.blackScreen.addAction(Actions.fadeIn(3f));
+    private void fadeToBlack() {
+        eventBus.publish(new FadeBlackScreenEvent(Actions.fadeIn(3f)));
     }
 
     /**
      * Fades the screen to black, then runs a runnable after it is done
      * @param runnable A runnable to execute after fading is finished
      */
-    public void fadeToBlack(RunnableAction runnable) {
-        game.blackScreen.addAction(Actions.sequence(Actions.fadeIn(3f), runnable));
+    private void fadeToBlack(RunnableAction runnable) {
+        eventBus.publish(new FadeBlackScreenEvent(Actions.fadeIn(3f), runnable));
     }
 
     /**
      * Fades the screen back in from black, displays a good morning message if the player was sleeping
      */
-    public void fadeFromBlack() {
+    private void fadeFromBlack() {
         // If the player is sleeping, queue up a message to be sent
-        if (game.getSleeping()) {
+        if (gameLogic.isSleeping()) {
             RunnableAction setTextAction = new RunnableAction();
             setTextAction.setRunnable(new Runnable() {
                   @Override
                   public void run() {
-                      if (game.getSleeping()) {
-                          game.dialogueBox.show();
+                      if (gameLogic.isSleeping()) {
+                          eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.SHOW));
                           // Show a text displaying how many days they have left in the game
-                          game.dialogueBox.setText(game.getWakeUpMessage());
-                          game.setSleeping(false);
+                          eventBus.publish(new DialogueSetText(gameLogic.getWakeUpMessage()));
+                          gameLogic.setSleeping(false);
                       }
                   }
               });
 
             // Queue up events
-            game.blackScreen.addAction(Actions.sequence(Actions.fadeOut(3f), setTextAction));
+            eventBus.publish(new FadeBlackScreenEvent(Actions.fadeOut(3f), setTextAction));
         } else {
-            game.blackScreen.addAction(Actions.fadeOut(3f));
+            eventBus.publish(new FadeBlackScreenEvent(Actions.fadeOut(3f)));
         }
     }
 }

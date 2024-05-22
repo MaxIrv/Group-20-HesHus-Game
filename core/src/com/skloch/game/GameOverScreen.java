@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -25,6 +26,7 @@ public class GameOverScreen implements Screen {
     Stage gameOverStage;
     Viewport viewport;
     OrthographicCamera camera;
+    ScrollPane scrollPane;
 
     /**
      * A screen to display a 'Game Over' screen when the player finishes their exams
@@ -60,26 +62,41 @@ public class GameOverScreen implements Screen {
         gameOverTable.row();
 
         Table scoresTable = new Table();
-        gameOverTable.add(scoresTable).prefHeight(380).prefWidth(450);
+        gameOverTable.add(scoresTable);
         gameOverTable.row();
+
 
         // Display scores
         scoresTable.add(new Label("Hours Studied", game.skin, "interaction")).padBottom(3);
-        scoresTable.row();
-        scoresTable.add(new Label(String.valueOf(hoursStudied), game.skin, "button")).padBottom(7);
+        scoresTable.add(new Label(String.valueOf(hoursStudied), game.skin, "button")).padBottom(3);
         scoresTable.row();
         scoresTable.add(new Label("Recreational hours", game.skin, "interaction")).padBottom(3);
-        scoresTable.row();
-        scoresTable.add(new Label(String.valueOf(hoursRecreational), game.skin, "button")).padBottom(7);
+        scoresTable.add(new Label(String.valueOf(hoursRecreational), game.skin, "button")).padBottom(3);
         scoresTable.row();
         scoresTable.add(new Label("Hours Slept", game.skin, "interaction")).padBottom(3);
-        scoresTable.row();
-        scoresTable.add(new Label(String.valueOf(hoursSlept), game.skin, "button")).padBottom(7);
+        scoresTable.add(new Label(String.valueOf(hoursSlept), game.skin, "button")).padBottom(3);
         scoresTable.row();
         scoresTable.add(new Label("Meals Eaten", game.skin, "interaction")).padBottom(3);
+        scoresTable.add(new Label(String.valueOf(mealsEaten), game.skin, "button")).padBottom(3);
         scoresTable.row();
-        scoresTable.add(new Label(String.valueOf(mealsEaten), game.skin, "button"));
-
+        if (this.game.studyStreak.getAchieved()) {
+            scoresTable.add(new Label(game.studyStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+        }
+        if (this.game.bookWorm.getAchieved()) {
+            scoresTable.add(new Label(game.bookWorm.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+        }
+        if (this.game.eatStreak.getAchieved()) {
+            scoresTable.add(new Label(game.eatStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+        }
+        if (this.game.funStreak.getAchieved()) {
+            scoresTable.add(new Label(game.funStreak.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+        }
+        if (this.game.allNighter.getAchieved()) {
+            scoresTable.add(new Label(game.allNighter.getTitle(), game.skin,"interaction")).padBottom(3);
+            scoresTable.row();
+        }
 
         // Exit button
         TextButton exitButton = new TextButton("Main Menu", game.skin);
@@ -89,7 +106,7 @@ public class GameOverScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.soundManager.playButton();
-                game.soundManager.overworldMusic.stop();
+                game.soundManager.stopOverworldMusic();
                 dispose();
                 game.setScreen(new MenuScreen(game));
             }

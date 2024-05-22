@@ -240,7 +240,7 @@ public class MenuScreen implements Screen {
         text.setWrap(true);
         scrollTable.add(text).width(820f).padLeft(20);
 
-        // Exit button
+        // Continue button
         TextButton continueButton = new TextButton("Continue", game.skin);
         tutTable.add(continueButton).bottom().width(300).padTop(10);
 

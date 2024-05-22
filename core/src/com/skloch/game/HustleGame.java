@@ -12,6 +12,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.skloch.game.interfaces.ISoundManager;
+
+import java.util.function.Predicate;
 
 /**
  * A class that is initially created by DesktopLauncher, loads consistent files at the start of the game and initialises lots of important classes.
@@ -22,17 +25,24 @@ public class HustleGame extends Game {
 	public int WIDTH;
 	public int HEIGHT;
 	public Skin skin;
+
+	public static final String mapAsset = "East Campus/east_campus.tmx";
 	public TiledMap map;
 	public String credits, tutorialText;
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public ShapeRenderer shapeRenderer;
-	public SoundManager soundManager;
+	public ISoundManager soundManager;
 	public Stage blueBackground;
 	public int[] backgroundLayers, foregroundLayers, objectLayers;
 	public int mapSquareSize;
 	public float mapScale;
 	public MapProperties mapProperties;
+	public Achievement studyStreak;
+	public Achievement bookWorm;
+	public Achievement eatStreak;
+	public Achievement funStreak;
+	public Achievement allNighter;
 
 
 	/**
@@ -64,7 +74,7 @@ public class HustleGame extends Game {
 		batch = new SpriteBatch();
 		skin = new Skin(Gdx.files.internal("Interface/BlockyInterface.json"));
 		// Map
-		map = new TmxMapLoader().load("East Campus/east_campus.tmx");
+		map = new TmxMapLoader().load(mapAsset);
 		mapProperties = map.getProperties();
 
 		// Define background, foreground and object layers
@@ -88,6 +98,22 @@ public class HustleGame extends Game {
 
 		credits = readTextFile("Text/credits.txt");
 		tutorialText = readTextFile("Text/tutorial_text.txt");
+
+		// Generates all achievements
+		Predicate<Integer> studyStreakNo = i -> (i > 4);
+		studyStreak = new Achievement("Serial Studier", "Study 5 days in a row.", studyStreakNo);
+
+		Predicate<Integer> studyTwiceToday = i -> (i == 1);
+		bookWorm = new Achievement("Bookworm", "Study twice in the same day.", studyTwiceToday);
+
+		Predicate<Integer> eatStreakNo = i -> (i > 4);
+		eatStreak = new Achievement("Foodie", "Eat 5 days in a row.", eatStreakNo);
+
+		Predicate<Integer> funStreakNo = i -> (i > 4);
+		funStreak = new Achievement("Smelling the Roses", "Have fun 5 days in a row.", funStreakNo);
+
+		Predicate<Integer> noSleep = i -> (i == 1);
+		allNighter = new Achievement("The Longest Day (and Night)", "Pull an all-nighter.", noSleep);
 
 		this.setScreen(new MenuScreen(this));
 	}
@@ -141,5 +167,13 @@ public class HustleGame extends Game {
 			return file.readString();
 		}
 
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public Stage getStage() {
+		return blueBackground;
 	}
 }

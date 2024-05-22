@@ -5,16 +5,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
+import com.skloch.game.interfaces.IEventManager;
 
 /**
  * A class to display a dialogue box for text and options on the screen.
  *
  */
 public class DialogueBox {
-    private Window dialogueWindow;
-    private Table dialogueTable;
-    private Label textLabel;
-    private Skin skin;
+    private final Window dialogueWindow;
+    private final Label textLabel;
+    private final Skin skin;
     private final int MAXCHARS;
     private SelectBox selectBox;
     private Array<String> textLines;
@@ -36,7 +36,7 @@ public class DialogueBox {
         dialogueWindow = new Window("", skin);
 
         // Create the table for the text in the dialogue box
-        dialogueTable = new Table();
+        Table dialogueTable = new Table();
         dialogueWindow.addActor(dialogueTable);
         dialogueTable.setFillParent(true);
 
@@ -214,7 +214,6 @@ public class DialogueBox {
         }
     }
 
-
     /**
      * Sets the dialogue box and all its elements to a position onscreen
      *
@@ -360,7 +359,7 @@ public class DialogueBox {
      * Pressing 'confirm' on the dialogue box
      * Either selects the choice if the selectbox is open, or advances text if not
      */
-    public void enter(EventManager eventManager) {
+    public void enter(IEventManager eventManager) {
         if (selectBox.isVisible()) {
             selectBox.hide();
             eventManager.event(selectBox.getChoice());
@@ -372,7 +371,7 @@ public class DialogueBox {
     /**
      * Continues on to the next bit of text, or closes the window if the end is reached
      */
-    private void advanceText(EventManager eventManager) {
+    private void advanceText(IEventManager eventManager) {
         if (scrollingText) {
             scrollingText = false;
             textCounter = 0;
@@ -444,8 +443,4 @@ public class DialogueBox {
     public SelectBox getSelectBox() {
         return selectBox;
     }
-
-
-
-
 }
