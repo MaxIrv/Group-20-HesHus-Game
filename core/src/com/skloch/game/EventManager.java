@@ -48,6 +48,7 @@ public class EventManager implements IEventManager {
         activityEnergies = new HashMap<String, Integer>();
         activityEnergies.put("studying", 10);
         activityEnergies.put("meet_friends", 10);
+        activityEnergies.put("pub",10);
         activityEnergies.put("eating", 10);
 
 
@@ -57,6 +58,8 @@ public class EventManager implements IEventManager {
         objectInteractions.put("comp_sci", "Study in the Computer Science building?");
         objectInteractions.put("piazza", "Meet your friends at the Piazza?");
         objectInteractions.put("bus_stop", "Get the bus?");
+        objectInteractions.put("houses", "Open the door?");
+        objectInteractions.put("pub", "Go for a drink with some friends?");
         objectInteractions.put("accomodation", "Go to sleep for the night?\nYour alarm is set for 8am.");
         objectInteractions.put("rch", null); // Changes, dynamically returned in getObjectInteraction
         objectInteractions.put("tree", "Speak to the tree?");
@@ -90,8 +93,17 @@ public class EventManager implements IEventManager {
 
         // Events related to objects
         switch (args[0]) {
+            case "pub":
+                pubEvent(args);
+                break;
+            case "restaurant":
+                restaurantEvent();
+                break;
             case "tree":
                 treeEvent();
+                break;
+            case "houses":
+                housesEvent();
                 break;
             case "chest":
                 chestEvent();
@@ -156,6 +168,16 @@ public class EventManager implements IEventManager {
     }
 
     /**
+
+     * A simple event to handle interaction with houses (other than your own).
+     */
+    public void housesEvent(){
+        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+        eventBus.publish(new DialogueSetText("That's not your house silly."));
+    }
+
+    /**
+
      * Sets the text when opening a chest
      */
     private void chestEvent() {
@@ -261,8 +283,40 @@ public class EventManager implements IEventManager {
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to study, go to bed!"));
+
         }
     }
+
+    /**
+     * The event for the player to interact with a pub
+     * @param args arguments, not used currently but will use for future expansion.
+     */
+    public void pubEvent(String[] args) {
+        if (gameLogic.getSeconds() > 8 * 60) {
+            int energyCost = activityEnergies.get("pub");
+            if (gameLogic.getEnergy() < energyCost) {
+                eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+                eventBus.publish(new DialogueSetText("You are too tired to go to the pub right now!"));
+            } else if (args.length == 1) {
+                // If the player has not yet chosen how many hours, ask
+                eventBus.publish(new DialogueSetText("How long do you want to stay?"));
+                eventBus.publish(new DialogueSetOptions(new String[]{"1 Hours (10)", "2 Hours (20)", "3 Hours (30)"}, new String[]{"pub-1", "pub-2", "pub-3"}));
+            } else {
+                int hours = Integer.parseInt(args[1]);
+                // If the player does not have enough energy to stay for that long
+                if (gameLogic.getEnergy() < hours * energyCost) {
+                    eventBus.publish(new DialogueSetText("You don't have enough energy to stay that long!"));}
+                else {
+                    eventBus.publish(new DialogueSetText("You had a drink with some friends."));
+                    gameLogic.decreaseEnergy(energyCost * hours);
+                    gameLogic.addRecreationalHours(hours);
+                    gameLogic.passTime(hours * 60); // in seconds
+                }
+            }
+
+        }
+    }
+
 
 
     /**
@@ -270,13 +324,32 @@ public class EventManager implements IEventManager {
      * Gives the player the choice to eat breakfast, lunch or dinner depending on the time of day
      * @param args Should contain the meal the player wants to eat
      */
-    private void ronCookeEvent(String[] args) {
+
+    public void ronCookeEvent(String[] args) {
+        eatingEvent("the Ron Cooke Hub");
+    }
+
+    /**
+     * The event to handle interaction with restaurants
+     * Gives the player the choice to eat breakfast, lunch or dinner depending on the time of day
+     */
+    public void restaurantEvent(){
+        eatingEvent("a restaurant");
+    }
+
+    /**
+     * To handle events that involve eating
+     * @param placeName the name of the place the player will be eating
+     */
+    private void eatingEvent(String placeName){
         if (gameLogic.getSeconds() > 8*60) {
             int energyCost = activityEnergies.get("eating");
             if (gameLogic.getEnergy() < energyCost) {
                 eventBus.publish(new DialogueSetText("You are too tired to eat right now!"));
             } else {
-                eventBus.publish(new DialogueSetText(String.format("You took an hour to eat %s at the Ron Cooke Hub!\nYou lost %d energy!", gameLogic.getMeal(), energyCost)));
+
+                eventBus.publish(new DialogueSetText(String.format("You took an hour to eat %s at %s!\nYou lost %d energy!", gameLogic.getMeal(),placeName, energyCost)));
+
                 gameLogic.addMeal();
                 gameLogic.decreaseEnergy(energyCost);
                 gameLogic.passTime(60); // in seconds
@@ -284,9 +357,12 @@ public class EventManager implements IEventManager {
             }
         } else {
             eventBus.publish(new DialogueSetText("It's too early in the morning to eat food, go to bed!"));
+
         }
 
-    }
+
+        }
+
 
     /**
      * Allows player to "get the bus" in effect switching map.
@@ -374,6 +450,7 @@ public class EventManager implements IEventManager {
 
         fadeToBlack(setTextAction);
     }
+
 
     /**
      * Fades the screen to black
