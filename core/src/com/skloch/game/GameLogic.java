@@ -73,7 +73,7 @@ public class GameLogic implements IGameLogic {
 
         // Increment the time and possibly day
         if (!gameScreen.isEscapeMenuVisible() && !sleeping) {
-            passTime(Gdx.graphics.getDeltaTime());
+            passTime(Gdx.graphics.getDeltaTime() *1000);
         }
 
         eventBus.publish(new TimeUpdatedEvent(daySeconds));

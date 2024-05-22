@@ -100,7 +100,10 @@ public class GameOverScreen implements Screen {
 
         // Exit button
         TextButton exitButton = new TextButton("Main Menu", game.skin);
-        gameOverTable.add(exitButton).bottom().width(300).padTop(10);
+        TextButton leaderboardButton = new TextButton("Leaderboard", game.skin);
+        gameOverTable.add(exitButton).width(300).bottom().padTop(10);
+        gameOverTable.row();
+        gameOverTable.add(leaderboardButton).width(300).bottom().padTop(10);
 
         exitButton.addListener(new ChangeListener() {
             @Override
@@ -109,6 +112,15 @@ public class GameOverScreen implements Screen {
                 game.soundManager.stopOverworldMusic();
                 dispose();
                 game.setScreen(new MenuScreen(game));
+            }
+        });
+
+        leaderboardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.soundManager.playButton();
+                dispose();
+                game.setScreen(new LeaderboardScreen(game));
             }
         });
 
