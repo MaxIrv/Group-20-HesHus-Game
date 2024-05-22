@@ -239,6 +239,9 @@ public class EventManager implements IEventManager {
                 eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
                 eventBus.publish(new DialogueSetText("You are too tired to study right now!"));
 //                eventBus.publish(new DialogueSetText("You are too tired to study right now!");
+            } else if (studied && studiedTwice) {
+                eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
+                eventBus.publish(new DialogueSetText("You have already studied twice in a day before!"));
             } else if (args.length == 1) {
                 // If the player has not yet chosen how many hours, ask
                 eventBus.publish(new DialogueSetText("Study for how long?"));
@@ -346,7 +349,6 @@ public class EventManager implements IEventManager {
                     if (studiedTwice) {
                         gameLogic.setBookWormCounter(1);
                         gameLogic.getGame().bookWorm.checkCondition(gameLogic.getBookWormCounter());
-                        studiedTwice = false;
                     }
 
                     if (ate) {
