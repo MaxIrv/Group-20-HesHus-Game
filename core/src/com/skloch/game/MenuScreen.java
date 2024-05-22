@@ -36,7 +36,6 @@ public class MenuScreen implements Screen {
      */
     public MenuScreen(final HustleGame game) {
         this.game = game;
-        this.game.menuScreen = this;
         // Create stage to draw UI on
         menuStage = new Stage(new FitViewport(game.WIDTH, game.HEIGHT));
         Gdx.input.setInputProcessor(menuStage);

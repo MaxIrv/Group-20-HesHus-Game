@@ -1,5 +1,6 @@
 package com.skloch.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,6 +43,7 @@ public class GameScreen implements Screen, GameScreenProvider {
     final IGameLogic gameLogic;
     final IGameRenderer gameRenderer;
     final IGameUI gameUI;
+    final GameMap gameMap;
     final EventBus eventBus;
     private IPlayer player;
     protected InputMultiplexer inputMultiplexer;
@@ -56,15 +58,15 @@ public class GameScreen implements Screen, GameScreenProvider {
     public GameScreen(final HustleGame game, int avatarChoice) {
         // Important game variables
         this.game = game;
-        this.game.gameScreen = this;
         this.eventBus = new EventBus();
 
+        this.gameMap = new GameMap();
         this.gameLogic = new GameLogic(game, this, avatarChoice, eventBus);
         this.player = gameLogic.getPlayer();
 
         this.gameUI = new GameUI(game, this, gameLogic, eventBus, this);
 
-        this.gameRenderer = new GameRenderer(game, eventBus);
+        this.gameRenderer = new GameRenderer(game, eventBus, gameMap);
 
         // USER INTERFACE
 
@@ -92,7 +94,7 @@ public class GameScreen implements Screen, GameScreenProvider {
         inputMultiplexer.addProcessor(gameUI.getUIStage());
         Gdx.input.setInputProcessor(inputMultiplexer);
 
-        gameLogic.setupMap(true);
+        gameLogic.setupMap(true, gameMap);
 
         gameUI.create_ui(gameRenderer.getWorldWidth(), gameRenderer.getWorldHeight());
 
@@ -118,7 +120,7 @@ public class GameScreen implements Screen, GameScreenProvider {
         delta = 0.016667f;
 
         gameLogic.update(delta);
-        gameRenderer.render(delta, gameLogic.getPlayer());
+        gameRenderer.render(delta, gameLogic.getPlayer(), gameMap);
         gameUI.render_ui(delta);
 
         // Load timer bar - needs fixing and drawing
@@ -170,6 +172,11 @@ public class GameScreen implements Screen, GameScreenProvider {
     }
 
     @Override
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    @Override
     public void resize(int width, int height) {
         gameUI.resize_ui(width, height);
         gameRenderer.resize_viewport(width, height);
@@ -208,6 +215,7 @@ public class GameScreen implements Screen, GameScreenProvider {
     public void dispose () {
         gameUI.dispose();
         gameRenderer.dispose();
+        gameMap.dispose();
     }
 
     /**

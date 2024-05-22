@@ -5,7 +5,6 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
-
 import com.badlogic.gdx.math.Vector3;
 import com.skloch.game.events.*;
 import com.skloch.game.events.DialogueBoxEvents.DialogueScrollEvent;
@@ -13,8 +12,6 @@ import com.skloch.game.interfaces.GameScreenProvider;
 import com.skloch.game.interfaces.IEventManager;
 import com.skloch.game.interfaces.IGameLogic;
 import com.skloch.game.interfaces.IPlayer;
-
-import java.util.Map;
 
 /**
  * A class that handles the game logic, including the player, time, energy, and map switching.
@@ -34,10 +31,6 @@ public class GameLogic implements IGameLogic {
     private int day = 1;
     private boolean sleeping = false;
     private String currentMap = "campus";
-    private final Map<String, String> mapPaths = Map.of(
-            "campus", "East Campus/east_campus.tmx",
-            "town", "Town/town.tmx"
-    );
 
     public GameLogic(HustleGame game, GameScreenProvider gameScreen, int avatarChoice, EventBus eventBus) {
         this.game = game;
@@ -101,14 +94,14 @@ public class GameLogic implements IGameLogic {
      *                  whether to place the player at the spawn or respawn location.
      */
     @Override
-    public void setupMap(boolean firstLoad) {
+    public void setupMap(boolean firstLoad, GameMap gameMap) {
         // Setup map
-        float unitScale = game.mapScale / game.mapSquareSize;
+        float unitScale = gameMap.mapScale / gameMap.mapSquareSize;
 
         // Get the dimensions of the top layer
-        TiledMapTileLayer layer0 = (TiledMapTileLayer) game.map.getLayers().get(0);
+        TiledMapTileLayer layer0 = (TiledMapTileLayer) gameMap.getLayers().get(0);
         // Set the player to the middle of the map
-        player.setPos(layer0.getWidth()*game.mapScale / 2f, layer0.getHeight()*game.mapScale / 2f);
+        player.setPos(layer0.getWidth() * gameMap.mapScale / 2f, layer0.getHeight() * gameMap.mapScale / 2f);
         // Publish event to update camera position to player position
         eventBus.publish(new CameraPositionEvent(new Vector3(player.getCentreX(), player.getCentreY(), 0)));
 
@@ -116,9 +109,9 @@ public class GameLogic implements IGameLogic {
         player.clearCollidables();
 
         // Give objects to player
-        for (int layer : game.objectLayers) {
+        for (int layer : gameMap.objectLayers) {
             // Get all objects on the layer
-            MapObjects objects = game.map.getLayers().get(layer).getObjects();
+            MapObjects objects = gameMap.getLayers().get(layer).getObjects();
 
             // Loop through each, handing them to the player
             for (int i = 0; i < objects.getCount(); i++) {
@@ -144,11 +137,10 @@ public class GameLogic implements IGameLogic {
                 new Rectangle(
                         0,
                         0,
-                        game.mapProperties.get("width", Integer.class) * game.mapScale,
-                        game.mapProperties.get("height", Integer.class) * game.mapScale
+                        gameMap.mapProperties.get("width", Integer.class) * gameMap.mapScale,
+                    gameMap.mapProperties.get("height", Integer.class) * gameMap.mapScale
                 )
         );
-
     }
 
     /**
@@ -158,14 +150,13 @@ public class GameLogic implements IGameLogic {
      */
     @Override
     public void switchMap(String mapName) {
-        if (!mapPaths.containsKey(mapName)){
-            mapName="campus";
-        }
-
+        Gdx.app.log("GameLogic", "Switching to map: " + mapName);
+        Gdx.app.log("GameLogic", "Switching to map: " + mapName);
         // If we are switching to the home map then set "onHomeMap" attribute
         currentMap = mapName;
-        game.switch_map(mapPaths.get(mapName));
-        setupMap(false);
+        gameScreen.getGameMap().switch_map(mapName);
+        setupMap(false, gameScreen.getGameMap());
+        eventBus.publish(new MapSwitchEvent(gameScreen.getGameMap()));
     }
 
     /**

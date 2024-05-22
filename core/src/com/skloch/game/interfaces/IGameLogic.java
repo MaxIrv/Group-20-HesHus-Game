@@ -1,11 +1,12 @@
 package com.skloch.game.interfaces;
 
+import com.skloch.game.GameMap;
 import com.skloch.game.GameObject;
 import com.skloch.game.HustleGame;
 
 public interface IGameLogic {
     void update(float delta);
-    void setupMap(boolean firstLoad);
+    void setupMap(boolean firstLoad, GameMap gameMap);
     void switchMap(String mapName);
     String getCurrentMap();
     void passTime(float delta);

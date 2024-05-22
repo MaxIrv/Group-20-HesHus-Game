@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.skloch.game.events.CameraPositionEvent;
 import com.skloch.game.events.EventBus;
+import com.skloch.game.events.MapSwitchEvent;
 import com.skloch.game.interfaces.IGameRenderer;
 import com.skloch.game.interfaces.IPlayer;
 
@@ -19,7 +20,7 @@ import com.skloch.game.interfaces.IPlayer;
  */
 public class GameRenderer implements IGameRenderer {
     private final HustleGame game;
-    private final OrthogonalTiledMapRenderer mapRenderer;
+    private OrthogonalTiledMapRenderer mapRenderer;
     private final OrthographicCamera camera;
     private final Viewport viewport;
 
@@ -30,7 +31,7 @@ public class GameRenderer implements IGameRenderer {
      * @param game The game object
      * @param eventBus The event bus
      */
-    public GameRenderer(HustleGame game, EventBus eventBus) {
+    public GameRenderer(HustleGame game, EventBus eventBus, GameMap gameMap) {
         this.game = game;
 
         // Camera and viewport settings
@@ -40,12 +41,15 @@ public class GameRenderer implements IGameRenderer {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
         // Setup map
-        float unitScale = game.mapScale / game.mapSquareSize;
-        mapRenderer = new OrthogonalTiledMapRenderer(game.map, unitScale);
+        float unitScale = gameMap.mapScale / gameMap.mapSquareSize;
+        mapRenderer = new OrthogonalTiledMapRenderer(gameMap.map, unitScale);
 
         // Subscribe to camera position events
         eventBus.subscribe(CameraPositionEvent.class, this::onCameraPosition);
+        eventBus.subscribe(MapSwitchEvent.class, this::onGameMapSwitch);
     }
+    
+    
 
     /**
      * Initial render of the game, including the player, map and UI elements.
@@ -61,7 +65,8 @@ public class GameRenderer implements IGameRenderer {
      * @param delta The time between the last frame and this frame
      */
     @Override
-    public void render(float delta, IPlayer player) {
+    public void render(float delta, IPlayer player, GameMap gameMap) {
+        Gdx.app.log("GameRenderer", "Rendering game map " + gameMap.currentMap);
         // Clear screen
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -70,7 +75,7 @@ public class GameRenderer implements IGameRenderer {
         // Update the map's render position
         mapRenderer.setView(camera);
         // Draw the background layer
-        mapRenderer.render(game.backgroundLayers);
+        mapRenderer.render(gameMap.backgroundLayers);
 
         // Begin the spritebatch to draw the player on the screen
         game.batch.setProjectionMatrix(camera.combined);
@@ -88,9 +93,9 @@ public class GameRenderer implements IGameRenderer {
         game.batch.end();
 
         // Render map foreground layers
-        mapRenderer.render(game.foregroundLayers);
+        mapRenderer.render(gameMap.foregroundLayers);
 
-        // Focus the camera on the center of the player
+        // Focus the camera in the center of the player
         // Make it slide into place too
         // Change to camera.positon.set() to remove cool sliding
         camera.position.slerp(
@@ -120,6 +125,13 @@ public class GameRenderer implements IGameRenderer {
     private void onCameraPosition(CameraPositionEvent event) {
         camera.position.set(event.getPosition());
         camera.update();
+    }
+
+    private void onGameMapSwitch(MapSwitchEvent event) {
+        OrthogonalTiledMapRenderer oldMapRenderer = mapRenderer;
+        float unitScale = event.getNewGameMap().mapScale / event.getNewGameMap().mapSquareSize;
+        mapRenderer = new OrthogonalTiledMapRenderer(event.getNewGameMap().map, unitScale);
+        oldMapRenderer.dispose();
     }
 
     /**

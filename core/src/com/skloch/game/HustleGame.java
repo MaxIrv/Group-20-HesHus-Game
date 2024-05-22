@@ -6,14 +6,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.skloch.game.interfaces.ISoundManager;
-
 import java.util.function.Predicate;
 
 /**
@@ -25,19 +21,10 @@ public class HustleGame extends Game {
 	public int WIDTH;
 	public int HEIGHT;
 	public Skin skin;
-
-	public static final String mapAsset = "East Campus/east_campus.tmx";
-	public TiledMap map;
 	public String credits, tutorialText;
-	public GameScreen gameScreen;
-	public MenuScreen menuScreen;
 	public ShapeRenderer shapeRenderer;
 	public ISoundManager soundManager;
 	public Stage blueBackground;
-	public int[] backgroundLayers, foregroundLayers, objectLayers;
-	public int mapSquareSize;
-	public float mapScale;
-	public MapProperties mapProperties;
 	public Achievement studyStreak;
 	public Achievement bookWorm;
 	public Achievement eatStreak;
@@ -73,18 +60,10 @@ public class HustleGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		skin = new Skin(Gdx.files.internal("Interface/BlockyInterface.json"));
-		// Map
-		map = new TmxMapLoader().load(mapAsset);
-		mapProperties = map.getProperties();
 
 		// Define background, foreground and object layers
 		// IMPORTANT: CHANGE THESE WHEN UPDATING THE LAYERS IN YOUR EXPORTED MAP FROM TILED
 		// Bottom most layer on 'layers' tab is 0
-		backgroundLayers = new int[] {0, 1, 2, 3, 4, 5, 6}; // Rendered behind player
-		foregroundLayers = new int[] {7}; // Rendered in front of player
-		objectLayers = new int[] {8}; // Rectangles for the player to collide with
-		mapSquareSize = mapProperties.get("tilewidth", Integer.class);
-		mapScale = 70f;
 
 		shapeRenderer = new ShapeRenderer();
 		soundManager = new SoundManager();
@@ -119,19 +98,6 @@ public class HustleGame extends Game {
 	}
 
 	/**
-	 * Switch from to a map specified by its path.
-	 * @param mapFileName The filename of the map to switch to.
-	 */
-	public void switch_map(String mapFileName){
-		System.out.println("Changing the map.");
-		TiledMap old_map = map;
-		map = new TmxMapLoader().load(mapFileName);
-		mapProperties = map.getProperties();
-		mapSquareSize = mapProperties.get("tilewidth", Integer.class);
-		old_map.dispose();
-	}
-
-	/**
 	 * Very important, renders the game, remove super.render() to get a black screen
 	 */
 	@Override
@@ -147,7 +113,6 @@ public class HustleGame extends Game {
 		batch.dispose();
 		blueBackground.dispose();
 		skin.dispose();
-		map.dispose();
 		shapeRenderer.dispose();
 		soundManager.dispose();
 	}
@@ -167,13 +132,5 @@ public class HustleGame extends Game {
 			return file.readString();
 		}
 
-	}
-
-	public SpriteBatch getBatch() {
-		return batch;
-	}
-
-	public Stage getStage() {
-		return blueBackground;
 	}
 }
