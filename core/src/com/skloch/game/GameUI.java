@@ -8,11 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.skloch.game.events.DayUpdatedEvent;
@@ -443,4 +439,18 @@ public class GameUI implements IGameUI {
     public DialogueBox getDialogueBox() {
         return dialogueBox;
     }
+
+    public Label getTimeLabel() {return timeLabel;}
+
+    public Label getDayLabel() {return dayLabel;}
+
+    public Label getHoursRecreationalLabel() {return hoursRecreationalLabel;}
+
+    public Label getHoursStudiedLabel() {return hoursStudiedLabel;}
+
+    public Label getMealsEatenLabel() {return mealsEatenLabel;}
+
+    public Actor getEnergyBar() {return energyBar;}
+
+    public Actor getBlackScreen() {return blackScreen;}
 }

@@ -212,6 +212,10 @@ public class DialogueBox {
             choiceIndex = index;
             optionPointers.get(choiceIndex).setVisible(true);
         }
+
+        public Object[] getOptions() {return options;}
+
+        public Object[] getEvents() {return events;}
     }
 
     /**

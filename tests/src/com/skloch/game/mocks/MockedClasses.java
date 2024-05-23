@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.skloch.game.DialogueBox;
 import com.skloch.game.HustleGame;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.events.FadeBlackScreenEvent;
@@ -68,4 +70,5 @@ public class MockedClasses {
 
     public static Viewport mockViewport() {return mock(Viewport.class);}
     public static GL20 mockGL20() {return mock(GL20.class);}
+    public static DialogueBox mockDialogueBox() {return mock(DialogueBox.class);}
 }

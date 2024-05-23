@@ -117,7 +117,7 @@ public class GameRenderer implements IGameRenderer {
         viewport.update(width, height);
     }
 
-    private void onCameraPosition(CameraPositionEvent event) {
+    public void onCameraPosition(CameraPositionEvent event) {
         camera.position.set(event.getPosition());
         camera.update();
     }
@@ -130,4 +130,6 @@ public class GameRenderer implements IGameRenderer {
         mapRenderer.dispose();
     }
 
+    public Vector3 getCameraPosition() {return camera.position;
+    }
 }
