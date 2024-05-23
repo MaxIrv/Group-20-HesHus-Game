@@ -39,7 +39,11 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
   private final Map<FrameworkMethod, RunNotifier> invokeInRender =
       new HashMap<FrameworkMethod, RunNotifier>();
 
-  /** Creates a new GdxTestRunner. */
+  /**
+   * Creates a new GdxTestRunner.
+   *
+   * @param klass The test class
+   */
   public GdxTestRunner(Class<?> klass) throws InitializationError {
     super(klass);
     HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
@@ -49,10 +53,12 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
   }
 
   @Override
-  public void create() {}
+  public void create() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
   public void render() {
@@ -65,13 +71,16 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
   }
 
   @Override
-  public void resize(int width, int height) {}
+  public void resize(int width, int height) {
+  }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void dispose() {}
+  public void dispose() {
+  }
 
   @Override
   protected void runChild(FrameworkMethod method, RunNotifier notifier) {

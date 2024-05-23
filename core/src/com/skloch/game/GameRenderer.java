@@ -30,6 +30,7 @@ public class GameRenderer implements GameRendererInterface {
    *
    * @param game The game object
    * @param eventBus The event bus
+   * @param gameMap The game map
    */
   public GameRenderer(HustleGame game, EventBus eventBus, GameMap gameMap) {
     this.game = game;
@@ -51,7 +52,7 @@ public class GameRenderer implements GameRendererInterface {
 
   /** Initial render of the game, including the player, map and UI elements. */
   @Override
-  public void initial_render() {
+  public void initialRender() {
     game.shapeRenderer.setProjectionMatrix(camera.combined);
   }
 
@@ -110,7 +111,7 @@ public class GameRenderer implements GameRendererInterface {
     return viewport.getWorldHeight();
   }
 
-  public void resize_viewport(int width, int height) {
+  public void resizeViewport(int width, int height) {
     viewport.update(width, height);
   }
 

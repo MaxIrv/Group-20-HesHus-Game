@@ -57,7 +57,8 @@ public class EventManager implements EventManagerInterface {
     objectInteractions.put("bus_stop", "Get the bus?");
     objectInteractions.put("houses", "Open the door?");
     objectInteractions.put("pub", "Go for a drink with some friends?");
-    objectInteractions.put("accomodation", "Go to sleep for the night?\nYour alarm is set for 8am.");
+    objectInteractions.put("accomodation",
+        "Go to sleep for the night?\nYour alarm is set for 8am.");
     objectInteractions.put("rch", null); // Changes, dynamically returned in getObjectInteraction
     objectInteractions.put("tree", "Speak to the tree?");
 
@@ -197,6 +198,8 @@ public class EventManager implements EventManagerInterface {
 
   /**
    * Sets the text when talking to an object without a dedicated function.
+   *
+   * @param object The object to be published in the dialogue box
    */
   private void objectEvent(String object) {
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
