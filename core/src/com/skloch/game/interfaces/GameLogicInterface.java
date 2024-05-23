@@ -56,7 +56,7 @@ public interface GameLogicInterface {
 
   float getDaySeconds();
 
-  InterfaceEventManager getEventManager();
+  EventManagerInterface getEventManager();
 
   boolean isPlayerNearObject();
 
@@ -96,6 +96,8 @@ public interface GameLogicInterface {
   void setNoSleepCounter(int x);
 
   void addNoSleepCounter(int x);
+
+  float getPlayerScore();
 
   HustleGame getGame();
 }

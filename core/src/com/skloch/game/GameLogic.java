@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.skloch.game.events.CameraPositionEvent;
 import com.skloch.game.events.DayUpdatedEvent;
 import com.skloch.game.events.EnergyUpdatedEvent;
@@ -14,18 +15,19 @@ import com.skloch.game.events.GameStatsUpdatedEvent;
 import com.skloch.game.events.MapSwitchEvent;
 import com.skloch.game.events.TimeUpdatedEvent;
 import com.skloch.game.events.dialoguebox.DialogueScrollEvent;
+import com.skloch.game.interfaces.EventManagerInterface;
+import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.GameScreenProvider;
-import com.skloch.game.interfaces.InterfaceEventManager;
 import com.skloch.game.interfaces.PlayerInterface;
 
 /**
  * A class that handles the game logic, including the player, time, energy, and map switching. This
  * class is called by the GameScreen class to update the game.
  */
-public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicInterface {
+public class GameLogic implements GameLogicInterface {
   private final HustleGame game;
   private final GameScreenProvider gameScreen;
-  private final InterfaceEventManager eventManager;
+  private final EventManagerInterface eventManager;
   private final EventBus eventBus;
   private final PlayerInterface player;
   private int energy = 100;
@@ -47,16 +49,16 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
   /**
    * Constructor for the GameLogic class. Sets up the player, time, and event manager.
    *
-   * @param game The game object
-   * @param gameScreen The GameScreenProvider object
+   * @param game         The game object
+   * @param gameScreen   The GameScreenProvider object
    * @param avatarChoice The avatar choice
-   * @param eventBus The event bus
+   * @param eventBus     The event bus
    */
-  public GameLogicInterface(
+  public GameLogic(
       HustleGame game, GameScreenProvider gameScreen, int avatarChoice, EventBus eventBus) {
     this.game = game;
     this.gameScreen = gameScreen;
-    this.eventManager = new com.skloch.game.InterfaceEventManager(this, eventBus);
+    this.eventManager = new EventManager(this, eventBus);
     this.eventBus = eventBus;
 
     hoursStudied = hoursRecreational = hoursSlept = mealsEaten = 0;
@@ -113,7 +115,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
    * Load and set up the map. Passes collidable objects to the player.
    *
    * @param firstLoad whether this is the first map being loaded, determines whether to place the
-   *     player at the spawn or respawn location.
+   *                  player at the spawn or respawn location.
    */
   @Override
   public void setupMap(boolean firstLoad, GameMap gameMap) {
@@ -272,7 +274,9 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
     // hours",hoursRecreational));
   }
 
-  /** Adds an amount of meals to the total number of meals. */
+  /**
+   * Adds an amount of meals to the total number of meals.
+   */
   @Override
   public void addMeal() {
     mealsEaten++;
@@ -368,7 +372,8 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
   @Override
   public void gameOver() {
     game.setScreen(
-        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten));
+        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten,
+            getPlayerScore()));
   }
 
   // Getters commands
@@ -403,7 +408,7 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
   }
 
   @Override
-  public InterfaceEventManager getEventManager() {
+  public EventManagerInterface getEventManager() {
     return eventManager;
   }
 
@@ -417,11 +422,74 @@ public class GameLogicInterface implements com.skloch.game.interfaces.GameLogicI
     return player.getClosestObject();
   }
 
-  /** Update the stats on the UI. */
+  /**
+   * Update the stats on the UI.
+   */
   private void updateStatsEvent() {
     eventBus.publish(
         new GameStatsUpdatedEvent(
             daySeconds, day, hoursRecreational, hoursStudied, mealsEaten, hoursSlept));
+  }
+
+  /**
+   * Get the player's score based on their performance in the game.
+   *
+   * @return The player's score as a percentage
+   */
+  public float getPlayerScore() {
+
+    ArrayMap<String, int[]> successRanges = new ArrayMap<String, int[]>();
+
+    successRanges.put("rec", new int[] {7, 10});
+    successRanges.put("study", new int[] {10, 21});
+    successRanges.put("meals", new int[] {10, 26});
+    successRanges.put("sleep", new int[] {30, 55});
+
+
+    //  if target range for each thing rec, study, meals and sleep, then X points
+    float rawScore = 0;
+
+    if ((hoursRecreational > successRanges.get("rec")[0])
+        && (hoursRecreational < successRanges.get("rec")[1])) {
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("study")[0]
+        && hoursStudied < successRanges.get("study")[1]) {
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("meals")[0]
+        && hoursStudied < successRanges.get("meals")[1]) {
+      rawScore += 1;
+    }
+    if (hoursStudied > successRanges.get("sleep")[0]
+        && hoursStudied < successRanges.get("sleep")[1]) {
+      rawScore += 1;
+    }
+
+
+    // Multiply by 1.3x
+    if (game.allNighter.getAchieved()) {
+      rawScore *= 1.2f;
+    }
+    if (game.bookWorm.getAchieved()) {
+      rawScore *= 1.2f;
+    }
+    if (game.eatStreak.getAchieved()) {
+      rawScore *= 1.2f;
+    }
+    if (game.funStreak.getAchieved()) {
+      rawScore *= 1.2f;
+    }
+    if (game.studyStreak.getAchieved()) {
+      rawScore *= 1.2f;
+    }
+
+    float possibleScore = 4;
+    float ratioScore = rawScore / possibleScore;
+    if (ratioScore > 1) {
+      ratioScore = 1;
+    }
+    return ratioScore * 100;
   }
 
   // Study Streak

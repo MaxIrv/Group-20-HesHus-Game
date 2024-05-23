@@ -1,13 +1,16 @@
 package com.skloch.game.mocks;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.skloch.game.Achievement;
 import com.skloch.game.HustleGame;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.GameScreenProvider;
+import com.skloch.game.interfaces.LeaderboardScreenInterface;
 import com.skloch.game.interfaces.PlayerInterface;
 import com.skloch.game.interfaces.SoundManagerInterface;
 
@@ -45,5 +48,21 @@ public class MockedClasses {
 
   public static GameLogicInterface mockGameLogic() {
     return mock(GameLogicInterface.class);
+  }
+
+  public static LeaderboardScreenInterface mockLeaderboardScreen() {
+    return mock(LeaderboardScreenInterface.class);
+  }
+
+  /**
+   * Mock an achievement with the given achieved status.
+   *
+   * @param achieved The achieved status of the achievement
+   * @return The mocked achievement
+   */
+  public static Achievement mockAchievement(boolean achieved) {
+    Achievement achievement = mock(Achievement.class);
+    when(achievement.getAchieved()).thenReturn(achieved);
+    return achievement;
   }
 }

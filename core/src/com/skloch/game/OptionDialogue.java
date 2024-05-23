@@ -22,7 +22,7 @@ public class OptionDialogue {
   private Label rightArrow;
   boolean visible = false;
   boolean choice = false;
-  private SoundManagerInterface soundManager;
+  private SoundManager soundManager;
 
   /**
    * Creates a small window that can be shown or hidden to prompt the user for a yes/no input.
@@ -37,7 +37,7 @@ public class OptionDialogue {
    *     input. Became redundant when dialogue got selection boxes, but the code may still be useful
    *     to those continuing the project.
    */
-  public OptionDialogue(String question, int width, Skin skin, SoundManagerInterface soundManager) {
+  public OptionDialogue(String question, int width, Skin skin, SoundManager soundManager) {
     // Create an option dialogue to prompt the player for an input
     // Attempted to make it as adaptable as possible
     // Width can be changed and text wraps

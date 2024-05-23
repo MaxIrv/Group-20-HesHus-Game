@@ -46,12 +46,12 @@ public class GameScreen implements Screen, GameScreenProvider {
     this.eventBus = new EventBus();
 
     this.gameMap = new GameMap();
-    this.gameLogic = new com.skloch.game.GameLogicInterface(game, this, avatarChoice, eventBus);
+    this.gameLogic = new GameLogic(game, this, avatarChoice, eventBus);
     this.player = gameLogic.getPlayer();
 
-    this.gameUi = new com.skloch.game.GameUiInterface(game, this, gameLogic, eventBus, this);
+    this.gameUi = new GameUi(game, this, gameLogic, eventBus, this);
 
-    this.gameRenderer = new com.skloch.game.GameRendererInterface(game, eventBus, gameMap);
+    this.gameRenderer = new GameRenderer(game, eventBus, gameMap);
 
     // USER INTERFACE
 
@@ -384,6 +384,7 @@ public class GameScreen implements Screen, GameScreenProvider {
             gameLogic.getHoursStudied(),
             gameLogic.getHoursRecreational(),
             gameLogic.getHoursSlept(),
-            gameLogic.getMealsEaten()));
+            gameLogic.getMealsEaten(),
+            gameLogic.getPlayerScore()));
   }
 }

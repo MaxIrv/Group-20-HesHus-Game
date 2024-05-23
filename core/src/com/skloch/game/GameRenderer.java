@@ -11,13 +11,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.skloch.game.events.CameraPositionEvent;
 import com.skloch.game.events.EventBus;
 import com.skloch.game.events.MapSwitchEvent;
+import com.skloch.game.interfaces.GameRendererInterface;
 import com.skloch.game.interfaces.PlayerInterface;
 
 /**
  * A class to render the game, including the player, map and UI elements. This class is called by
  * the GameScreen class to render the game.
  */
-public class GameRendererInterface implements com.skloch.game.interfaces.GameRendererInterface {
+public class GameRenderer implements GameRendererInterface {
   private final HustleGame game;
   private OrthogonalTiledMapRenderer mapRenderer;
   private final OrthographicCamera camera;
@@ -30,7 +31,7 @@ public class GameRendererInterface implements com.skloch.game.interfaces.GameRen
    * @param game The game object
    * @param eventBus The event bus
    */
-  public GameRendererInterface(HustleGame game, EventBus eventBus, GameMap gameMap) {
+  public GameRenderer(HustleGame game, EventBus eventBus, GameMap gameMap) {
     this.game = game;
 
     // Camera and viewport settings
