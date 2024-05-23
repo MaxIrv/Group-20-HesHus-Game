@@ -14,9 +14,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+/**
+ * Tests for the LeaderboardManager class.
+ */
 public class LeaderboardManagerTests {
   private LeaderboardManager leaderboardManager;
 
+  /**
+   * Initialise the LeaderboardManager and mock the Gdx.files.local method.
+   */
   @Before
   public void setup() {
     leaderboardManager = new LeaderboardManager();

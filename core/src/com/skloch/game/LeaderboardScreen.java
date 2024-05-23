@@ -18,6 +18,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.skloch.game.interfaces.LeaderboardScreenInterface;
 import java.util.List;
 
+/**
+ * A screen that displays the leaderboard.
+ */
 public class LeaderboardScreen implements Screen, LeaderboardScreenInterface {
   private HustleGame game;
   private LeaderboardManager leaderboardManager;
@@ -29,14 +32,20 @@ public class LeaderboardScreen implements Screen, LeaderboardScreenInterface {
   private Viewport viewport;
   private OrthographicCamera camera;
 
+  /**
+   * Constructor for the LeaderboardScreen.
+   *
+   * @param game        An instance of HustleGame
+   * @param playerScore The player's score to be displayed on the leaderboard
+   */
   public LeaderboardScreen(final HustleGame game, float playerScore) {
     this.game = game;
     this.leaderboardManager = new LeaderboardManager();
     this.leaderboardManager.setPlayerScore(playerScore);
-    setupUI();
+    setupUi();
   }
 
-  private void setupUI() {
+  private void setupUi() {
     leaderboardStage = new Stage(new FitViewport(game.width, game.height));
     camera = new OrthographicCamera();
     viewport = new FitViewport(game.width, game.height, camera);
@@ -103,13 +112,15 @@ public class LeaderboardScreen implements Screen, LeaderboardScreenInterface {
 
     inputWindow.setWidth(600);
     inputWindow.setHeight(600);
-    inputWindow.setPosition((game.width / 2f) - inputWindow.getWidth() / 2, (game.height / 2f) - inputWindow.getHeight() / 2);
+    inputWindow.setPosition((game.width / 2f) - inputWindow.getWidth() / 2,
+        (game.height / 2f) - inputWindow.getHeight() / 2);
 
     Table inputTable = new Table();
     Label prompt = new Label("Type your name", game.skin, "button");
     Label nameLabel = new Label("", game.skin, "button");
 
-    nameLabel.setPosition((inputWindow.getX() / 2f) - nameLabel.getWidth() / 2, (inputWindow.getY() / 2f) - nameLabel.getHeight() / 2);
+    nameLabel.setPosition((inputWindow.getX() / 2f) - nameLabel.getWidth() / 2,
+        (inputWindow.getY() / 2f) - nameLabel.getHeight() / 2);
 
     inputTable.add(prompt);
     inputTable.row();
@@ -148,7 +159,8 @@ public class LeaderboardScreen implements Screen, LeaderboardScreenInterface {
 
   private void closeInputLayer() {
     Gdx.input.setInputProcessor(leaderboardStage);
-    leaderboardManager.storeLeaderboardEntry(new String[]{leaderboardManager.getPlayerName(), String.format("%f", leaderboardManager.getPlayerScore())});
+    leaderboardManager.storeLeaderboardEntry(new String[] {leaderboardManager.getPlayerName(),
+        String.format("%f", leaderboardManager.getPlayerScore())});
     updateLeaderboard();
     setInputWindowVisibility(false);
   }
@@ -158,9 +170,11 @@ public class LeaderboardScreen implements Screen, LeaderboardScreenInterface {
     List<String[]> sortedEntries = leaderboardManager.getSortedEntries(entries);
 
     int pos = 0;
-    for (int i = sortedEntries.size() - 1; i > (sortedEntries.size() - numberEntriesDisplayed - 1) && i >= 0; i--) {
+    for (int i = sortedEntries.size() - 1;
+         i > (sortedEntries.size() - numberEntriesDisplayed - 1) && i >= 0; i--) {
       nameLabels[pos].setText(String.format("%s", sortedEntries.get(i)[0]));
-      scoreLabels[pos].setText(String.format("%.1f", Float.parseFloat(sortedEntries.get(i)[1])) + "%");
+      scoreLabels[pos].setText(
+          String.format("%.1f", Float.parseFloat(sortedEntries.get(i)[1])) + "%");
       pos++;
     }
   }

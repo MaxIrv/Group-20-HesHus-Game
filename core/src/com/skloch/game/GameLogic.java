@@ -15,12 +15,10 @@ import com.skloch.game.events.GameStatsUpdatedEvent;
 import com.skloch.game.events.MapSwitchEvent;
 import com.skloch.game.events.TimeUpdatedEvent;
 import com.skloch.game.events.dialoguebox.DialogueScrollEvent;
+import com.skloch.game.interfaces.EventManagerInterface;
 import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.GameScreenProvider;
-import com.skloch.game.interfaces.EventManagerInterface;
 import com.skloch.game.interfaces.PlayerInterface;
-
-import java.util.Map;
 
 /**
  * A class that handles the game logic, including the player, time, energy, and map switching. This
@@ -51,10 +49,10 @@ public class GameLogic implements GameLogicInterface {
   /**
    * Constructor for the GameLogic class. Sets up the player, time, and event manager.
    *
-   * @param game The game object
-   * @param gameScreen The GameScreenProvider object
+   * @param game         The game object
+   * @param gameScreen   The GameScreenProvider object
    * @param avatarChoice The avatar choice
-   * @param eventBus The event bus
+   * @param eventBus     The event bus
    */
   public GameLogic(
       HustleGame game, GameScreenProvider gameScreen, int avatarChoice, EventBus eventBus) {
@@ -117,7 +115,7 @@ public class GameLogic implements GameLogicInterface {
    * Load and set up the map. Passes collidable objects to the player.
    *
    * @param firstLoad whether this is the first map being loaded, determines whether to place the
-   *     player at the spawn or respawn location.
+   *                  player at the spawn or respawn location.
    */
   @Override
   public void setupMap(boolean firstLoad, GameMap gameMap) {
@@ -276,7 +274,9 @@ public class GameLogic implements GameLogicInterface {
     // hours",hoursRecreational));
   }
 
-  /** Adds an amount of meals to the total number of meals. */
+  /**
+   * Adds an amount of meals to the total number of meals.
+   */
   @Override
   public void addMeal() {
     mealsEaten++;
@@ -372,7 +372,8 @@ public class GameLogic implements GameLogicInterface {
   @Override
   public void gameOver() {
     game.setScreen(
-        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten,getPlayerScore()));
+        new GameOverScreen(game, hoursStudied, hoursRecreational, hoursSlept, mealsEaten,
+            getPlayerScore()));
   }
 
   // Getters commands
@@ -421,68 +422,74 @@ public class GameLogic implements GameLogicInterface {
     return player.getClosestObject();
   }
 
-  /** Update the stats on the UI. */
+  /**
+   * Update the stats on the UI.
+   */
   private void updateStatsEvent() {
     eventBus.publish(
         new GameStatsUpdatedEvent(
             daySeconds, day, hoursRecreational, hoursStudied, mealsEaten, hoursSlept));
   }
 
-  public float getPlayerScore(){
-    //  if target range for each thing rec, study, meals and sleep, then X points
-    float rawScore = 0;
-    float possible_score = 4;
+  /**
+   * Get the player's score based on their performance in the game.
+   *
+   * @return The player's score as a percentage
+   */
+  public float getPlayerScore() {
 
     ArrayMap<String, int[]> successRanges = new ArrayMap<String, int[]>();
 
-    successRanges.put("rec",new int[] {7,10});
-    successRanges.put("study",new int[] {10,21});
-    successRanges.put("meals",new int[] {10,26});
-    successRanges.put("sleep",new int[] {30,55});
+    successRanges.put("rec", new int[] {7, 10});
+    successRanges.put("study", new int[] {10, 21});
+    successRanges.put("meals", new int[] {10, 26});
+    successRanges.put("sleep", new int[] {30, 55});
 
-    if ((hoursRecreational > successRanges.get("rec")[0]) &&
-            (hoursRecreational < successRanges.get("rec")[1])){
+
+    //  if target range for each thing rec, study, meals and sleep, then X points
+    float rawScore = 0;
+
+    if ((hoursRecreational > successRanges.get("rec")[0])
+        && (hoursRecreational < successRanges.get("rec")[1])) {
       rawScore += 1;
     }
-    if (hoursStudied > successRanges.get("study")[0] &&
-            hoursStudied <successRanges.get("study")[1]){
+    if (hoursStudied > successRanges.get("study")[0]
+        && hoursStudied < successRanges.get("study")[1]) {
       rawScore += 1;
     }
-    if (hoursStudied > successRanges.get("meals")[0] &&
-            hoursStudied <successRanges.get("meals")[1]){
+    if (hoursStudied > successRanges.get("meals")[0]
+        && hoursStudied < successRanges.get("meals")[1]) {
       rawScore += 1;
     }
-    if (hoursStudied > successRanges.get("sleep")[0] &&
-            hoursStudied <successRanges.get("sleep")[1]){
+    if (hoursStudied > successRanges.get("sleep")[0]
+        && hoursStudied < successRanges.get("sleep")[1]) {
       rawScore += 1;
     }
 
 
-    /**
-     * Multiply by 1.3x
-     */
-    if (game.allNighter.getAchieved()){
+    // Multiply by 1.3x
+    if (game.allNighter.getAchieved()) {
       rawScore *= 1.2f;
     }
-    if (game.bookWorm.getAchieved()){
+    if (game.bookWorm.getAchieved()) {
       rawScore *= 1.2f;
     }
-    if (game.eatStreak.getAchieved()){
+    if (game.eatStreak.getAchieved()) {
       rawScore *= 1.2f;
     }
-    if (game.funStreak.getAchieved()){
+    if (game.funStreak.getAchieved()) {
       rawScore *= 1.2f;
     }
-    if (game.studyStreak.getAchieved()){
+    if (game.studyStreak.getAchieved()) {
       rawScore *= 1.2f;
     }
 
-
-    float ratio_score = rawScore/possible_score;
-    if (ratio_score > 1){
-      ratio_score = 1;
+    float possibleScore = 4;
+    float ratioScore = rawScore / possibleScore;
+    if (ratioScore > 1) {
+      ratioScore = 1;
     }
-    return ratio_score * 100;
+    return ratioScore * 100;
   }
 
   // Study Streak

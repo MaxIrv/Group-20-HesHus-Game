@@ -8,6 +8,9 @@ import com.skloch.game.Achievement;
 import java.util.function.Predicate;
 import org.junit.Test;
 
+/**
+ * Tests for the Achievement class.
+ */
 public class AchievementTests {
   @Test
   public void testAchievementInitialization() {
