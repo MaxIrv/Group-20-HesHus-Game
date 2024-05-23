@@ -9,3 +9,11 @@ Group 20's version of Heslington Hustle
 
 [Documentation](https://docs.google.com/document/d/e/2PACX-1vSv_ceo9WVWkExVdJTcRDvOGG9dvaT4u3FKtMxP3KHxWDgZjG1YxPeSrSR09Ll2qwSzs-jig_dpa5-k/pub)
 
+Build using:
+./gradlew dist
+
+Run using:
+./gradlew run
+
+Run Checkstyle and build using:
+./gradlew build
