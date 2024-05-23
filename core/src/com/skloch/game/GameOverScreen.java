@@ -31,18 +31,19 @@ public class GameOverScreen implements Screen {
    * not calculate a score, just shows the player's stats to them, as requested in assessment 1
    * Tracking them now will make win conditions easier to implement for assessment 2.
    *
-   * @param game An instance of HustleGame
-   * @param hoursStudied The hours studied in the playthrough
+   * @param game              An instance of HustleGame
+   * @param hoursStudied      The hours studied in the playthrough
    * @param hoursRecreational The hours of fun had in the playthrough
-   * @param hoursSlept The hours slept in the playthrough
-   * @param mealsEaten The number of meals eaten over a playthrough
+   * @param hoursSlept        The hours slept in the playthrough
+   * @param mealsEaten        The number of meals eaten over a playthrough
    */
   public GameOverScreen(
       final HustleGame game,
       int hoursStudied,
       int hoursRecreational,
       int hoursSlept,
-      int mealsEaten) {
+      int mealsEaten,
+      float score) {
     this.game = game;
     gameOverStage = new Stage(new FitViewport(game.width, game.height));
     Gdx.input.setInputProcessor(gameOverStage);
@@ -105,6 +106,19 @@ public class GameOverScreen implements Screen {
     // Exit button
     TextButton exitButton = new TextButton("Main Menu", game.skin);
     gameOverTable.add(exitButton).bottom().width(300).padTop(10);
+    TextButton leaderboardButton = new TextButton("Leaderboard", game.skin);
+    gameOverTable.row();
+    gameOverTable.add(leaderboardButton).width(300).bottom().padTop(10);
+
+    exitButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.soundManager.stopOverworldMusic();
+        dispose();
+        game.setScreen(new MenuScreen(game));
+      }
+    });
 
     exitButton.addListener(
         new ChangeListener() {
@@ -116,6 +130,15 @@ public class GameOverScreen implements Screen {
             game.setScreen(new MenuScreen(game));
           }
         });
+
+    leaderboardButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        dispose();
+        game.setScreen(new LeaderboardScreen(game, score));
+      }
+    });
 
     gameOverWindow.pack();
 
@@ -146,7 +169,7 @@ public class GameOverScreen implements Screen {
   /**
    * Correctly resizes the onscreen elements when the window is resized.
    *
-   * @param width The new width of the window.
+   * @param width  The new width of the window.
    * @param height The new height of the window.
    */
   @Override
@@ -157,17 +180,22 @@ public class GameOverScreen implements Screen {
 
   // Other required methods from Screen
   @Override
-  public void show() {}
+  public void show() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
-  public void dispose() {}
+  public void dispose() {
+  }
 }
