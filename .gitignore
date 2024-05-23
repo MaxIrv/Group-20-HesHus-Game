@@ -109,3 +109,6 @@ Thumbs.db
 
 # JaCoCo
 /tests/build/
+
+# Leaderboard file
+scores.csv

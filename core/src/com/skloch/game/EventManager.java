@@ -8,12 +8,14 @@ import com.skloch.game.events.FadeBlackScreenEvent;
 import com.skloch.game.events.dialoguebox.DialogueSetOptions;
 import com.skloch.game.events.dialoguebox.DialogueSetText;
 import com.skloch.game.events.dialoguebox.DialogueUpdateState;
-import com.skloch.game.interfaces.GameLogicInterface;
 import com.skloch.game.interfaces.EventManagerInterface;
+import com.skloch.game.interfaces.GameLogicInterface;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** A class that maps Object's event strings to actual Java functions. */
+/**
+ * A class that maps Object's event strings to actual Java functions.
+ */
 public class EventManager implements EventManagerInterface {
   private final GameLogicInterface gameLogic;
   private final EventBus eventBus;
@@ -34,7 +36,7 @@ public class EventManager implements EventManagerInterface {
    * Object's event strings can be set in the Tiled map editor with a property called "event"
    *
    * @param gameLogic The game logic object
-   * @param eventBus The event bus object
+   * @param eventBus  The event bus object
    */
   public EventManager(GameLogicInterface gameLogic, EventBus eventBus) {
     this.gameLogic = gameLogic;
@@ -62,15 +64,15 @@ public class EventManager implements EventManagerInterface {
 
     // Some random topics that can be chatted about
     String[] topics = {
-      "Dogs",
-      "Cats",
-      "Exams",
-      "Celebrities",
-      "Flatmates",
-      "Video games",
-      "Sports",
-      "Food",
-      "Fashion"
+        "Dogs",
+        "Cats",
+        "Exams",
+        "Celebrities",
+        "Flatmates",
+        "Video games",
+        "Sports",
+        "Food",
+        "Fashion"
     };
     talkTopics = new Array<String>(topics);
   }
@@ -164,20 +166,26 @@ public class EventManager implements EventManagerInterface {
     return objectInteractions.containsKey(key);
   }
 
-  /** Sets the text when talking to a tree. */
+  /**
+   * Sets the text when talking to a tree.
+   */
   private void treeEvent() {
     //        eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     eventBus.publish(new DialogueSetText("The tree doesn't say anything back."));
   }
 
-  /** A simple event to handle interaction with houses (other than your own). */
+  /**
+   * A simple event to handle interaction with houses (other than your own).
+   */
   public void housesEvent() {
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     eventBus.publish(new DialogueSetText("That's not your house silly."));
   }
 
-  /** Sets the text when opening a chest. */
+  /**
+   * Sets the text when opening a chest.
+   */
   private void chestEvent() {
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     eventBus.publish(
@@ -188,7 +196,9 @@ public class EventManager implements EventManagerInterface {
                 + "I wonder if someone is testing something?\n...\n...\n...\nHow cool!"));
   }
 
-  /** Sets the text when talking to an object without a dedicated function. */
+  /**
+   * Sets the text when talking to an object without a dedicated function.
+   */
   private void objectEvent(String object) {
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));
     eventBus.publish(new DialogueSetText("This is a " + object + "!"));
@@ -199,7 +209,7 @@ public class EventManager implements EventManagerInterface {
    * increments the game time.
    *
    * @param args Arguments to be passed, should contain the hours the player wants to study. E.g.
-   *     ["piazza", "1"]
+   *             ["piazza", "1"]
    */
   private void piazzaEvent(String[] args) {
     if (gameLogic.getSeconds() > 8 * 60) {
@@ -216,7 +226,7 @@ public class EventManager implements EventManagerInterface {
             new DialogueSetOptions(
                 topics,
                 new String[] {
-                  "piazza-" + topics[0], "piazza-" + topics[1], "piazza-" + topics[2]
+                    "piazza-" + topics[0], "piazza-" + topics[1], "piazza-" + topics[2]
                 }));
         //                gameScreen.dialogueBox.getSelectBox().setOptions(topics, new
         // String[]{"piazza-"+topics[0], "piazza-"+topics[1], "piazza-"+topics[2]});
@@ -265,7 +275,7 @@ public class EventManager implements EventManagerInterface {
    * option to study for 2, 3 or 4 hours.
    *
    * @param args The arguments passed to the function, should contain the hours the player wants to
-   *     study
+   *             study
    */
   private void compSciEvent(String[] args) {
     if (gameLogic.getSeconds() > 8 * 60) {
@@ -412,8 +422,8 @@ public class EventManager implements EventManagerInterface {
    * Lets the player go to sleep, fades the screen to black then shows a dialogue about the amount
    * of sleep the player gets Then queues up fadeFromBlack to be called when this dialogue closes.
    *
-   * @see GameScreen fadeToBlack function
    * @param args Unused currently
+   * @see GameScreen fadeToBlack function
    */
   private void accomEvent(String[] args) {
     gameLogic.setSleeping(true);
@@ -490,7 +500,9 @@ public class EventManager implements EventManagerInterface {
     fadeToBlack(setTextAction);
   }
 
-  /** Fades the screen to black. */
+  /**
+   * Fades the screen to black.
+   */
   private void fadeToBlack() {
     eventBus.publish(new FadeBlackScreenEvent(Actions.fadeIn(3f)));
   }

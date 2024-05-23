@@ -29,6 +29,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.mockito.Mockito;
 
 /**
  * A JUnit Runner for LibGDX applications. This class should be used to run LibGDX tests that
@@ -44,7 +45,7 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
     HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
     new HeadlessApplication(this, conf);
-    Gdx.gl = mock(GL20.class);
+    Gdx.gl = mock(GL20.class, Mockito.withSettings().stubOnly());
   }
 
   @Override
