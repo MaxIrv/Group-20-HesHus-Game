@@ -45,7 +45,7 @@ public class MockedClasses {
     return mock(GameLogicInterface.class);
   }
 
-  public static LeaderboardScreenInterface mockLeaderboardScreen(){
+  public static LeaderboardScreenInterface mockLeaderboardScreen() {
     return mock(LeaderboardScreenInterface.class);
   }
 }

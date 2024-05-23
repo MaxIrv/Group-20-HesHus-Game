@@ -1,15 +1,16 @@
 package com.skloch.game.interfaces;
 
-public interface LeaderboardScreenInterface{
+/** Interface for the LeaderboardScreen class. */
+public interface LeaderboardScreenInterface {
 
-    public void setPlayerScore(float score);
+  public void setPlayerScore(float score);
 
-    public float getPlayerScore();
+  public float getPlayerScore();
 
 
-    public String getPlayerName();
+  public String getPlayerName();
 
-    public void setPlayerName(String name);
+  public void setPlayerName(String name);
 
 
 }
