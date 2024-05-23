@@ -17,13 +17,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.skloch.game.interfaces.LeaderboardScreenInterface;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 /** Allow the player to enter a score and displays the leaderboard. */
-public class LeaderboardScreen implements Screen {
+public class LeaderboardScreen implements Screen,LeaderboardScreenInterface{
   private HustleGame game;
   Stage leaderboardStage;
   private Window inputWindow;
@@ -48,7 +50,8 @@ public class LeaderboardScreen implements Screen {
    *
    * @param game An instance of HustleGame
    */
-  public LeaderboardScreen(final HustleGame game, float playerScore) {
+  public LeaderboardScreen(final HustleGame game, float playerScore){
+
     this.playerScore = playerScore;
     this.game = game;
 
@@ -276,13 +279,19 @@ public class LeaderboardScreen implements Screen {
     camera.update();
   }
 
+  @Override
+  public void setPlayerScore(float score) {
+    playerScore =score;
+  }
+
   public float getPlayerScore() {
     return playerScore;
   }
 
-  public void setPlayerScore(float score){
-    playerScore = score;
-  }
+  public String getPlayerName(){ return playerName; }
+
+  @Override
+  public void setPlayerName(String name){ playerName = name; }
 
   /**
    * Correctly resizes the onscreen elements when the window is resized.
