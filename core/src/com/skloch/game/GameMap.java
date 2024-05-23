@@ -5,7 +5,9 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
-/** Represents the game map. */
+/**
+ * Represents the game map.
+ */
 public class GameMap {
   public TiledMap map;
   public String currentMapPath;
@@ -14,13 +16,15 @@ public class GameMap {
   public int[] objectLayers;
   public int mapSquareSize;
   public float mapScale = 70f;
-  public static final String campusMapPath = "East Campus/east_campus.tmx";
-  public static final String townMapPath = "Town/town.tmx";
+  public static final String CAMPUS_MAP_PATH = "East Campus/east_campus.tmx";
+  public static final String TOWN_MAP_PATH = "Town/town.tmx";
   public MapProperties mapProperties;
-  
-  /** Constructor for a GameMap. */
+
+  /**
+   * Constructor for a GameMap.
+   */
   public GameMap() {
-    this.currentMapPath = campusMapPath;
+    this.currentMapPath = CAMPUS_MAP_PATH;
     this.map = new TmxMapLoader().load(currentMapPath);
     this.mapProperties = map.getProperties();
     backgroundLayers = new int[] {0, 1, 2, 3, 4, 5, 6};
@@ -34,11 +38,11 @@ public class GameMap {
    *
    * @param mapName the name of the map to switch to
    */
-  public void switch_map(String mapName) {
+  public void switchMap(String mapName) {
     if (mapName.equals("town")) {
-      currentMapPath = townMapPath;
+      currentMapPath = TOWN_MAP_PATH;
     } else {
-      currentMapPath = campusMapPath;
+      currentMapPath = CAMPUS_MAP_PATH;
     }
     TiledMap oldMap = map;
     this.map = new TmxMapLoader().load(currentMapPath);

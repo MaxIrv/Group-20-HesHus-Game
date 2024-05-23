@@ -35,10 +35,10 @@ public class GameScreen implements Screen, GameScreenProvider {
   /**
    * Constructor for the GameScreen class. Initialises the game, player, map, renderer and UI.
    *
-   * @param game An instance of the class HustleGame containing variables that only need to be
-   *     loaded or initialised once.
+   * @param game         An instance of the class HustleGame containing variables that only need to be
+   *                     loaded or initialised once.
    * @param avatarChoice Which avatar the player has picked, 0 for the more masculine avatar, 1 for
-   *     the more feminine
+   *                     the more feminine avatar.
    */
   public GameScreen(final HustleGame game, int avatarChoice) {
     // Important game variables
@@ -82,13 +82,14 @@ public class GameScreen implements Screen, GameScreenProvider {
 
     gameLogic.setupMap(true, gameMap);
 
-    gameUi.create_ui(gameRenderer.getWorldWidth(), gameRenderer.getWorldHeight());
+    gameUi.createUi(gameRenderer.getWorldWidth(), gameRenderer.getWorldHeight());
 
-    gameRenderer.initial_render();
+    gameRenderer.initialRender();
   }
 
   @Override
-  public void show() {}
+  public void show() {
+  }
 
   /**
    * Renders the player, updates sound, renders the map and updates any UI elements Called every
@@ -105,7 +106,7 @@ public class GameScreen implements Screen, GameScreenProvider {
 
     gameLogic.update(delta);
     gameRenderer.render(delta, gameLogic.getPlayer(), gameMap);
-    gameUi.render_ui(delta);
+    gameUi.renderUi(delta);
 
     // Load timer bar - needs fixing and drawing
     // TextureAtlas blueBar = new
@@ -152,7 +153,8 @@ public class GameScreen implements Screen, GameScreenProvider {
     return player;
   }
 
-  public void blackScreenAction() {}
+  public void blackScreenAction() {
+  }
 
   @Override
   public GameMap getGameMap() {
@@ -161,14 +163,17 @@ public class GameScreen implements Screen, GameScreenProvider {
 
   @Override
   public void resize(int width, int height) {
-    gameUi.resize_ui(width, height);
-    gameRenderer.resize_viewport(width, height);
+    gameUi.resizeUi(width, height);
+    gameRenderer.resizeViewport(width, height);
   }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
-  /** Called when switching back to this gameScreen. */
+  /**
+   * Called when switching back to this gameScreen.
+   */
   @Override
   public void resume() {
     // Set the input multiplexer back to this stage
@@ -187,9 +192,12 @@ public class GameScreen implements Screen, GameScreenProvider {
   }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 
-  /** Disposes of certain elements, called when the game is closed. */
+  /**
+   * Disposes of certain elements, called when the game is closed.
+   */
   @Override
   public void dispose() {
     gameUi.dispose();

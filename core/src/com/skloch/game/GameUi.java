@@ -174,7 +174,7 @@ public class GameUi implements GameUiInterface {
    * @param worldHeight The height of the world
    */
   @Override
-  public void create_ui(float worldWidth, float worldHeight) {
+  public void createUi(float worldWidth, float worldHeight) {
     // Add a black image over everything first
     blackScreen = new Image(new Texture(Gdx.files.internal("Sprites/black_square.png")));
     blackScreen.setSize(worldWidth, worldHeight);
@@ -241,8 +241,8 @@ public class GameUi implements GameUiInterface {
    * @param delta The time since the last frame
    */
   @Override
-  public void render_ui(float delta) {
-    check_interaction();
+  public void renderUi(float delta) {
+    checkInteraction();
 
     // Update UI elements
     uiStage.getViewport().apply();
@@ -251,7 +251,7 @@ public class GameUi implements GameUiInterface {
   }
 
   /** Checks if the player is near an object and displays the interaction label. */
-  private void check_interaction() {
+  private void checkInteraction() {
     interactionLabel.setVisible(false);
     if (!gameScreenProvider.isDialogueBoxVisible()
         && !isEscapeMenuVisible()
@@ -275,7 +275,7 @@ public class GameUi implements GameUiInterface {
    * @param height The new height of the screen
    */
   @Override
-  public void resize_ui(int width, int height) {
+  public void resizeUi(int width, int height) {
     uiStage.getViewport().update(width, height, true);
   }
 

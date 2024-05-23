@@ -65,9 +65,9 @@ public class GameLogic implements GameLogicInterface {
 
     // Create a player class
     if (avatarChoice == 1) {
-      player = new com.skloch.game.PlayerInterface("avatar1");
+      player = new Player("avatar1");
     } else {
-      player = new com.skloch.game.PlayerInterface("avatar2");
+      player = new Player("avatar2");
     }
 
     // Set initial time
@@ -179,7 +179,7 @@ public class GameLogic implements GameLogicInterface {
     Gdx.app.log("GameLogic", "Switching to map: " + mapName);
     // If we are switching to the home map then set "onHomeMap" attribute
     currentMap = mapName;
-    gameScreen.getGameMap().switch_map(mapName);
+    gameScreen.getGameMap().switchMap(mapName);
     setupMap(false, gameScreen.getGameMap());
     eventBus.publish(new MapSwitchEvent(gameScreen.getGameMap()));
   }

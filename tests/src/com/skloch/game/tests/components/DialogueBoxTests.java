@@ -3,7 +3,6 @@ package com.skloch.game.tests.components;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.skloch.game.DialogueBox;
-import com.skloch.game.DialogueBox.*;
 import com.skloch.game.tests.GdxTestRunner;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,8 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.when;
 
 @RunWith(GdxTestRunner.class)
 public class DialogueBoxTests {

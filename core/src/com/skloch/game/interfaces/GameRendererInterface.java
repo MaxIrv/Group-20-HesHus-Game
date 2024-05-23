@@ -4,7 +4,7 @@ import com.skloch.game.GameMap;
 
 /** Interface for the game renderer. */
 public interface GameRendererInterface {
-  void initial_render();
+  void initialRender();
 
   void render(float delta, PlayerInterface player, GameMap gameMap);
 
@@ -12,7 +12,7 @@ public interface GameRendererInterface {
 
   float getWorldHeight();
 
-  void resize_viewport(int width, int height);
+  void resizeViewport(int width, int height);
 
   void dispose();
 }
