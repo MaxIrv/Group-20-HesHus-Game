@@ -3,7 +3,10 @@ package com.skloch.game.mocks;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.skloch.game.Achievement;
 import com.skloch.game.HustleGame;
@@ -64,5 +67,17 @@ public class MockedClasses {
     Achievement achievement = mock(Achievement.class);
     when(achievement.getAchieved()).thenReturn(achieved);
     return achievement;
+  }
+
+  public static FileHandle mockFileHandle() {
+    return mock(FileHandle.class);
+  }
+
+  public static TextureAtlas mockTextureAtlas() {
+    return mock(TextureAtlas.class);
+  }
+
+  public static Files mockFiles() {
+    return mock(Files.class);
   }
 }

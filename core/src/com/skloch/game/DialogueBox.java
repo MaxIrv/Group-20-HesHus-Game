@@ -231,6 +231,11 @@ public class DialogueBox {
         y + dialogueWindow.getHeight() - 24);
   }
 
+  /**
+   * Gets the position of the dialogue box.
+   *
+   * @return An array containing the x and y coordinates of the bottom left corner
+   */
   public float[] getPos() {
     float[] x = new float[2];
     x[0] = selectBox.selectWindow.getX();

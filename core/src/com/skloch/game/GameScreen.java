@@ -35,8 +35,8 @@ public class GameScreen implements Screen, GameScreenProvider {
   /**
    * Constructor for the GameScreen class. Initialises the game, player, map, renderer and UI.
    *
-   * @param game         An instance of the class HustleGame containing variables that only need to be
-   *                     loaded or initialised once.
+   * @param game         An instance of the class HustleGame containing variables that only need to
+   *                     be loaded or initialised once.
    * @param avatarChoice Which avatar the player has picked, 0 for the more masculine avatar, 1 for
    *                     the more feminine avatar.
    */
