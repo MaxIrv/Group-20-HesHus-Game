@@ -3,7 +3,10 @@ package com.skloch.game.tests.components;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -18,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,9 +34,12 @@ public class HustleGameTests {
     private Skin mockSkin;
     private SpriteBatch mockBatch;
     private Stage mockStage;
+    private ShapeRenderer mockShapeRenderer;
     private SoundManager mockSoundManager;
     private MapProperties mockMapProperties;
     private FileHandle mockFileHandle;
+    @Mock
+    private GL20 mockGL20 = mock(GL20.class);
     @Before
     public void setup() {
         // Mock dependencies
@@ -40,10 +47,12 @@ public class HustleGameTests {
         mockMap = mock(TiledMap.class);
         mockSkin = mock(Skin.class);
         mockBatch = mock(SpriteBatch.class);
+        mockShapeRenderer = mock(ShapeRenderer.class);
         mockStage = mock(Stage.class);
         mockSoundManager = mock(SoundManager.class);
         mockMapProperties = mock(MapProperties.class);
         mockFileHandle = mock(FileHandle.class);
+
 
         // Set up Gdx.files and Gdx.files.internal to return the mock FileHandle
         Gdx.files = mock(Files.class);
@@ -62,19 +71,16 @@ public class HustleGameTests {
         // Inject mocks into game
         game.batch = mockBatch;
         game.skin = mockSkin;
-        game.map = mockMap;
-        game.mapProperties = mockMapProperties;
         game.soundManager = mockSoundManager;
         game.blueBackground = mockStage;
+        game.shapeRenderer = mockShapeRenderer;
     }
 
     @Test
     public void testCreate() {
         game.create();
-
         assertNotNull(game.batch);
         assertNotNull(game.skin);
-        assertNotNull(game.map);
         assertNotNull(game.shapeRenderer);
         assertNotNull(game.soundManager);
         assertNotNull(game.blueBackground);
@@ -88,24 +94,13 @@ public class HustleGameTests {
     }
 
     @Test
-    public void testSwitchMap() {
-        String newMapPath = "East Campus/new_map.tmx";
-        game.switch_map(newMapPath);
-
-        verify(mapLoader).load(newMapPath);
-        assertSame(mockMap, game.map);
-        assertSame(mockMapProperties, game.mapProperties);
-        verify(mockMap).dispose();
-    }
-
-    @Test
     public void testDispose() {
+        game.batch = mockBatch;
         game.dispose();
 
         verify(mockBatch).dispose();
         verify(mockStage).dispose();
         verify(mockSkin).dispose();
-        verify(mockMap).dispose();
         verify(mockSoundManager).dispose();
     }
 

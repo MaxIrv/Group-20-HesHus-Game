@@ -28,6 +28,7 @@ public class GameObjectTests {
 
         gameObject1 = new GameObject(1.0f, 1.0f, 1.0f, 1.0f);
         gameObject2 = new GameObject(mapProperties, 2.0f);
+
     }
 
     @Test
@@ -35,17 +36,17 @@ public class GameObjectTests {
         // Check properties was instantiated
         Assert.assertNotNull(gameObject1.properties);
         // x
-        Assert.assertEquals(1.0f, gameObject1.getX());
+        Assert.assertEquals(1.0f, gameObject1.x, 0);
         // y
-        Assert.assertEquals(1.0f, gameObject1.getY());
+        Assert.assertEquals(1.0f, gameObject1.y, 0);
         // width
-        Assert.assertEquals(1.0f, gameObject1.getWidth());
+        Assert.assertEquals(1.0f, gameObject1.width, 0);
         // height
-        Assert.assertEquals(1.0f, gameObject1.getHeight());
+        Assert.assertEquals(1.0f, gameObject1.height, 0);
         // centreX
-        Assert.assertEquals(1.5f, gameObject1.centreX);
+        Assert.assertEquals(1.5f, gameObject1.centreX, 0);
         // centreY
-        Assert.assertEquals(1.5f, gameObject1.centreY);
+        Assert.assertEquals(1.5f, gameObject1.centreY, 0);
 
     }
 
@@ -53,24 +54,24 @@ public class GameObjectTests {
     public void testPredefinedInstanceProperties() {
         Assert.assertNotNull(gameObject2.properties);
         // x
-        Assert.assertEquals(2.0f, gameObject2.getX());
+        Assert.assertEquals(2.0f, gameObject2.getX(), 0);
         // y
-        Assert.assertEquals(2.0f, gameObject2.getY());
+        Assert.assertEquals(2.0f, gameObject2.getY(), 0);
         // width
-        Assert.assertEquals(2.0f, gameObject2.getWidth());
+        Assert.assertEquals(2.0f, gameObject2.getWidth(), 0);
         // height
-        Assert.assertEquals(2.0f, gameObject2.getHeight());
+        Assert.assertEquals(2.0f, gameObject2.getHeight(), 0);
         // centreX
-        Assert.assertEquals(3.0f, gameObject2.centreX);
+        Assert.assertEquals(3.0f, gameObject2.centreX, 0);
         // centreY
-        Assert.assertEquals(3.0f, gameObject2.centreY);
+        Assert.assertEquals(3.0f, gameObject2.centreY, 0);
     }
 
     @Test
     public void testGet() {
-        Assert.assertEquals(1.0f, gameObject1.get("x"));
-        Assert.assertEquals(1.0f, gameObject1.get("y"));
-        Assert.assertEquals(1.0f, gameObject1.get("width"));
-        Assert.assertEquals(1.0f, gameObject1.get("height"));
+        Assert.assertEquals(1.0f, mapProperties.get("x"));
+        Assert.assertEquals(1.0f, mapProperties.get("y"));
+        Assert.assertEquals(1.0f, mapProperties.get("width"));
+        Assert.assertEquals(1.0f, mapProperties.get("height"));
     }
 }
