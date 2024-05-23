@@ -198,6 +198,8 @@ public class EventManager implements EventManagerInterface {
 
   /**
    * Sets the text when talking to an object without a dedicated function.
+   *
+   * @param object The object to be published in the dialogue box
    */
   private void objectEvent(String object) {
     eventBus.publish(new DialogueUpdateState(DialogueUpdateState.State.HIDE_SELECT_BOX));

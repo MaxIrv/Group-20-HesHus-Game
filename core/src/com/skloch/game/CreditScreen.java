@@ -32,7 +32,7 @@ public class CreditScreen implements Screen {
    * loaded from assets/Text/credits.txt and displayed in the scrollable widget Thus any changes to
    * assets or licenses must be reflected in credits.txt
    *
-   * @param game An instance of the HustleGame class
+   * @param game           An instance of the HustleGame class
    * @param previousScreen The screen to return to when the exit button is pressed
    */
   public CreditScreen(final HustleGame game, Screen previousScreen) {
@@ -124,7 +124,7 @@ public class CreditScreen implements Screen {
   /**
    * Correctly resizes the onscreen elements when the window is resized.
    *
-   * @param width The new width of the window.
+   * @param width  The new width of the window.
    * @param height The new height of the window.
    */
   @Override
@@ -135,17 +135,22 @@ public class CreditScreen implements Screen {
 
   // Other required methods from Screen
   @Override
-  public void show() {}
+  public void show() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
   @Override
-  public void dispose() {}
+  public void dispose() {
+  }
 }

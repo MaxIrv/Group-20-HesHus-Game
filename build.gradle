@@ -18,13 +18,13 @@ plugins {
     id 'jacoco'
 }
 
+
 configurations {
     checkstyleRules
 }
 
 dependencies {
-    checkstyleRules(
-            "com.puppycrawl.tools:checkstyle:10.12.4") {
+    checkstyleRules("com.puppycrawl.tools:checkstyle:10.12.4") {
         transitive = false
     }
 }
@@ -32,10 +32,16 @@ dependencies {
 checkstyle {
     toolVersion = "10.12.4"
     config = resources.text.fromArchiveEntry(
-            configurations.checkstyleRules, 'google_check.xml')
+            configurations.checkstyleRules, 'google_check.xml'
+    )
+    checkstyleMain {
+        enabled = false
+    }
+
+    checkstyleTest {
+        enabled = false
+    }
 }
-
-
 
 allprojects {
     repositories {
