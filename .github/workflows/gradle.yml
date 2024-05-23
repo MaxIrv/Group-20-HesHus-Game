@@ -2,7 +2,7 @@ name: Java CI with Gradle
 on:
   # Trigger the workflow on push or pull request to main branch
   push:
-    branches: [ main, KAN-8-Implement-testing-in-CI ]
+    branches: [ main, KAN-40-Implement-Automated-Releases ]
   pull_request:
     branches: [ main ]
 jobs:
