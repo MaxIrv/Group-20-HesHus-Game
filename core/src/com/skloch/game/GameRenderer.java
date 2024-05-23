@@ -62,7 +62,6 @@ public class GameRenderer implements GameRendererInterface {
    */
   @Override
   public void render(float delta, PlayerInterface player, GameMap gameMap) {
-    Gdx.app.log("GameRenderer", "Rendering game map " + gameMap.currentMap);
     // Clear screen
     ScreenUtils.clear(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
