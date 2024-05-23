@@ -14,8 +14,7 @@ public class AssetTests {
   /** Test that the ship asset exists. */
   @Test
   public void testShipAssetExists() {
-    for (String mapName : GameMap.mapPaths.values()) {
-      assertTrue("The asset for TMX map exists", Gdx.files.internal(mapName).exists());
-    }
+    assertTrue("Town map exists", Gdx.files.internal(GameMap.townMapPath).exists());
+    assertTrue("Campus map exists", Gdx.files.internal(GameMap.campusMapPath).exists());
   }
 }
