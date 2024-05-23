@@ -33,12 +33,6 @@ jobs:
           name: jacoco-report
           path: tests/build/reports/jacoco/test/html/
 
-      - name: Upload library JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: desktop-1.0.jar
-          path: desktop/build/libs/desktop-1.0.jar
-
       - name: Upload Core Checkstyle report
         uses: actions/upload-artifact@v4
         with:
@@ -56,6 +50,17 @@ jobs:
         with:
           name: tests-checkstyle-report
           path: tests/build/reports/checkstyle/main.html
+
+      - name: Build Gradle distribution
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          arguments: dist
+
+      - name: Upload library JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-1.0.jar
+          path: desktop/build/libs/desktop-1.0.jar
 
   release:
     runs-on: ubuntu-latest
