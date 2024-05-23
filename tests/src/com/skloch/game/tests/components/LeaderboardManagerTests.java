@@ -9,14 +9,17 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.skloch.game.LeaderboardManager;
+import com.skloch.game.tests.GdxTestRunner;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 /**
  * Tests for the LeaderboardManager class.
  */
+@RunWith(GdxTestRunner.class)
 public class LeaderboardManagerTests {
   private LeaderboardManager leaderboardManager;
 
