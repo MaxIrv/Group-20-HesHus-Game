@@ -14,6 +14,9 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests for the DialogueBox class.
+ */
 @RunWith(GdxTestRunner.class)
 public class DialogueBoxTests {
     DialogueBox dialogueBox;
