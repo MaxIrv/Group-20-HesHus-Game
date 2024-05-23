@@ -23,6 +23,8 @@ jobs:
 
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+         arguments: dist
 
       - name: Upload JaCoCo coverage report as a workflow artifact
         uses: actions/upload-artifact@v4
