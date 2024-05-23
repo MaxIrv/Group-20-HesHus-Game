@@ -7,7 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Array;
 import com.skloch.game.interfaces.EventManagerInterface;
 
-/** A class to display a dialogue box for text and options on the screen. */
+/**
+ * A class to display a dialogue box for text and options on the screen.
+ */
 public class DialogueBox {
   private final Window dialogueWindow;
   private final Label textLabel;
@@ -59,13 +61,17 @@ public class DialogueBox {
     setText("Are you sure you want to sleep at the Piazza? This will cost you 10 energy");
   }
 
-  public int getMaxChars() {return maxchars;
+  public int getMaxChars() {
+    return maxchars;
   }
 
-  public Window getDialogueWindow() {return dialogueWindow;
+  public Window getDialogueWindow() {
+    return dialogueWindow;
   }
 
-  /** A class displaying a little selection box to the user when an input is needed in dialog. */
+  /**
+   * A class displaying a little selection box to the user when an input is needed in dialog.
+   */
   class SelectBox {
     private Window selectWindow;
     private Table selectTable;
@@ -88,10 +94,10 @@ public class DialogueBox {
      * Sets the options visible to the player when asking for a choice. Also sets which events to
      * call from each option. Event strings are translated into events in EventManager
      *
-     * @see EventManager
      * @param options The options available to the player e.g. "Yes" and "No"
-     * @param events The events called to the option of the same index E.g. "piazza" and
-     *     "closeDialogue"
+     * @param events  The events called to the option of the same index E.g. "piazza" and
+     *                "closeDialogue"
+     * @see EventManager
      */
     public void setOptions(String[] options, String[] events) {
       selectTable.clearChildren();
@@ -141,7 +147,9 @@ public class DialogueBox {
       optionPointers.get(choiceIndex).setVisible(true);
     }
 
-    /** The same as choiceUp but in the opposite direction. */
+    /**
+     * The same as choiceUp but in the opposite direction.
+     */
     public void choiceDown() {
       optionPointers.get(choiceIndex).setVisible(false);
       choiceIndex += 1;
@@ -171,12 +179,16 @@ public class DialogueBox {
       return selectWindow;
     }
 
-    /** Hides the selection widget. */
+    /**
+     * Hides the selection widget.
+     */
     public void hide() {
       selectWindow.setVisible(false);
     }
 
-    /** Shows the selection widget. */
+    /**
+     * Shows the selection widget.
+     */
     public void show() {
       selectWindow.setVisible(true);
     }
@@ -218,7 +230,13 @@ public class DialogueBox {
         x + dialogueWindow.getWidth() - selectBox.selectWindow.getWidth(),
         y + dialogueWindow.getHeight() - 24);
   }
-  public float[] getPos(){
+
+  /**
+   * Gets the position of the dialogue box.
+   *
+   * @return An array containing the x and y coordinates of the bottom left corner
+   */
+  public float[] getPos() {
     float[] x = new float[2];
     x[0] = selectBox.selectWindow.getX();
     x[1] = selectBox.selectWindow.getY();
@@ -240,7 +258,7 @@ public class DialogueBox {
    * Sets the text to be displayed on the dialogue box, automatically wraps it correctly
    * Additionally, schedules an event to be called after the text is done displaying.
    *
-   * @param text The text to display
+   * @param text     The text to display
    * @param eventKey The event key to be triggered
    */
   public void setText(String text, String eventKey) {
@@ -303,7 +321,7 @@ public class DialogueBox {
             index = 0;
           } else {
             newString = new StringBuilder(
-              newString.substring(0, lastSpace) + "\n" + newString.substring(lastSpace + 1));
+                newString.substring(0, lastSpace) + "\n" + newString.substring(lastSpace + 1));
             newString.append(c);
             index = totalIndex - lastSpace;
             totalIndex += 1;
@@ -344,12 +362,16 @@ public class DialogueBox {
     linePointer = 0;
   }
 
-  /** Makes the dialogue box visible, along with any elements that need to be shown. */
+  /**
+   * Makes the dialogue box visible, along with any elements that need to be shown.
+   */
   public void show() {
     dialogueWindow.setVisible(true);
   }
 
-  /** Hides the dialogue box and all of its elements. */
+  /**
+   * Hides the dialogue box and all of its elements.
+   */
   public void hide() {
     dialogueWindow.setVisible(false);
     selectBox.hide();
@@ -358,8 +380,10 @@ public class DialogueBox {
   /**
    * Pressing 'confirm' on the dialogue box Either selects the choice if the select is open, or
    * advances text if not.
+   *
+   * @param eventManager The event manager to send events to
    */
-  public void enter(EventManagerInterface eventManager) {
+  protected void enter(EventManagerInterface eventManager) {
     if (selectBox.isVisible()) {
       selectBox.hide();
       eventManager.event(selectBox.getChoice());
@@ -368,8 +392,12 @@ public class DialogueBox {
     }
   }
 
-  /** Continues on to the next bit of text, or closes the window if the end is reached. */
-  private void advanceText(EventManagerInterface eventManager) {
+  /**
+   * Continues on to the next bit of text, or closes the window if the end is reached.
+   *
+   * @param eventManager The event manager to send events to
+   */
+  protected void advanceText(EventManagerInterface eventManager) {
     if (scrollingText) {
       scrollingText = false;
       textCounter = 0;
@@ -393,7 +421,9 @@ public class DialogueBox {
     }
   }
 
-  /** Hides just the select box window. */
+  /**
+   * Hides just the select box window.
+   */
   public void hideSelectBox() {
     selectBox.hide();
   }

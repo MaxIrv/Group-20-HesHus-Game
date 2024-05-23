@@ -57,4 +57,6 @@ public interface PlayerInterface {
   float getSpriteWidth();
 
   float getSpriteHeight();
+
+  float getStateTime();
 }

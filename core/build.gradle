@@ -1,5 +1,21 @@
-sourceCompatibility = 1.8
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    maven { url "https://jitpack.io" }
+}
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 

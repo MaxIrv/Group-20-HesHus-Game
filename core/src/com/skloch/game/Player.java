@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.skloch.game.interfaces.PlayerInterface;
 
 /**
  * A class handling everything needed to control and draw a player, including animation, movement
  * and collision.
  */
-public class PlayerInterface implements com.skloch.game.interfaces.PlayerInterface {
+public class Player implements PlayerInterface {
   // Hitboxes
   public Rectangle sprite;
   public Rectangle feet;
@@ -23,8 +24,8 @@ public class PlayerInterface implements com.skloch.game.interfaces.PlayerInterfa
   public int direction = 2; // 0 = up, 1 = right, 2 = down, 3 = left (like a clock)
   private TextureRegion currentFrame;
   private float stateTime = 0;
-  private final Array<Animation<TextureRegion>> walkingAnimation;
-  private final Array<Animation<TextureRegion>> idleAnimation;
+  public final Array<Animation<TextureRegion>> walkingAnimation;
+  public final Array<Animation<TextureRegion>> idleAnimation;
   // Stats
   public float speed = 300f;
   public Array<GameObject> collidables;
@@ -43,7 +44,7 @@ public class PlayerInterface implements com.skloch.game.interfaces.PlayerInterfa
    * @param avatar "avatar1" for the more masculine character, "avatar2" for the more feminine
    *     character, player animations are packed in the player_sprites atlas
    */
-  public PlayerInterface(String avatar) {
+  public Player(String avatar) {
     // Load the player's textures from the atlas
     TextureAtlas playerAtlas =
         new TextureAtlas(Gdx.files.internal("Sprites/Player/player_sprites.atlas"));
@@ -475,5 +476,10 @@ public class PlayerInterface implements com.skloch.game.interfaces.PlayerInterfa
   @Override
   public float getSpriteHeight() {
     return sprite.height;
+  }
+
+  @Override
+  public float getStateTime() {
+    return stateTime;
   }
 }

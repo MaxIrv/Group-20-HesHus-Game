@@ -6,11 +6,11 @@ import com.skloch.game.DialogueBox;
 /** Interface for the game UI. */
 public interface GameUiInterface {
 
-  void create_ui(float worldWidth, float worldHeight);
+  void createUi(float worldWidth, float worldHeight);
 
-  void render_ui(float delta);
+  void renderUi(float delta);
 
-  void resize_ui(int width, int height);
+  void resizeUi(int width, int height);
 
   Stage getUiStage();
 

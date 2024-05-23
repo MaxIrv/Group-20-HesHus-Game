@@ -51,9 +51,7 @@ public class MenuScreen implements Screen {
     // Set the size of the background to the viewport size, only need to do this once, this is then
     // used by all
     // screens as an easy way of having a blue background
-    game.blueBackground
-        .getRoot()
-        .findActor("blue image")
+    game.blueBackground.getRoot().findActor("blue image")
         .setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
 
     // Title image
@@ -100,52 +98,48 @@ public class MenuScreen implements Screen {
 
     // Add listeners to the buttons, so they do things when pressed
     // START GAME BUTTON - Displays the tutorial window
-    startButton.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            buttonTable.setVisible(false);
-            titleImage.setVisible(false);
-            tutorialWindow.setVisible(true);
+    startButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        buttonTable.setVisible(false);
+        titleImage.setVisible(false);
+        tutorialWindow.setVisible(true);
 
-            //                dispose();
-            //                game.setScreen(new GameScreen(game));
-          }
-        });
+        //                dispose();
+        //                game.setScreen(new GameScreen(game));
+      }
+    });
 
     // SETTINGS BUTTON
     Screen thisScreen = this;
-    settingsButton.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            game.setScreen(new SettingsScreen(game, thisScreen));
-          }
-        });
+    settingsButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.setScreen(new SettingsScreen(game, thisScreen));
+      }
+    });
 
     // CREDITS BUTTON
-    creditsButton.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            game.setScreen(new CreditScreen(game, thisScreen));
-          }
-        });
+    creditsButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.setScreen(new CreditScreen(game, thisScreen));
+      }
+    });
 
     // EXIT BUTTON
-    exitButton.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            game.dispose();
-            dispose();
-            Gdx.app.exit();
-          }
-        });
+    exitButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.dispose();
+        dispose();
+        Gdx.app.exit();
+      }
+    });
 
     game.batch.setProjectionMatrix(camera.combined);
   }
@@ -173,7 +167,7 @@ public class MenuScreen implements Screen {
   /**
    * Correctly resizes the menu screen.
    *
-   * @param width The new width of the screen.
+   * @param width  The new width of the screen.
    * @param height The new height of the screen.
    */
   @Override
@@ -184,13 +178,16 @@ public class MenuScreen implements Screen {
 
   // Other required methods
   @Override
-  public void show() {}
+  public void show() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   /**
    * Correctly sizes the game when resuming it after a pause or switching screens Fixes a small
@@ -204,7 +201,9 @@ public class MenuScreen implements Screen {
     Gdx.input.setCursorPosition(Gdx.input.getX(), Gdx.input.getY());
   }
 
-  /** Dispose of all menu assets. */
+  /**
+   * Dispose of all menu assets.
+   */
   @Override
   public void dispose() {
     menuStage.dispose();
@@ -214,9 +213,11 @@ public class MenuScreen implements Screen {
    * Generates a window to teach the player how to play the game Displays the tutorial text shown in
    * Text/tutorial_text.txt.
    *
+   * @param nextTable The table to display after the tutorial window is closed
+   *
    * @return A small window to explain the game
    */
-  public Window makeTutorialWindow(Table nextTable) {
+  protected Window makeTutorialWindow(Table nextTable) {
     Window tutWindow = new Window("", game.skin);
     Table tutTable = new Table();
     tutWindow.add(tutTable).prefHeight(600).prefWidth(800 - 20);
@@ -252,15 +253,14 @@ public class MenuScreen implements Screen {
     tutWindow.setX((viewport.getWorldWidth() / 2) - (tutWindow.getWidth() / 2));
     tutWindow.setY((viewport.getWorldHeight() / 2) - (tutWindow.getHeight() / 2));
 
-    continueButton.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            tutWindow.setVisible(false);
-            nextTable.setVisible(true);
-          }
-        });
+    continueButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        tutWindow.setVisible(false);
+        nextTable.setVisible(true);
+      }
+    });
 
     return tutWindow;
   }
@@ -289,27 +289,25 @@ public class MenuScreen implements Screen {
     ImageButton choice2 = new ImageButton(game.skin, "avatar2");
     buttonTable.add(choice2).right().expandX();
 
-    choice1.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            game.setScreen(new GameScreen(game, 1));
-            game.soundManager.stopMenuMusic();
-            dispose();
-          }
-        });
+    choice1.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.setScreen(new GameScreen(game, 1));
+        game.soundManager.stopMenuMusic();
+        dispose();
+      }
+    });
 
-    choice2.addListener(
-        new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent event, Actor actor) {
-            game.soundManager.playButton();
-            game.setScreen(new GameScreen(game, 2));
-            game.soundManager.stopMenuMusic();
-            dispose();
-          }
-        });
+    choice2.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        game.soundManager.playButton();
+        game.setScreen(new GameScreen(game, 2));
+        game.soundManager.stopMenuMusic();
+        dispose();
+      }
+    });
 
     return table;
   }

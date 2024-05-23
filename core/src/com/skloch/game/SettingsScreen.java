@@ -16,7 +16,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-/** A screen to display settings to the player, lets the player adjust sound and music volume. */
+/**
+ * A screen to display settings to the player, lets the player adjust sound and music volume.
+ */
 public class SettingsScreen implements Screen {
   private HustleGame game;
   private Stage optionStage;
@@ -30,7 +32,7 @@ public class SettingsScreen implements Screen {
   /**
    * Handles the configuration of Music and Sound effect volume using two sliders.
    *
-   * @param game An instance of HustleGame
+   * @param game           An instance of HustleGame
    * @param previousScreen The previous screen to return to when the exit button is pressed
    */
   public SettingsScreen(final HustleGame game, Screen previousScreen) {
@@ -131,7 +133,7 @@ public class SettingsScreen implements Screen {
   /**
    * Correctly resizes the settings screen.
    *
-   * @param width The new width of the screen.
+   * @param width  The new width of the screen.
    * @param height The new height of the screen.
    */
   @Override
@@ -142,18 +144,24 @@ public class SettingsScreen implements Screen {
 
   // Other required methods
   @Override
-  public void show() {}
+  public void show() {
+  }
 
   @Override
-  public void hide() {}
+  public void hide() {
+  }
 
   @Override
-  public void pause() {}
+  public void pause() {
+  }
 
   @Override
-  public void resume() {}
+  public void resume() {
+  }
 
-  /** Disposes of the option settings stage. */
+  /**
+   * Disposes of the option settings stage.
+   */
   @Override
   public void dispose() {
     optionStage.dispose();
