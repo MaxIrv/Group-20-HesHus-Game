@@ -2,7 +2,8 @@ name: Java CI with Gradle
 on:
   # Trigger the workflow on push or pull request to main branch
   push:
-    branches: [ main, KAN-40-Implement-Automated-Releases ]
+    branches: [ main ]
+    tags: [ "v[0-9]+.[0-9]+.[0-9]+" ]
   pull_request:
     branches: [ main ]
 jobs:
@@ -21,7 +22,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Build with Gradle
+      - name: Build with Gradle and run tests with JaCoCo coverage and Checkstyle
         uses: gradle/actions/setup-gradle@v3
         with:
          arguments: build jacocoTestReport
@@ -55,3 +56,25 @@ jobs:
         with:
           name: tests-checkstyle-report
           path: tests/build/reports/checkstyle/main.html
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download the Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: desktop-1.0.jar
+          path: desktop/build/libs/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktop/build/libs/desktop-1.0.jar
+          tag_name: ${{ github.ref }}
+          body: |
+          token: ${{ secrets.GITHUB_TOKEN }}
