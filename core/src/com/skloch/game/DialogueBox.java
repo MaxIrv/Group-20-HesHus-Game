@@ -59,6 +59,12 @@ public class DialogueBox {
     setText("Are you sure you want to sleep at the Piazza? This will cost you 10 energy");
   }
 
+  public int getMaxChars() {return maxchars;
+  }
+
+  public Window getDialogueWindow() {return dialogueWindow;
+  }
+
   /** A class displaying a little selection box to the user when an input is needed in dialog. */
   class SelectBox {
     private Window selectWindow;
@@ -211,6 +217,12 @@ public class DialogueBox {
     selectBox.selectWindow.setPosition(
         x + dialogueWindow.getWidth() - selectBox.selectWindow.getWidth(),
         y + dialogueWindow.getHeight() - 24);
+  }
+  public float[] getPos(){
+    float[] x = new float[2];
+    x[0] = selectBox.selectWindow.getX();
+    x[1] = selectBox.selectWindow.getY();
+    return x;
   }
 
   /**
