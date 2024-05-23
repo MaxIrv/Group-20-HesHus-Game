@@ -69,17 +69,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: desktop-1.0.jar
-          path: desktop/build/libs/
-
-      - name: Rename JAR File to Match Release Tag
-        run: |
-          TAG_NAME=${GITHUB_REF/refs\/tags\//}
-          mv desktop/build/libs/desktop-1.0.jar desktop/build/libs/desktop-${TAG_NAME}.jar
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: desktop/build/libs/desktop-${{ github.ref }}.jar
-          tag_name: ${{ github.ref }}
-          body: |
-          token: ${{ secrets.GITHUB_TOKEN }}
+          files: desktop-1.0.jar
